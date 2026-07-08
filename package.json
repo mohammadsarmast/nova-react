@@ -1,0 +1,58 @@
+{
+  "name": "nova-react",
+  "version": "1.0.0",
+  "description": "A modular React UI component library — import only what you need.",
+  "author": "Mohammad Sarmast <mohammadsarmast1379@gmail.com>",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    "./autocomplete": {
+      "import": "./dist/autocomplete/index.js",
+      "require": "./dist/autocomplete/index.cjs"
+    },
+    "./autocomplete/styles.css": "./dist/autocomplete/index.css"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "demo": "vite demo",
+    "demo:build": "vite build demo",
+    "prepublishOnly": "npm run build"
+  },
+  "peerDependencies": {
+    "react": ">=17.0.0",
+    "react-dom": ">=17.0.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tsup": "^8.3.5",
+    "vite": "^6.0.3"
+  },
+  "keywords": [
+    "react",
+    "nova-react",
+    "ui",
+    "components",
+    "autocomplete",
+    "typeahead",
+    "combobox"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mohammadsarmast/nova-react.git"
+  },
+  "homepage": "https://github.com/mohammadsarmast/nova-react#readme",
+  "bugs": {
+    "url": "https://github.com/mohammadsarmast/nova-react/issues"
+  },
+  "sideEffects": [
+    "**/*.css"
+  ]
+}
