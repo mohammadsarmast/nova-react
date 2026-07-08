@@ -103,7 +103,7 @@ function App() {
 />
 ```
 
-![Grouped options](./docs/images/autocomplete/05-grouped.svg)
+![Grouped options](./docs/images/autocomplete/05-grouped.svg?v=2)
 
 ---
 

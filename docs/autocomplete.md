@@ -192,7 +192,7 @@ const groupedCities = [
 
 **Preview:**
 
-![Grouped options with section headers](./images/autocomplete/05-grouped.svg)
+![Grouped options with section headers](./images/autocomplete/05-grouped.svg?v=2)
 
 ---
 
