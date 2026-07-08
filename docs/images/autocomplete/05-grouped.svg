@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="380" height="150" viewBox="0 0 380 150">
+  <rect width="380" height="150" fill="#f9fafb" rx="8"/>
+  <rect x="20" y="20" width="340" height="36" fill="#fff" stroke="#d1d5db" rx="8"/>
+  <text x="32" y="43" fill="#9ca3af" font-family="system-ui,sans-serif" font-size="13">Select city...</text>
+  <rect x="20" y="62" width="340" height="78" fill="#fff" stroke="#e5e7eb" rx="8"/>
+  <text x="36" y="80" fill="#6b7280" font-family="system-ui,sans-serif" font-size="11" font-weight="600">GERMANY</text>
+  <text x="36" y="102" fill="#111827" font-family="system-ui,sans-serif" font-size="13">Berlin</text>
+  <text x="36" y="124" fill="#6b7280" font-family="system-ui,sans-serif" font-size="11" font-weight="600">IRAN</text>
+  <text x="36" y="134" fill="#111827" font-family="system-ui,sans-serif" font-size="13">Tehran</text>
+</svg>

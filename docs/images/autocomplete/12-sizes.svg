@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="380" height="150" viewBox="0 0 380 150">
+  <rect width="380" height="150" fill="#f9fafb" rx="8"/>
+  <rect x="20" y="16" width="340" height="28" fill="#fff" stroke="#d1d5db" rx="6"/>
+  <text x="32" y="34" fill="#9ca3af" font-family="system-ui,sans-serif" font-size="11">Small</text>
+  <rect x="20" y="54" width="340" height="36" fill="#fff" stroke="#d1d5db" rx="8"/>
+  <text x="32" y="77" fill="#9ca3af" font-family="system-ui,sans-serif" font-size="13">Medium (default)</text>
+  <rect x="20" y="100" width="340" height="44" fill="#fff" stroke="#d1d5db" rx="8"/>
+  <text x="32" y="128" fill="#9ca3af" font-family="system-ui,sans-serif" font-size="15">Large</text>
+</svg>

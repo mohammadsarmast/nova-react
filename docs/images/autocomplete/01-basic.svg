@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="380" height="160" viewBox="0 0 380 160">
+  <rect width="380" height="160" fill="#f9fafb" rx="8"/>
+  <rect x="20" y="20" width="340" height="36" fill="#fff" stroke="#3b82f6" stroke-width="2" rx="8"/>
+  <text x="32" y="43" fill="#111827" font-family="system-ui,sans-serif" font-size="13">ger</text>
+  <text x="52" y="43" fill="#111827" font-family="system-ui,sans-serif" font-size="13" font-weight="600">man</text>
+  <text x="88" y="43" fill="#6b7280" font-family="system-ui,sans-serif" font-size="13">y</text>
+  <circle cx="340" cy="38" r="8" fill="none" stroke="#9ca3af" stroke-width="1.5"/>
+  <line x1="336" y1="38" x2="344" y2="38" stroke="#9ca3af" stroke-width="1.5"/>
+  <rect x="20" y="60" width="340" height="88" fill="#fff" stroke="#e5e7eb" rx="8"/>
+  <rect x="28" y="68" width="324" height="28" fill="#eff6ff" rx="6"/>
+  <text x="36" y="86" fill="#111827" font-family="system-ui,sans-serif" font-size="13">Germany</text>
+  <text x="36" y="114" fill="#111827" font-family="system-ui,sans-serif" font-size="13">Algeria</text>
+  <text x="36" y="136" fill="#111827" font-family="system-ui,sans-serif" font-size="13">Niger</text>
+</svg>

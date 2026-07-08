@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="380" height="150" viewBox="0 0 380 150">
+  <rect width="380" height="150" fill="#f9fafb" rx="8"/>
+  <rect x="20" y="20" width="300" height="36" fill="#fff" stroke="#d1d5db" rx="8"/>
+  <text x="32" y="43" fill="#9ca3af" font-family="system-ui,sans-serif" font-size="13">Search from 5000 items...</text>
+  <rect x="324" y="20" width="36" height="36" fill="#f3f4f6" stroke="#d1d5db" rx="8"/>
+  <rect x="20" y="62" width="340" height="78" fill="#fff" stroke="#e5e7eb" rx="8"/>
+  <text x="36" y="84" fill="#111827" font-family="system-ui,sans-serif" font-size="13">Item 1</text>
+  <text x="36" y="106" fill="#111827" font-family="system-ui,sans-serif" font-size="13">Item 2</text>
+  <text x="36" y="128" fill="#111827" font-family="system-ui,sans-serif" font-size="13">Item 3</text>
+  <rect x="348" y="68" width="4" height="50" fill="#e5e7eb" rx="2"/>
+  <rect x="348" y="68" width="4" height="16" fill="#9ca3af" rx="2"/>
+</svg>

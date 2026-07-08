@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="380" height="130" viewBox="0 0 380 130">
+  <rect width="380" height="130" fill="#f9fafb" rx="8"/>
+  <rect x="20" y="20" width="300" height="36" fill="#fff" stroke="#d1d5db" rx="8"/>
+  <text x="32" y="43" fill="#9ca3af" font-family="system-ui,sans-serif" font-size="13">Click arrow or type...</text>
+  <rect x="324" y="20" width="36" height="36" fill="#f3f4f6" stroke="#d1d5db" rx="8"/>
+  <path d="M336 36 L342 44 L348 36" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round"/>
+  <rect x="20" y="62" width="340" height="58" fill="#fff" stroke="#e5e7eb" rx="8"/>
+  <text x="36" y="84" fill="#111827" font-family="system-ui,sans-serif" font-size="13">Germany</text>
+  <text x="36" y="106" fill="#111827" font-family="system-ui,sans-serif" font-size="13">Iran</text>
+</svg>

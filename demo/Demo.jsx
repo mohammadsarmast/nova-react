@@ -75,7 +75,7 @@ export function Demo() {
 
   return (
     <div style={{ fontFamily: 'system-ui, sans-serif', padding: 40, maxWidth: 800, margin: '0 auto' }}>
-      <h1 style={{ fontSize: 28, marginBottom: 8 }}>React Power AutoComplete</h1>
+      <h1 style={{ fontSize: 28, marginBottom: 8 }}>NovaReact AutoComplete</h1>
       <p style={{ color: '#6b7280', marginBottom: 40 }}>
         A powerful autocomplete with built-in filtering, debounce, virtual scroll, and more.
       </p>

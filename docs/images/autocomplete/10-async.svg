@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="380" height="120" viewBox="0 0 380 120">
+  <rect width="380" height="120" fill="#f9fafb" rx="8"/>
+  <rect x="20" y="20" width="340" height="36" fill="#fff" stroke="#d1d5db" rx="8"/>
+  <text x="32" y="43" fill="#111827" font-family="system-ui,sans-serif" font-size="13">ir</text>
+  <circle cx="330" cy="38" r="8" fill="none" stroke="#3b82f6" stroke-width="2" stroke-dasharray="20 40"/>
+  <rect x="20" y="62" width="340" height="48" fill="#fff" stroke="#e5e7eb" rx="8"/>
+  <text x="36" y="84" fill="#111827" font-family="system-ui,sans-serif" font-size="13">Iran</text>
+  <text x="36" y="104" fill="#111827" font-family="system-ui,sans-serif" font-size="13">Iraq</text>
+  <text x="20" y="116" fill="#6b7280" font-family="system-ui,sans-serif" font-size="11">Simulated 500ms API delay</text>
+</svg>

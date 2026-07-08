@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="380" height="90" viewBox="0 0 380 90">
+  <rect width="380" height="90" fill="#f9fafb" rx="8"/>
+  <rect x="20" y="20" width="340" height="36" fill="#fff" stroke="#d1d5db" rx="8"/>
+  <text x="32" y="43" fill="#111827" font-family="system-ui,sans-serif" font-size="13">InvalidCountry</text>
+  <text x="20" y="78" fill="#ef4444" font-family="system-ui,sans-serif" font-size="11">Value must be selected from the list</text>
+</svg>
