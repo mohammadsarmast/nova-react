@@ -118,10 +118,13 @@ export const Chart = forwardRef(function Chart(props, ref) {
   const containerRef = useRef(null);
   const onReadyRef = useRef(onReady);
   const pluginsRef = useRef(pluginsProp ?? EMPTY_PLUGINS);
+  const optionsRef = useRef(options);
+  const prevDataRef = useRef(data);
   const [legendVisible, setLegendVisible] = useState(showLegend);
 
   onReadyRef.current = onReady;
   pluginsRef.current = pluginsProp ?? EMPTY_PLUGINS;
+  optionsRef.current = options;
 
   const locale = resolveLocale(rtl, localeProp);
 
@@ -173,12 +176,12 @@ export const Chart = forwardRef(function Chart(props, ref) {
       rtl,
       locale,
       fontFamily: resolvedFont,
-      indexAxis: options?.indexAxis,
+      indexAxis: optionsRef.current?.indexAxis,
       sparkline,
       themeColors: resolvedThemeColors,
     });
 
-    const userOptions = options || {};
+    const userOptions = optionsRef.current || {};
     const merged = deepMerge(defaults, userOptions);
 
     merged.responsive = responsive;
@@ -232,7 +235,6 @@ export const Chart = forwardRef(function Chart(props, ref) {
     fontFamilyProp,
     resolvedThemeColors,
     sparkline,
-    options,
     responsive,
     maintainAspectRatio,
     aspectRatio,
@@ -273,10 +275,12 @@ export const Chart = forwardRef(function Chart(props, ref) {
 
   useEffect(() => {
     if (!chartRef.current || loading || isEmpty) return;
+    const dataChanged = prevDataRef.current !== data;
+    prevDataRef.current = data;
     chartRef.current.data = chartData;
     chartRef.current.options = getMergedOptions();
-    chartRef.current.update();
-  }, [chartData, getMergedOptions, loading, isEmpty, type]);
+    chartRef.current.update(dataChanged ? 'default' : 'none');
+  }, [chartData, getMergedOptions, loading, isEmpty, type, data, options]);
 
   useEffect(() => {
     setLegendVisible(showLegend);

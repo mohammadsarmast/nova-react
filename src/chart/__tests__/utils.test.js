@@ -30,6 +30,14 @@ describe('chart palettes', () => {
     expect(next.datasets[1].backgroundColor).toBe('#222222');
   });
 
+  it('uses translucent fill color for filled line charts', () => {
+    const data = {
+      datasets: [{ label: 'Users', data: [1, 2, 3], fill: true }],
+    };
+    const next = applyPaletteToData(data, ['#3b82f6'], 'line');
+    expect(next.datasets[0].backgroundColor).toBe('rgba(59, 130, 246, 0.15)');
+  });
+
   it('detects empty chart data', () => {
     expect(hasChartData(null)).toBe(false);
     expect(hasChartData({ datasets: [] })).toBe(false);

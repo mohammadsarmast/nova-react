@@ -128,6 +128,36 @@ describe('Chart', () => {
     expect(mockUpdate).toHaveBeenCalled();
   });
 
+  it('updates without animation when only options change', async () => {
+    const { rerender } = render(
+      <Chart
+        type="bar"
+        data={sampleData}
+        height={240}
+        options={{ plugins: { legend: { display: true } } }}
+      />
+    );
+
+    await waitFor(() => {
+      expect(MockChart.instances).toHaveLength(1);
+    });
+
+    mockUpdate.mockClear();
+
+    rerender(
+      <Chart
+        type="bar"
+        data={sampleData}
+        height={240}
+        options={{ plugins: { legend: { display: false } } }}
+      />
+    );
+
+    await waitFor(() => {
+      expect(mockUpdate).toHaveBeenCalledWith('none');
+    });
+  });
+
   it('renders toolbar actions', async () => {
     const user = userEvent.setup();
     render(<Chart type="bar" data={sampleData} title="Toolbar" showToolbar height={240} />);

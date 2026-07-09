@@ -13,6 +13,17 @@ export function resolvePalette(name) {
 
 const ARC_TYPES = new Set(['pie', 'doughnut', 'polarArea']);
 
+function colorWithAlpha(color, alpha = 0.15) {
+  if (typeof color !== 'string' || !color.startsWith('#') || color.length < 7) {
+    return color;
+  }
+  const hex = color.slice(1);
+  const r = Number.parseInt(hex.slice(0, 2), 16);
+  const g = Number.parseInt(hex.slice(2, 4), 16);
+  const b = Number.parseInt(hex.slice(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
 export function applyPaletteToData(data, colors, type = 'bar') {
   if (!data?.datasets?.length) return data;
 
@@ -25,9 +36,14 @@ export function applyPaletteToData(data, colors, type = 'bar') {
       const next = { ...dataset };
 
       if (next.backgroundColor == null) {
-        next.backgroundColor = usePerPointColors && Array.isArray(next.data)
+        const datasetType = next.type || type;
+        const baseColor = usePerPointColors && Array.isArray(next.data)
           ? next.data.map((_, i) => colors[i % colors.length])
           : color;
+
+        next.backgroundColor = datasetType === 'line' && next.fill
+          ? colorWithAlpha(color)
+          : baseColor;
       }
 
       if (next.borderColor == null) {

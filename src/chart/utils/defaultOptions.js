@@ -73,7 +73,7 @@ export function buildDefaultOptions({
     boxPadding: 6,
   };
 
-  const tooltipLabelFormatter = createTooltipLabelFormatter(locale, indexAxis ?? 'x');
+  const tooltipLabelFormatter = createTooltipLabelFormatter(locale, indexAxis ?? 'x', type);
   if (tooltipLabelFormatter) {
     tooltip.callbacks = {
       label: tooltipLabelFormatter,
@@ -143,10 +143,17 @@ export function buildDefaultOptions({
   };
 
   if (glass) {
-    common.plugins.tooltip.backgroundColor = 'rgba(255, 255, 255, 0.88)';
-    common.plugins.tooltip.titleColor = '#111827';
-    common.plugins.tooltip.bodyColor = '#374151';
-    common.plugins.tooltip.borderColor = 'rgba(148, 163, 184, 0.45)';
+    if (theme === 'dark') {
+      common.plugins.tooltip.backgroundColor = 'rgba(15, 23, 42, 0.88)';
+      common.plugins.tooltip.titleColor = '#f8fafc';
+      common.plugins.tooltip.bodyColor = '#e2e8f0';
+      common.plugins.tooltip.borderColor = 'rgba(148, 163, 184, 0.25)';
+    } else {
+      common.plugins.tooltip.backgroundColor = 'rgba(255, 255, 255, 0.88)';
+      common.plugins.tooltip.titleColor = '#111827';
+      common.plugins.tooltip.bodyColor = '#374151';
+      common.plugins.tooltip.borderColor = 'rgba(148, 163, 184, 0.45)';
+    }
   }
 
   if (type === 'pie' || type === 'doughnut' || type === 'polarArea') {

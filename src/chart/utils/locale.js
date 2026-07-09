@@ -14,14 +14,19 @@ export function createAxisTickFormatter(locale) {
   return (value) => toPersianDigits(value);
 }
 
-export function createTooltipLabelFormatter(locale, indexAxis = 'x') {
+export function createTooltipLabelFormatter(locale, indexAxis = 'x', chartType = 'bar') {
   if (locale !== 'fa') return undefined;
   return (context) => {
     const label = context.dataset.label || '';
     const parsed = context.parsed;
-    const raw = indexAxis === 'y'
-      ? (parsed?.x ?? context.raw)
-      : (parsed?.y ?? parsed?.x ?? context.raw);
+    let raw;
+    if (chartType === 'radar') {
+      raw = parsed?.r ?? context.raw;
+    } else if (indexAxis === 'y') {
+      raw = parsed?.x ?? context.raw;
+    } else {
+      raw = parsed?.y ?? parsed?.x ?? context.raw;
+    }
     const value = raw == null ? '' : toPersianDigits(raw);
     return label ? `${label}: ${value}` : `${value}`;
   };

@@ -31,4 +31,13 @@ describe('chart locale', () => {
       raw: 42,
     })).toBe('فروش: ۴۲');
   });
+
+  it('formats radar tooltip values from the radial axis', () => {
+    const formatter = createTooltipLabelFormatter('fa', 'x', 'radar');
+    expect(formatter({
+      dataset: { label: 'سرعت' },
+      parsed: { r: 80 },
+      raw: 80,
+    })).toBe('سرعت: ۸۰');
+  });
 });
