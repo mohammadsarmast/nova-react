@@ -44,26 +44,7 @@ const chartMocks = vi.hoisted(() => {
 
 vi.mock('chart.js', () => ({
   Chart: chartMocks.MockChart,
-  CategoryScale: {},
-  LinearScale: {},
-  RadialLinearScale: {},
-  BarController: {},
-  BarElement: {},
-  LineController: {},
-  LineElement: {},
-  PointElement: {},
-  ArcElement: {},
-  PieController: {},
-  DoughnutController: {},
-  RadarController: {},
-  PolarAreaController: {},
-  ScatterController: {},
-  BubbleController: {},
-  Filler: {},
-  Legend: {},
-  Tooltip: {},
-  Title: {},
-  SubTitle: {},
+  registerables: [],
 }));
 
 import { Chart } from '../Chart.jsx';

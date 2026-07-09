@@ -32,7 +32,7 @@
     "dev": "tsup --watch",
     "demo": "vite",
     "demo:build": "vite build --mode production",
-    "demo:preview": "vite preview --outDir demo/dist",
+    "demo:preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
     "prepublishOnly": "npm run build"
