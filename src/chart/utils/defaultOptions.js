@@ -155,20 +155,28 @@ export function buildDefaultOptions({
   return {
     ...common,
     scales: cartesianScales,
+    datasets: {
+      bar: {
+        barPercentage: 0.72,
+        categoryPercentage: 0.82,
+        maxBarThickness: sparkline ? undefined : 48,
+      },
+    },
     elements: {
       bar: {
-        borderRadius: type === 'bar' ? 8 : 0,
-        borderSkipped: false,
+        borderRadius: type === 'bar' ? { topLeft: 3, topRight: 3, bottomLeft: 0, bottomRight: 0 } : 0,
+        borderSkipped: 'bottom',
+        borderWidth: 0,
       },
       line: {
-        borderWidth: 3,
-        tension: 0.35,
+        borderWidth: sparkline ? 2.5 : 2.5,
+        tension: sparkline ? 0.4 : 0.35,
       },
       point: {
-        radius: sparkline ? 0 : 4,
-        hoverRadius: sparkline ? 0 : 6,
-        hitRadius: sparkline ? 8 : 12,
-        borderWidth: 2,
+        radius: sparkline ? 0 : 3,
+        hoverRadius: sparkline ? 3 : 5,
+        hitRadius: sparkline ? 10 : 10,
+        borderWidth: sparkline ? 0 : 2,
       },
     },
   };

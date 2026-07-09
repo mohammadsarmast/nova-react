@@ -80,6 +80,9 @@ export const Chart = forwardRef(function Chart(props, ref) {
     emptyMessage = 'No data available',
     rtl = false,
     sparkline = false,
+    sparklineValue,
+    sparklineBadge,
+    sparklineBadgeTone = 'up',
     downloadFileName = 'chart',
     className,
     style,
@@ -288,39 +291,60 @@ export const Chart = forwardRef(function Chart(props, ref) {
       style={containerStyle}
       data-chart-type={type}
     >
-      {(title || subtitle || showToolbar) && !sparkline ? (
-        <div className="nr-chart__header">
-          <div className="nr-chart__titles">
-            {title ? <h3 className="nr-chart__title">{title}</h3> : null}
-            {subtitle ? <p className="nr-chart__subtitle">{subtitle}</p> : null}
-          </div>
-          {showToolbar ? (
-            <div className="nr-chart__toolbar" role="toolbar" aria-label="Chart tools">
-              <button
-                type="button"
-                className="nr-chart__tool-btn"
-                aria-label="Toggle legend"
-                aria-pressed={legendVisible}
-                onClick={() => {
-                  setLegendVisible((value) => !value);
-                  requestAnimationFrame(() => chartRef.current?.update());
-                }}
-              >
-                <LegendIcon />
-              </button>
-              <button type="button" className="nr-chart__tool-btn" aria-label="Reset chart" onClick={reset}>
-                <RefreshIcon />
-              </button>
-              <button
-                type="button"
-                className="nr-chart__tool-btn"
-                aria-label="Download chart as PNG"
-                onClick={() => download()}
-              >
-                <DownloadIcon />
-              </button>
-            </div>
-          ) : null}
+      {(title || subtitle || sparklineValue || sparklineBadge || showToolbar) ? (
+        <div className={cn('nr-chart__header', sparkline && 'nr-chart__header--sparkline')}>
+          {sparkline ? (
+            <>
+              <div className="nr-chart__titles">
+                {title ? <span className="nr-chart__spark-label">{title}</span> : null}
+                {sparklineValue ? <strong className="nr-chart__spark-value">{sparklineValue}</strong> : null}
+              </div>
+              {sparklineBadge ? (
+                <span
+                  className={cn(
+                    'nr-chart__spark-badge',
+                    sparklineBadgeTone === 'down' && 'nr-chart__spark-badge--down'
+                  )}
+                >
+                  {sparklineBadge}
+                </span>
+              ) : null}
+            </>
+          ) : (
+            <>
+              <div className="nr-chart__titles">
+                {title ? <h3 className="nr-chart__title">{title}</h3> : null}
+                {subtitle ? <p className="nr-chart__subtitle">{subtitle}</p> : null}
+              </div>
+              {showToolbar ? (
+                <div className="nr-chart__toolbar" role="toolbar" aria-label="Chart tools">
+                  <button
+                    type="button"
+                    className="nr-chart__tool-btn"
+                    aria-label="Toggle legend"
+                    aria-pressed={legendVisible}
+                    onClick={() => {
+                      setLegendVisible((value) => !value);
+                      requestAnimationFrame(() => chartRef.current?.update());
+                    }}
+                  >
+                    <LegendIcon />
+                  </button>
+                  <button type="button" className="nr-chart__tool-btn" aria-label="Reset chart" onClick={reset}>
+                    <RefreshIcon />
+                  </button>
+                  <button
+                    type="button"
+                    className="nr-chart__tool-btn"
+                    aria-label="Download chart as PNG"
+                    onClick={() => download()}
+                  >
+                    <DownloadIcon />
+                  </button>
+                </div>
+              ) : null}
+            </>
+          )}
         </div>
       ) : null}
 

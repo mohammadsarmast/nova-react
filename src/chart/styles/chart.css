@@ -54,13 +54,58 @@
 
 .nr-chart--sparkline {
   --nr-chart-radius: 12px;
-  box-shadow: none;
-  border-color: transparent;
-  background: transparent;
+  --nr-chart-bg: #ffffff;
+  --nr-chart-border: #e5e7eb;
+  box-shadow: 0 1px 3px rgb(15 23 42 / 0.06);
+  border: 1px solid var(--nr-chart-border);
+  background: var(--nr-chart-bg);
 }
 
-.nr-chart--rtl {
-  direction: rtl;
+.nr-chart--sparkline .nr-chart__header--sparkline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 14px 0;
+}
+
+.nr-chart__spark-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--nr-chart-subtitle);
+  letter-spacing: 0.02em;
+}
+
+.nr-chart__spark-value {
+  display: block;
+  margin-top: 2px;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--nr-chart-title);
+}
+
+.nr-chart__spark-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: #ecfdf5;
+  color: #047857;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.nr-chart__spark-badge--down {
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.nr-chart--sparkline .nr-chart__body {
+  padding: 4px 10px 10px;
+  min-height: 48px;
 }
 
 .nr-chart__header {
@@ -140,13 +185,18 @@
 }
 
 .nr-chart--sparkline .nr-chart__body {
-  padding: 0;
+  padding: 4px 10px 10px;
+  min-height: 48px;
 }
 
 .nr-chart__canvas {
   display: block;
   width: 100% !important;
   height: 100% !important;
+}
+
+.nr-chart--rtl {
+  direction: rtl;
 }
 
 .nr-chart__overlay {

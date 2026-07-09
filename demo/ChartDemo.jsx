@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { Chart } from 'nova-react/chart';
+import { Chart, styleGroupedBarDatasets, styleStackedDatasets } from 'nova-react/chart';
 
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
 
@@ -23,7 +23,7 @@ function Section({ title, children, wide = false }) {
 function salesData() {
   return {
     labels: months,
-    datasets: [
+    datasets: styleGroupedBarDatasets([
       {
         label: 'Revenue',
         data: [12000, 19000, 15000, 22000, 18000, 26000],
@@ -32,7 +32,7 @@ function salesData() {
         label: 'Expenses',
         data: [8000, 12000, 10000, 14000, 11000, 15000],
       },
-    ],
+    ]),
   };
 }
 
@@ -65,11 +65,26 @@ export function ChartDemo() {
   const stackedData = useMemo(
     () => ({
       labels: months,
-      datasets: [
+      datasets: styleStackedDatasets([
         { label: 'Organic', data: [12, 19, 14, 18, 16, 22] },
         { label: 'Paid', data: [8, 11, 9, 13, 10, 15] },
         { label: 'Referral', data: [4, 6, 5, 7, 6, 8] },
-      ],
+      ]),
+    }),
+    []
+  );
+
+  const stackedHorizontalData = useMemo(
+    () => ({
+      labels: months,
+      datasets: styleStackedDatasets(
+        [
+          { label: 'Organic', data: [12, 19, 14, 18, 16, 22] },
+          { label: 'Paid', data: [8, 11, 9, 13, 10, 15] },
+          { label: 'Referral', data: [4, 6, 5, 7, 6, 8] },
+        ],
+        { horizontal: true }
+      ),
     }),
     []
   );
@@ -159,14 +174,16 @@ export function ChartDemo() {
       <Section title="4. Horizontal & Stacked Bar" wide>
         <Chart
           type="bar"
-          data={stackedData}
+          data={stackedHorizontalData}
           title="Marketing Channels"
+          subtitle="Horizontal stacked — subtle end radius only"
           height={320}
+          palette="nova"
           options={{
             indexAxis: 'y',
             scales: {
-              x: { stacked: true },
-              y: { stacked: true },
+              x: { stacked: true, grid: { color: 'rgba(148, 163, 184, 0.2)' } },
+              y: { stacked: true, grid: { display: false } },
             },
           }}
         />
@@ -174,11 +191,13 @@ export function ChartDemo() {
           type="bar"
           data={stackedData}
           title="Stacked Vertical"
+          subtitle="Clean stack with rounded top segment only"
           height={320}
+          palette="vibrant"
           options={{
             scales: {
-              x: { stacked: true },
-              y: { stacked: true },
+              x: { stacked: true, grid: { display: false } },
+              y: { stacked: true, grid: { color: 'rgba(148, 163, 184, 0.25)' } },
             },
           }}
         />
@@ -210,14 +229,29 @@ export function ChartDemo() {
       </Section>
 
       <Section title="7. Sparkline, Dark Theme, Custom Colors">
-        <Chart type="line" data={sparkData} sparkline height={56} palette="nova" />
+        <Chart
+          type="line"
+          data={sparkData}
+          sparkline
+          title="Weekly Trend"
+          sparklineValue="26.4K"
+          sparklineBadge="+18.2%"
+          height={72}
+          palette="nova"
+          options={{
+            elements: {
+              line: { borderWidth: 2.5, tension: 0.45 },
+            },
+          }}
+        />
         <Chart
           type="bar"
           data={salesData()}
           title="Dark Dashboard"
+          subtitle="Grouped bars with soft top corners"
           theme="dark"
           height={280}
-          palette="mono"
+          palette="nova"
         />
         <Chart
           type="line"
