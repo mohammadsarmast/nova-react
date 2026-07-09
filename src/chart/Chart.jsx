@@ -9,6 +9,8 @@ import React, {
 } from 'react';
 import { cn } from './utils/cn.js';
 import { buildDefaultOptions } from './utils/defaultOptions.js';
+import { resolveChartFontFamily } from './utils/font.js';
+import { resolveLocale } from './utils/locale.js';
 import { deepMerge } from './utils/merge.js';
 import { applyPaletteToData, hasChartData, resolvePalette } from './utils/palettes.js';
 import { ChartJS, registerChartComponents } from './utils/registerChart.js';
@@ -79,6 +81,8 @@ export const Chart = forwardRef(function Chart(props, ref) {
     loading = false,
     emptyMessage = 'No data available',
     rtl = false,
+    locale: localeProp,
+    fontFamily: fontFamilyProp,
     sparkline = false,
     sparklineValue,
     sparklineBadge,
@@ -100,6 +104,8 @@ export const Chart = forwardRef(function Chart(props, ref) {
   const containerRef = useRef(null);
   const [legendVisible, setLegendVisible] = useState(showLegend);
 
+  const locale = resolveLocale(rtl, localeProp);
+
   const paletteColors = useMemo(
     () => (Array.isArray(colors) && colors.length ? colors : resolvePalette(palette)),
     [colors, palette]
@@ -112,7 +118,8 @@ export const Chart = forwardRef(function Chart(props, ref) {
 
   const isEmpty = !loading && !hasChartData(chartData);
 
-  const mergedOptions = useMemo(() => {
+  const getMergedOptions = useCallback(() => {
+    const resolvedFont = resolveChartFontFamily(containerRef.current, fontFamilyProp);
     const defaults = buildDefaultOptions({
       type,
       theme,
@@ -121,6 +128,9 @@ export const Chart = forwardRef(function Chart(props, ref) {
       showGrid,
       animated,
       rtl,
+      locale,
+      fontFamily: resolvedFont,
+      indexAxis: options?.indexAxis,
       sparkline,
     });
 
@@ -155,6 +165,8 @@ export const Chart = forwardRef(function Chart(props, ref) {
     showGrid,
     animated,
     rtl,
+    locale,
+    fontFamilyProp,
     sparkline,
     options,
     responsive,
@@ -178,14 +190,14 @@ export const Chart = forwardRef(function Chart(props, ref) {
     const chart = new ChartJS(canvasRef.current, {
       type,
       data: chartData,
-      options: mergedOptions,
+      options: getMergedOptions(),
       plugins: chartPlugins,
     });
 
     chartRef.current = chart;
     onReady?.(chart);
     return chart;
-  }, [type, chartData, mergedOptions, plugins, loading, isEmpty, onReady]);
+  }, [type, chartData, getMergedOptions, plugins, loading, isEmpty, onReady]);
 
   useEffect(() => {
     if (loading || isEmpty) {
@@ -202,9 +214,9 @@ export const Chart = forwardRef(function Chart(props, ref) {
   useEffect(() => {
     if (!chartRef.current || loading || isEmpty) return;
     chartRef.current.data = chartData;
-    chartRef.current.options = mergedOptions;
+    chartRef.current.options = getMergedOptions();
     chartRef.current.update();
-  }, [chartData, mergedOptions, loading, isEmpty]);
+  }, [chartData, getMergedOptions, loading, isEmpty]);
 
   useEffect(() => {
     setLegendVisible(showLegend);

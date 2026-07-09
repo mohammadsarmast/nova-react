@@ -19,8 +19,8 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  font-size: 14px;
+  font-family: inherit;
+  font-size: inherit;
   color: var(--rpa-text);
   width: 100%;
 }

@@ -37,7 +37,8 @@
   gap: 8px;
   overflow: visible;
   border: 1px solid transparent;
-  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  font-family: inherit;
+  font-size: inherit;
   font-weight: 600;
   line-height: 1.4;
   text-decoration: none;
@@ -312,7 +313,6 @@
 .nr-split-btn--rtl,
 .nr-btn-tooltip-wrap--rtl {
   direction: rtl;
-  font-family: system-ui, -apple-system, 'Segoe UI', Tahoma, 'Noto Sans Arabic', sans-serif;
 }
 
 .nr-btn--rtl .nr-btn-label {

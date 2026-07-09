@@ -1,6 +1,6 @@
-const fontFamily = "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif";
+import { createAxisTickFormatter, createTooltipLabelFormatter } from './locale.js';
 
-function baseFont(theme) {
+function baseFont(theme, fontFamily) {
   return {
     family: fontFamily,
     size: 12,
@@ -18,6 +18,15 @@ function tickColor(theme) {
   return theme === 'dark' ? '#cbd5e1' : '#64748b';
 }
 
+function applyLocaleToTicks(ticks, locale) {
+  const formatter = createAxisTickFormatter(locale);
+  if (!formatter) return ticks;
+  return {
+    ...ticks,
+    callback: formatter,
+  };
+}
+
 export function buildDefaultOptions({
   type,
   theme = 'light',
@@ -26,16 +35,20 @@ export function buildDefaultOptions({
   showGrid = true,
   animated = true,
   rtl = false,
+  locale = 'en',
+  fontFamily = 'sans-serif',
+  indexAxis,
   sparkline = false,
 }) {
-  const font = baseFont(theme);
+  const font = baseFont(theme, fontFamily);
   const minimal = preset === 'minimal' || sparkline;
   const glass = preset === 'glass';
 
   const legend = {
     display: showLegend && !sparkline,
-    position: rtl ? 'left' : 'top',
-    align: 'start',
+    position: 'top',
+    align: rtl ? 'end' : 'start',
+    rtl,
     labels: {
       usePointStyle: true,
       pointStyle: 'circle',
@@ -44,11 +57,13 @@ export function buildDefaultOptions({
       padding: 16,
       font,
       color: font.color,
+      textAlign: rtl ? 'right' : 'left',
     },
   };
 
   const tooltip = {
     enabled: !sparkline,
+    rtl,
     backgroundColor: theme === 'dark' ? 'rgba(15, 23, 42, 0.92)' : 'rgba(17, 24, 39, 0.92)',
     titleColor: '#f8fafc',
     bodyColor: '#e2e8f0',
@@ -62,6 +77,13 @@ export function buildDefaultOptions({
     boxPadding: 6,
   };
 
+  const tooltipLabelFormatter = createTooltipLabelFormatter(locale);
+  if (tooltipLabelFormatter) {
+    tooltip.callbacks = {
+      label: tooltipLabelFormatter,
+    };
+  }
+
   const animation = animated
     ? { duration: 650, easing: 'easeOutQuart' }
     : false;
@@ -69,31 +91,43 @@ export function buildDefaultOptions({
   const cartesianScales = {
     x: {
       display: !sparkline,
+      reverse: rtl && indexAxis !== 'y',
       grid: {
         display: showGrid && !minimal,
         color: gridColor(theme),
         drawBorder: false,
       },
-      ticks: {
-        color: tickColor(theme),
-        font,
-        padding: 8,
-      },
+      ticks: applyLocaleToTicks(
+        {
+          color: tickColor(theme),
+          font,
+          padding: 8,
+          maxRotation: rtl ? 0 : 50,
+          minRotation: rtl ? 0 : 0,
+          autoSkip: true,
+        },
+        locale
+      ),
       border: { display: false },
     },
     y: {
       display: !sparkline,
+      position: rtl ? 'right' : 'left',
+      reverse: rtl && indexAxis === 'y',
       beginAtZero: true,
       grid: {
         display: showGrid && !minimal,
         color: gridColor(theme),
         drawBorder: false,
       },
-      ticks: {
-        color: tickColor(theme),
-        font,
-        padding: 8,
-      },
+      ticks: applyLocaleToTicks(
+        {
+          color: tickColor(theme),
+          font,
+          padding: 8,
+        },
+        locale
+      ),
       border: { display: false },
     },
   };
@@ -127,7 +161,8 @@ export function buildDefaultOptions({
         ...common.plugins,
         legend: {
           ...legend,
-          position: rtl ? 'left' : 'right',
+          position: rtl ? 'right' : 'right',
+          align: 'center',
         },
       },
     };
@@ -140,13 +175,20 @@ export function buildDefaultOptions({
         r: {
           angleLines: { color: gridColor(theme) },
           grid: { color: gridColor(theme) },
-          pointLabels: { font, color: tickColor(theme) },
-          ticks: {
-            display: !minimal,
-            backdropColor: 'transparent',
-            color: tickColor(theme),
+          pointLabels: {
             font,
+            color: tickColor(theme),
+            centerPointLabels: rtl,
           },
+          ticks: applyLocaleToTicks(
+            {
+              display: !minimal,
+              backdropColor: 'transparent',
+              color: tickColor(theme),
+              font,
+            },
+            locale
+          ),
         },
       },
     };
@@ -164,7 +206,11 @@ export function buildDefaultOptions({
     },
     elements: {
       bar: {
-        borderRadius: type === 'bar' ? { topLeft: 3, topRight: 3, bottomLeft: 0, bottomRight: 0 } : 0,
+        borderRadius: type === 'bar'
+          ? rtl
+            ? { topLeft: 3, topRight: 3, bottomLeft: 0, bottomRight: 0 }
+            : { topLeft: 3, topRight: 3, bottomLeft: 0, bottomRight: 0 }
+          : 0,
         borderSkipped: 'bottom',
         borderWidth: 0,
       },

@@ -22,6 +22,8 @@
   border-radius: var(--nr-chart-radius);
   box-shadow: var(--nr-chart-shadow);
   overflow: hidden;
+  font-family: inherit;
+  font-size: inherit;
 }
 
 .nr-chart--dark {
@@ -197,6 +199,17 @@
 
 .nr-chart--rtl {
   direction: rtl;
+  text-align: right;
+}
+
+.nr-chart--rtl .nr-chart__header,
+.nr-chart--rtl .nr-chart__titles {
+  text-align: right;
+}
+
+.nr-chart--rtl .nr-chart__toolbar {
+  margin-inline-start: auto;
+  margin-inline-end: 0;
 }
 
 .nr-chart__overlay {

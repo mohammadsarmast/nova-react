@@ -262,7 +262,49 @@ export function ChartDemo() {
         />
       </Section>
 
-      <Section title="8. Loading, Empty, RTL">
+      <Section title="8. RTL & Persian (فارسی)">
+        <div dir="rtl" style={{ display: 'contents' }}>
+          <Chart
+            type="bar"
+            rtl
+            locale="fa"
+            data={{
+              labels: ['فروردین', 'اردیبهشت', 'خرداد', 'تیر', 'مرداد', 'شهریور'],
+              datasets: [{ label: 'فروش', data: [42, 58, 49, 73, 61, 88] }],
+            }}
+            title="نمودار فروش"
+            subtitle="داده‌های ماهانه — محور راست، اعداد فارسی"
+            height={300}
+            palette="nova"
+          />
+          <Chart
+            type="line"
+            rtl
+            locale="fa"
+            data={{
+              labels: ['فروردین', 'اردیبهشت', 'خرداد', 'تیر'],
+              datasets: [{ label: 'کاربران', data: [420, 510, 480, 620], fill: true }],
+            }}
+            title="رشد کاربران"
+            height={280}
+            palette="vibrant"
+          />
+          <Chart
+            type="pie"
+            rtl
+            locale="fa"
+            data={{
+              labels: ['موبایل', 'دسکتاپ', 'تبلت'],
+              datasets: [{ label: 'سهم', data: [52, 34, 14] }],
+            }}
+            title="سهم دستگاه‌ها"
+            height={280}
+            palette="pastel"
+          />
+        </div>
+      </Section>
+
+      <Section title="9. Loading, Empty">
         <Chart
           type="bar"
           data={salesData()}
@@ -290,17 +332,6 @@ export function ChartDemo() {
           </button>
         </div>
         <Chart type="bar" data={{ labels: [], datasets: [] }} title="Empty State" height={260} />
-        <Chart
-          type="bar"
-          data={{
-            labels: ['فروردین', 'اردیبهشت', 'خرداد', 'تیر'],
-            datasets: [{ label: 'فروش', data: [42, 58, 49, 73] }],
-          }}
-          title="نمودار فروش"
-          subtitle="داده‌های ماهانه"
-          rtl
-          height={260}
-        />
       </Section>
     </div>
   );

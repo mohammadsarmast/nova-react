@@ -48,4 +48,18 @@ describe('chart default options', () => {
     const options = buildDefaultOptions({ type: 'doughnut' });
     expect(options.cutout).toBe('62%');
   });
+
+  it('applies rtl axis and legend defaults', () => {
+    const options = buildDefaultOptions({ type: 'bar', rtl: true, locale: 'fa' });
+    expect(options.scales.y.position).toBe('right');
+    expect(options.scales.x.reverse).toBe(true);
+    expect(options.plugins.legend.align).toBe('end');
+    expect(options.scales.y.ticks.callback(12)).toBe('۱۲');
+  });
+
+  it('reverses y axis for horizontal rtl bars', () => {
+    const options = buildDefaultOptions({ type: 'bar', rtl: true, indexAxis: 'y' });
+    expect(options.scales.y.reverse).toBe(true);
+    expect(options.scales.x.reverse).toBe(false);
+  });
 });

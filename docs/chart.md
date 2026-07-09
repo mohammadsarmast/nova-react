@@ -45,6 +45,8 @@ import 'nova-react/chart/styles.css';
 | **Responsive** | Auto-resize with `ResizeObserver` |
 | **Loading / Empty** | Built-in states |
 | **RTL** | Right-to-left layout support |
+| **Locale** | `locale="fa"` for Persian digits on axes/tooltips |
+| **Font** | Inherits site font; optional `fontFamily` override |
 | **Ref API** | `getChart()`, `download()`, `reset()`, `update()` |
 | **Events** | `onChartClick`, `onLegendClick`, `onReady` |
 | **Full freedom** | Pass any Chart.js `options`, `plugins`, and `canvasProps` |
@@ -163,6 +165,8 @@ const chart = ref.current?.getChart();
 | `loading` | `boolean` | `false` | Loading overlay |
 | `emptyMessage` | `string` | `'No data available'` | Empty state message |
 | `rtl` | `boolean` | `false` | RTL layout |
+| `locale` | `'en'\|'fa'` | `fa` when `rtl` | Number formatting |
+| `fontFamily` | `string` | inherited | Canvas font override |
 | `sparkline` | `boolean` | `false` | Compact sparkline mode |
 | `downloadFileName` | `string` | `'chart'` | PNG download filename |
 | `className` | `string` | — | Container class |
@@ -172,6 +176,42 @@ const chart = ref.current?.getChart();
 | `onChartClick` | `function` | — | Click handler |
 | `onLegendClick` | `function` | — | Legend click handler |
 | `onReady` | `function` | — | Called when chart instance is ready |
+
+### RTL & Persian
+
+```jsx
+<Chart
+  rtl
+  locale="fa"
+  type="bar"
+  data={{
+    labels: ['فروردین', 'اردیبهشت', 'خرداد'],
+    datasets: [{ label: 'فروش', data: [42, 58, 49] }],
+  }}
+  title="نمودار فروش"
+/>
+```
+
+- Y-axis moves to the **right**
+- X-axis order is **reversed** (first label on the right)
+- Axis/tooltip numbers use **Persian digits** when `locale="fa"`
+- Legend aligns to the **top-right**
+
+### Font inheritance
+
+Components do not force a font. Set your site font on a parent element:
+
+```css
+body {
+  font-family: 'Vazirmatn', sans-serif;
+}
+```
+
+Chart reads the computed font for canvas labels. Override explicitly if needed:
+
+```jsx
+<Chart fontFamily="'Vazirmatn', sans-serif" ... />
+```
 
 ## Accessibility
 

@@ -3,3 +3,5 @@ export { palettes, resolvePalette, applyPaletteToData, hasChartData } from './ut
 export { buildDefaultOptions } from './utils/defaultOptions.js';
 export { deepMerge } from './utils/merge.js';
 export { styleStackedDatasets, styleGroupedBarDatasets } from './utils/stackedBars.js';
+export { resolveLocale, toPersianDigits } from './utils/locale.js';
+export { resolveChartFontFamily } from './utils/font.js';
