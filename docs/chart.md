@@ -39,7 +39,7 @@ import 'nova-react/chart/styles.css';
 |---------|-------------|
 | **Themes** | `light` and `dark` built-in |
 | **Presets** | `default`, `minimal`, `glass` styling |
-| **Palettes** | `nova`, `pastel`, `vibrant`, `mono`, `sunset` or custom `colors` array |
+| **Palettes** | `nova`, `pastel`, `vibrant`, `mono`, `dark`, `sunset` or custom `colors` array |
 | **Toolbar** | Toggle legend, reset, download PNG |
 | **Sparkline** | Compact charts with `sparkline` prop |
 | **Responsive** | Auto-resize with `ResizeObserver` |
@@ -106,6 +106,51 @@ import 'nova-react/chart/styles.css';
 <Chart type="line" data={data} sparkline height={56} />
 ```
 
+### Dark theme + muted bars
+
+```jsx
+<Chart
+  type="bar"
+  data={data}
+  theme="dark"
+  palette="dark"
+  title="Dashboard"
+  height={320}
+/>
+```
+
+The `dark` palette uses slate and off-white bar colors suited for dark backgrounds. With `theme="dark"` and default `palette="nova"`, the dark palette is selected automatically.
+
+### Custom theme colors
+
+Override container background, borders, title, subtitle, axis text, grid lines, and tooltip colors:
+
+```jsx
+<Chart
+  type="bar"
+  data={data}
+  theme="dark"
+  palette="dark"
+  chartColors={{
+    background: '#111827',
+    border: '#1f2937',
+    title: '#f9fafb',
+    subtitle: '#9ca3af',
+    text: '#e5e7eb',
+    tick: '#94a3b8',
+    grid: 'rgba(148, 163, 184, 0.12)',
+  }}
+/>
+```
+
+Shorthand props are also supported: `backgroundColor`, `borderColor`, `titleColor`, `subtitleColor`, `textColor`, `tickColor`, `gridColor`.
+
+### Custom bar / dataset colors
+
+```jsx
+<Chart type="line" data={data} colors={['#14b8a6', '#f97316', '#a855f7']} />
+```
+
 ### Dark theme + toolbar
 
 ```jsx
@@ -120,6 +165,8 @@ import 'nova-react/chart/styles.css';
 ```
 
 ### Custom colors
+
+Use `colors` for dataset/bar colors. Use `chartColors` or shorthand props for UI and axis styling (see above).
 
 ```jsx
 <Chart type="line" data={data} colors={['#14b8a6', '#f97316', '#a855f7']} />
@@ -153,8 +200,16 @@ const chart = ref.current?.getChart();
 | `responsive` | `boolean` | `true` | Responsive chart |
 | `maintainAspectRatio` | `boolean` | `false` | Chart.js maintainAspectRatio |
 | `colors` | `string[]` | — | Custom dataset colors |
-| `palette` | `string` | `'nova'` | Built-in palette name |
+| `palette` | `string` | `'nova'` | Built-in palette name (`dark` auto-selected when `theme="dark"`) |
 | `theme` | `'light'\|'dark'` | `'light'` | Container theme |
+| `chartColors` | `object` | — | Override theme colors (background, border, title, subtitle, text, tick, grid, tooltip*) |
+| `backgroundColor` | `string` | — | Shorthand for `chartColors.background` |
+| `borderColor` | `string` | — | Shorthand for `chartColors.border` |
+| `titleColor` | `string` | — | Shorthand for `chartColors.title` |
+| `subtitleColor` | `string` | — | Shorthand for `chartColors.subtitle` |
+| `textColor` | `string` | — | Shorthand for `chartColors.text` (legend labels) |
+| `tickColor` | `string` | — | Shorthand for `chartColors.tick` (axis labels) |
+| `gridColor` | `string` | — | Shorthand for `chartColors.grid` |
 | `preset` | `'default'\|'minimal'\|'glass'` | `'default'` | Visual preset |
 | `title` | `string` | — | Chart title |
 | `subtitle` | `string` | — | Chart subtitle |

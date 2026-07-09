@@ -11,6 +11,10 @@ import { cn } from './utils/cn.js';
 import { buildDefaultOptions } from './utils/defaultOptions.js';
 import { resolveChartFontFamily } from './utils/font.js';
 import { resolveLocale } from './utils/locale.js';
+import {
+  chartThemeColorsToCssVars,
+  resolveChartThemeColors,
+} from './utils/themeColors.js';
 import { deepMerge } from './utils/merge.js';
 import { applyPaletteToData, hasChartData, resolvePalette } from './utils/palettes.js';
 import { ChartJS, registerChartComponents } from './utils/registerChart.js';
@@ -71,6 +75,14 @@ export const Chart = forwardRef(function Chart(props, ref) {
     colors,
     palette = 'nova',
     theme = 'light',
+    chartColors,
+    backgroundColor,
+    borderColor,
+    textColor,
+    titleColor,
+    subtitleColor,
+    gridColor,
+    tickColor,
     preset = 'default',
     title,
     subtitle,
@@ -106,9 +118,33 @@ export const Chart = forwardRef(function Chart(props, ref) {
 
   const locale = resolveLocale(rtl, localeProp);
 
+  const effectivePalette = palette === 'nova' && theme === 'dark' ? 'dark' : palette;
+
+  const resolvedThemeColors = useMemo(() => {
+    const overrides = { ...(chartColors || {}) };
+    if (backgroundColor) overrides.background = backgroundColor;
+    if (borderColor) overrides.border = borderColor;
+    if (textColor) overrides.text = textColor;
+    if (tickColor) overrides.tick = tickColor;
+    if (titleColor) overrides.title = titleColor;
+    if (subtitleColor) overrides.subtitle = subtitleColor;
+    if (gridColor) overrides.grid = gridColor;
+    return resolveChartThemeColors(theme, overrides);
+  }, [
+    theme,
+    chartColors,
+    backgroundColor,
+    borderColor,
+    textColor,
+    tickColor,
+    titleColor,
+    subtitleColor,
+    gridColor,
+  ]);
+
   const paletteColors = useMemo(
-    () => (Array.isArray(colors) && colors.length ? colors : resolvePalette(palette)),
-    [colors, palette]
+    () => (Array.isArray(colors) && colors.length ? colors : resolvePalette(effectivePalette)),
+    [colors, effectivePalette]
   );
 
   const chartData = useMemo(
@@ -132,6 +168,7 @@ export const Chart = forwardRef(function Chart(props, ref) {
       fontFamily: resolvedFont,
       indexAxis: options?.indexAxis,
       sparkline,
+      themeColors: resolvedThemeColors,
     });
 
     const userOptions = options || {};
@@ -167,6 +204,7 @@ export const Chart = forwardRef(function Chart(props, ref) {
     rtl,
     locale,
     fontFamilyProp,
+    resolvedThemeColors,
     sparkline,
     options,
     responsive,
@@ -282,6 +320,7 @@ export const Chart = forwardRef(function Chart(props, ref) {
     ...(sparkline ? { height: height || 56 } : null),
     ...(minHeight != null && !sparkline ? { minHeight } : null),
     ...(maxHeight != null ? { maxHeight } : null),
+    ...chartThemeColorsToCssVars(resolvedThemeColors, theme),
     ...style,
   };
 

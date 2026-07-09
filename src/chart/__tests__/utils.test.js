@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { applyPaletteToData, hasChartData, resolvePalette } from '../utils/palettes.js';
 import { deepMerge } from '../utils/merge.js';
+import { resolveChartThemeColors, chartThemeColorsToCssVars } from '../utils/themeColors.js';
 import { buildDefaultOptions } from '../utils/defaultOptions.js';
 
 describe('chart palettes', () => {
@@ -61,5 +62,34 @@ describe('chart default options', () => {
     const options = buildDefaultOptions({ type: 'bar', rtl: true, indexAxis: 'y' });
     expect(options.scales.y.reverse).toBe(true);
     expect(options.scales.x.reverse).toBe(false);
+  });
+
+  it('uses theme colors for grid and ticks', () => {
+    const options = buildDefaultOptions({
+      type: 'bar',
+      theme: 'dark',
+      themeColors: { grid: '#ff0000', tick: '#00ff00', text: '#0000ff' },
+    });
+    expect(options.scales.x.grid.color).toBe('#ff0000');
+    expect(options.scales.x.ticks.color).toBe('#00ff00');
+    expect(options.plugins.legend.labels.color).toBe('#0000ff');
+  });
+});
+
+describe('chart theme colors', () => {
+  it('merges dark defaults with overrides', () => {
+    const colors = resolveChartThemeColors('dark', { background: '#111111' });
+    expect(colors.background).toBe('#111111');
+    expect(colors.grid).toBe('rgba(148, 163, 184, 0.12)');
+  });
+
+  it('maps colors to css variables', () => {
+    const vars = chartThemeColorsToCssVars(
+      resolveChartThemeColors('dark'),
+      'dark'
+    );
+    expect(vars['--nr-chart-bg']).toBe('#0f172a');
+    expect(vars['--nr-chart-title']).toBe('#f8fafc');
+    expect(vars['--nr-chart-tool-bg']).toBe('#1e293b');
   });
 });

@@ -1,21 +1,14 @@
 import { createAxisTickFormatter, createTooltipLabelFormatter } from './locale.js';
+import { resolveChartThemeColors } from './themeColors.js';
 
-function baseFont(theme, fontFamily) {
+function baseFont(fontFamily, textColor) {
   return {
     family: fontFamily,
     size: 12,
     weight: '500',
     lineHeight: 1.4,
-    color: theme === 'dark' ? '#e5e7eb' : '#374151',
+    color: textColor,
   };
-}
-
-function gridColor(theme) {
-  return theme === 'dark' ? 'rgba(148, 163, 184, 0.15)' : 'rgba(148, 163, 184, 0.35)';
-}
-
-function tickColor(theme) {
-  return theme === 'dark' ? '#cbd5e1' : '#64748b';
 }
 
 function applyLocaleToTicks(ticks, locale) {
@@ -39,10 +32,13 @@ export function buildDefaultOptions({
   fontFamily = 'sans-serif',
   indexAxis,
   sparkline = false,
+  themeColors: userThemeColors = {},
 }) {
-  const font = baseFont(theme, fontFamily);
+  const themeColors = resolveChartThemeColors(theme, userThemeColors);
+  const font = baseFont(fontFamily, themeColors.text);
   const minimal = preset === 'minimal' || sparkline;
   const glass = preset === 'glass';
+  const barRadius = theme === 'dark' ? 5 : 3;
 
   const legend = {
     display: showLegend && !sparkline,
@@ -64,10 +60,10 @@ export function buildDefaultOptions({
   const tooltip = {
     enabled: !sparkline,
     rtl,
-    backgroundColor: theme === 'dark' ? 'rgba(15, 23, 42, 0.92)' : 'rgba(17, 24, 39, 0.92)',
-    titleColor: '#f8fafc',
-    bodyColor: '#e2e8f0',
-    borderColor: theme === 'dark' ? 'rgba(148, 163, 184, 0.25)' : 'rgba(148, 163, 184, 0.35)',
+    backgroundColor: themeColors.tooltipBackground,
+    titleColor: themeColors.tooltipTitle,
+    bodyColor: themeColors.tooltipBody,
+    borderColor: themeColors.tooltipBorder,
     borderWidth: 1,
     cornerRadius: 10,
     padding: 12,
@@ -94,12 +90,12 @@ export function buildDefaultOptions({
       reverse: rtl && indexAxis !== 'y',
       grid: {
         display: showGrid && !minimal,
-        color: gridColor(theme),
+        color: themeColors.grid,
         drawBorder: false,
       },
       ticks: applyLocaleToTicks(
         {
-          color: tickColor(theme),
+          color: themeColors.tick,
           font,
           padding: 8,
           maxRotation: rtl ? 0 : 50,
@@ -117,12 +113,12 @@ export function buildDefaultOptions({
       beginAtZero: true,
       grid: {
         display: showGrid && !minimal,
-        color: gridColor(theme),
+        color: themeColors.grid,
         drawBorder: false,
       },
       ticks: applyLocaleToTicks(
         {
-          color: tickColor(theme),
+          color: themeColors.tick,
           font,
           padding: 8,
         },
@@ -173,18 +169,18 @@ export function buildDefaultOptions({
       ...common,
       scales: {
         r: {
-          angleLines: { color: gridColor(theme) },
-          grid: { color: gridColor(theme) },
+          angleLines: { color: themeColors.grid },
+          grid: { color: themeColors.grid },
           pointLabels: {
             font,
-            color: tickColor(theme),
+            color: themeColors.tick,
             centerPointLabels: rtl,
           },
           ticks: applyLocaleToTicks(
             {
               display: !minimal,
               backdropColor: 'transparent',
-              color: tickColor(theme),
+              color: themeColors.tick,
               font,
             },
             locale
@@ -207,9 +203,7 @@ export function buildDefaultOptions({
     elements: {
       bar: {
         borderRadius: type === 'bar'
-          ? rtl
-            ? { topLeft: 3, topRight: 3, bottomLeft: 0, bottomRight: 0 }
-            : { topLeft: 3, topRight: 3, bottomLeft: 0, bottomRight: 0 }
+          ? { topLeft: barRadius, topRight: barRadius, bottomLeft: 0, bottomRight: 0 }
           : 0,
         borderSkipped: 'bottom',
         borderWidth: 0,

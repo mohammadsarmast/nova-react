@@ -251,7 +251,25 @@ export function ChartDemo() {
           subtitle="Grouped bars with soft top corners"
           theme="dark"
           height={280}
-          palette="nova"
+          palette="dark"
+        />
+        <Chart
+          type="bar"
+          data={salesData()}
+          title="Custom Theme Colors"
+          subtitle="Override background, grid, bars, and text"
+          theme="dark"
+          height={280}
+          palette="dark"
+          chartColors={{
+            background: '#111827',
+            grid: 'rgba(99, 102, 241, 0.15)',
+            text: '#e0e7ff',
+            tick: '#a5b4fc',
+            title: '#f5f3ff',
+            subtitle: '#c4b5fd',
+          }}
+          colors={['#6366f1', '#e0e7ff', '#4f46e5', '#c7d2fe']}
         />
         <Chart
           type="line"
