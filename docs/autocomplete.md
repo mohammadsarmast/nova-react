@@ -30,7 +30,12 @@ import 'nova-react/autocomplete/styles.css';
 11. [Invalid / Error State](#11-invalid--error-state)
 12. [Sizes](#12-sizes)
 13. [Disabled](#13-disabled)
-14. [All Features](#all-features)
+14. [RTL](#14-rtl)
+15. [Portal](#15-portal)
+16. [Match Mode](#16-match-mode)
+17. [Disabled Options](#17-disabled-options)
+18. [Creatable](#18-creatable)
+19. [All Features](#all-features)
 15. [Props Reference](#props-reference)
 16. [Events](#events)
 17. [Styling](#styling)
@@ -406,6 +411,77 @@ const search = async ({ query }) => {
 
 ---
 
+## 14. RTL
+
+```jsx
+<div dir="rtl">
+  <AutoComplete
+    rtl
+    options={['ایران', 'آلمان', 'فرانسه']}
+    value={value}
+    onChange={(e) => setValue(e.value)}
+    placeholder="جستجوی کشور..."
+  />
+</div>
+```
+
+---
+
+## 15. Portal
+
+```jsx
+<AutoComplete
+  appendTo="body"
+  dropdown
+  options={countries}
+  placeholder="Panel renders in document.body"
+/>
+```
+
+Panel position updates on scroll and resize.
+
+---
+
+## 16. Match Mode
+
+```jsx
+<AutoComplete matchMode="startsWith" options={countries} />
+```
+
+| Value | Description |
+|-------|-------------|
+| `contains` | پیش‌فرض — هر جای label |
+| `startsWith` | فقط ابتدای label |
+| `equals` | تطابق کامل |
+
+---
+
+## 17. Disabled Options
+
+```jsx
+<AutoComplete
+  field="name"
+  options={[
+    { name: 'Germany', disabled: true },
+    { name: 'Iran' },
+  ]}
+/>
+```
+
+آیتم‌های `disabled: true` در کیبورد و کلیک نادیده گرفته می‌شوند.
+
+---
+
+## 18. Creatable
+
+```jsx
+<AutoComplete allowCustomValue options={tags} placeholder="Type a new tag..." />
+```
+
+وقتی مقدار تایپ‌شده در لیست نباشد، گزینه `Add "..."` نمایش داده می‌شود.
+
+---
+
 ## All Features
 
 | Feature | Prop / Usage |
@@ -430,6 +506,9 @@ const search = async ({ query }) => {
 | Size variants | `size` |
 | RTL layout | `rtl` |
 | Portal to body | `appendTo="body"` |
+| Match mode | `matchMode` |
+| Disabled options | `option.disabled` |
+| Creatable value | `allowCustomValue` |
 | Accessibility | ARIA built-in |
 
 ---
@@ -442,7 +521,7 @@ const search = async ({ query }) => {
 | `defaultValue` | — | مقدار پیش‌فرض uncontrolled |
 | `options` | — | لیست ثابت |
 | `suggestions` | — | نتایج dynamic از API |
-| `completeMethod` | — | `({ query }) => void \| Promise` |
+| `completeMethod` | — | `({ query }) => void \| any[]` — می‌تواند آرایه suggestions برگرداند |
 | `onChange` | — | `(e) => void` |
 | `onSelect` | — | وقتی آیتم انتخاب می‌شود |
 | `onClear` | — | وقتی clear زده می‌شود |
@@ -459,6 +538,9 @@ const search = async ({ query }) => {
 | `highlightMatches` | `true` | هایلایت جستجو |
 | `filter` | `true` | فیلتر داخلی |
 | `filterFunction` | — | فیلتر سفارشی |
+| `matchMode` | `'contains'` | `'contains'` \| `'startsWith'` \| `'equals'` |
+| `optionDisabledField` | `'disabled'` | فیلد disabled در object |
+| `creatableMessage` | — | قالب گزینه Add، مثلاً `'افزودن {value}'` |
 | `delay` | `300` | debounce (ms) |
 | `minLength` | `1` | حداقل کاراکتر |
 | `maxSuggestions` | — | محدودیت تعداد نتایج |
@@ -484,6 +566,7 @@ const search = async ({ query }) => {
 | `panelClassName` | — | کلاس panel |
 | `autoFocus` | `false` | focus خودکار |
 | `autoHighlight` | `true` | هایلایت اولین آیتم |
+| `selectOnBlur` | `false` | انتخاب آیتم هایلایت‌شده هنگام blur |
 | `hideOnSelect` | `true` | بستن panel بعد از انتخاب |
 
 ---

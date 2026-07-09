@@ -1,4 +1,4 @@
-import {
+import React, {
   useCallback,
   useEffect,
   useId,
@@ -13,10 +13,14 @@ import { useDebouncedCallback } from './hooks/useDebounce.js';
 import { useVirtualScroll } from './hooks/useVirtualScroll.js';
 import {
   cn,
+  createCreatableOption,
+  createMatchFilter,
   filterOptions,
   flattenGroupedOptions,
   getOptionLabel,
+  isCreatableOption,
   isEqualOption,
+  isOptionDisabled,
 } from './utils/index.js';
 import { highlightText } from './utils/highlight.jsx';
 import './styles/autocomplete.css';
@@ -53,6 +57,26 @@ function ChipRemoveIcon() {
   );
 }
 
+function findNextEnabledIndex(items, start, direction, disabledField) {
+  const len = items.length;
+  if (!len) return -1;
+
+  let index = start;
+  for (let i = 0; i < len; i += 1) {
+    index += direction;
+    if (index < 0) index = 0;
+    if (index >= len) index = len - 1;
+    const item = items[index];
+    if (!isOptionDisabled(item, disabledField)) {
+      return index;
+    }
+    if (index === 0 && direction < 0) break;
+    if (index === len - 1 && direction > 0) break;
+  }
+
+  return start;
+}
+
 export function AutoComplete(props) {
   const {
     value: controlledValue,
@@ -87,6 +111,9 @@ export function AutoComplete(props) {
     highlightMatches = true,
     filter: enableFilter = true,
     filterFunction,
+    matchMode = 'contains',
+    optionDisabledField = 'disabled',
+    creatableMessage,
     delay = DEFAULT_DELAY,
     minLength = DEFAULT_MIN_LENGTH,
     maxSuggestions,
@@ -131,8 +158,9 @@ export function AutoComplete(props) {
   const inputRef = useRef(null);
   const panelRef = useRef(null);
   const listRef = useRef(null);
+  const activeQueryRef = useRef('');
 
-  useImperativeHandle(externalInputRef, () => inputRef.current);
+  useImperativeHandle(externalInputRef, () => inputRef.current, []);
 
   const isControlled = controlledValue !== undefined;
   const [internalValue, setInternalValue] = useState(
@@ -152,6 +180,11 @@ export function AutoComplete(props) {
 
   const isGrouped = !!(optionGroupLabel && optionGroupChildren);
 
+  const resolvedFilter = useMemo(
+    () => filterFunction ?? createMatchFilter(matchMode),
+    [filterFunction, matchMode]
+  );
+
   const groupedData = useMemo(() => {
     if (!isGrouped || !options) return null;
     return flattenGroupedOptions(options, optionGroupLabel, optionGroupChildren);
@@ -159,12 +192,20 @@ export function AutoComplete(props) {
 
   const rawSuggestions = externalSuggestions ?? internalSuggestions;
 
+  const belowMinLength = inputValue.length > 0 && inputValue.length < minLength;
+
   const displaySuggestions = useMemo(() => {
     let items = rawSuggestions;
 
     if (options && enableFilter && !completeMethod) {
-      const source = isGrouped ? groupedData.flat : options;
-      items = filterOptions(source, inputValue, field, filterFunction, maxSuggestions);
+      if (belowMinLength) {
+        items = [];
+      } else {
+        const source = isGrouped ? groupedData?.flat ?? [] : options;
+        items = filterOptions(source, inputValue, field, resolvedFilter, maxSuggestions);
+      }
+    } else if (belowMinLength) {
+      items = [];
     } else if (maxSuggestions && items.length > maxSuggestions) {
       items = items.slice(0, maxSuggestions);
     }
@@ -179,37 +220,64 @@ export function AutoComplete(props) {
     groupedData,
     inputValue,
     field,
-    filterFunction,
+    resolvedFilter,
     maxSuggestions,
+    belowMinLength,
   ]);
 
+  const creatableOption = useMemo(() => {
+    if (!allowCustomValue || !inputValue.trim() || belowMinLength) return null;
+    const trimmed = inputValue.trim();
+    const hasExact = displaySuggestions.some(
+      (item) => getOptionLabel(item, field).toLowerCase() === trimmed.toLowerCase()
+    );
+    return hasExact ? null : createCreatableOption(trimmed);
+  }, [allowCustomValue, inputValue, belowMinLength, displaySuggestions, field]);
+
+  const panelItems = useMemo(() => {
+    if (!creatableOption) return displaySuggestions;
+    return [...displaySuggestions, creatableOption];
+  }, [displaySuggestions, creatableOption]);
+
   const groupHeaders = useMemo(() => {
-    if (!isGrouped || !groupedData) return new Map();
+    if (!isGrouped || !options) return new Map();
     const map = new Map();
-    let flatIndex = 0;
-    options?.forEach((group) => {
-      const groupLabel = getOptionLabel(group, optionGroupLabel);
-      const children = group[optionGroupChildren];
-      if (Array.isArray(children)) {
-        map.set(flatIndex, groupLabel);
-        flatIndex += children.length;
+    let lastGroupLabel = null;
+
+    panelItems.forEach((item, index) => {
+      if (isCreatableOption(item)) return;
+
+      for (const group of options) {
+        const children = group[optionGroupChildren];
+        if (!Array.isArray(children)) continue;
+        const belongs = children.some((child) => isEqualOption(child, item, field));
+        if (!belongs) continue;
+
+        const groupLabel = getOptionLabel(group, optionGroupLabel);
+        if (groupLabel !== lastGroupLabel) {
+          map.set(index, groupLabel);
+          lastGroupLabel = groupLabel;
+        }
+        break;
       }
     });
+
     return map;
-  }, [isGrouped, groupedData, options, optionGroupLabel, optionGroupChildren]);
+  }, [isGrouped, options, panelItems, optionGroupLabel, optionGroupChildren, field]);
 
   const virtualEnabled = !!virtualScrollerOptions;
   const itemSize = virtualScrollerOptions?.itemSize ?? 38;
-  const { state: virtualState, onScroll: onVirtualScroll, reset: resetVirtual } =
-    useVirtualScroll(
-      displaySuggestions.length,
-      itemSize,
-      PANEL_MAX_HEIGHT
-    );
+  const {
+    state: virtualState,
+    onScroll: onVirtualScroll,
+    reset: resetVirtual,
+    scrollTop,
+    scrollToIndex,
+  } = useVirtualScroll(panelItems.length, itemSize, PANEL_MAX_HEIGHT);
 
   const visibleItems = virtualEnabled
-    ? displaySuggestions.slice(virtualState.startIndex, virtualState.endIndex + 1)
-    : displaySuggestions;
+    ? panelItems.slice(virtualState.startIndex, virtualState.endIndex + 1)
+    : panelItems;
 
   const visibleOffset = virtualEnabled ? virtualState.startIndex : 0;
 
@@ -224,11 +292,20 @@ export function AutoComplete(props) {
   const debouncedComplete = useDebouncedCallback(
     async (query, event) => {
       if (!completeMethod) return;
+      activeQueryRef.current = query;
+      const queryAtStart = query;
       setInternalLoading(true);
       try {
-        await completeMethod({ query, originalEvent: event });
+        const result = await completeMethod({ query, originalEvent: event });
+        if (activeQueryRef.current === queryAtStart) {
+          if (Array.isArray(result)) {
+            setInternalSuggestions(result);
+          }
+        }
       } finally {
-        setInternalLoading(false);
+        if (activeQueryRef.current === queryAtStart) {
+          setInternalLoading(false);
+        }
       }
     },
     delay
@@ -236,23 +313,29 @@ export function AutoComplete(props) {
 
   const triggerSearch = useCallback(
     (query, event) => {
-      if (query.length < minLength && dropdownMode !== 'blank') {
-        setInternalSuggestions([]);
+      const belowMin = query.length > 0 && query.length < minLength;
+
+      if (belowMin) {
+        debouncedComplete.cancel();
+        activeQueryRef.current = '';
+        setInternalLoading(false);
+        if (completeMethod) {
+          setInternalSuggestions([]);
+        }
         return;
       }
 
       if (completeMethod) {
         debouncedComplete(query, event);
       } else if (options && enableFilter) {
-        const source = isGrouped ? groupedData.flat : options;
+        const source = isGrouped ? groupedData?.flat ?? [] : options;
         setInternalSuggestions(
-          filterOptions(source, query, field, filterFunction, maxSuggestions)
+          filterOptions(source, query, field, resolvedFilter, maxSuggestions)
         );
       }
     },
     [
       minLength,
-      dropdownMode,
       completeMethod,
       debouncedComplete,
       options,
@@ -260,15 +343,12 @@ export function AutoComplete(props) {
       isGrouped,
       groupedData,
       field,
-      filterFunction,
+      resolvedFilter,
       maxSuggestions,
     ]
   );
 
-  const showPanel = useCallback(() => {
-    if (disabled || readOnly) return;
-    setPanelVisible(true);
-    onShow?.();
+  const updatePanelPosition = useCallback(() => {
     if (appendTo === 'body' && rootRef.current) {
       const rect = rootRef.current.getBoundingClientRect();
       setPanelPosition({
@@ -277,7 +357,14 @@ export function AutoComplete(props) {
         width: rect.width,
       });
     }
-  }, [disabled, readOnly, onShow, appendTo]);
+  }, [appendTo]);
+
+  const showPanel = useCallback(() => {
+    if (disabled || readOnly) return;
+    setPanelVisible(true);
+    onShow?.();
+    updatePanelPosition();
+  }, [disabled, readOnly, onShow, updatePanelPosition]);
 
   const hidePanel = useCallback(() => {
     setPanelVisible(false);
@@ -312,18 +399,38 @@ export function AutoComplete(props) {
     setInputValue(query);
     onInputChange?.(query);
 
-    if (!multiple) {
-      if (allowCustomValue) {
-        updateValue(query, e);
-      }
+    if (!multiple && allowCustomValue) {
+      updateValue(query, e);
     }
 
     triggerSearch(query, e);
     showPanel();
-    setHighlightedIndex(autoHighlight ? 0 : -1);
+    setHighlightedIndex(autoHighlight && query.length >= minLength ? 0 : -1);
   };
 
   const selectItem = (item, event) => {
+    if (isCreatableOption(item)) {
+      const customValue = item.value;
+      onSelect?.({ value: customValue, originalEvent: event });
+
+      if (multiple) {
+        const current = [...selectedValues];
+        if (!selectionLimit || current.length < selectionLimit) {
+          current.push(customValue);
+          updateValue(current, event);
+        }
+        setInputValue('');
+      } else {
+        updateValue(customValue, event);
+        setInputValue(customValue);
+        if (hideOnSelect) hidePanel();
+      }
+      inputRef.current?.focus();
+      return;
+    }
+
+    if (isOptionDisabled(item, optionDisabledField)) return;
+
     onSelect?.({ value: item, originalEvent: event });
 
     if (multiple) {
@@ -387,39 +494,43 @@ export function AutoComplete(props) {
       case 'ArrowDown': {
         e.preventDefault();
         setHighlightedIndex((prev) =>
-          prev < displaySuggestions.length - 1 ? prev + 1 : prev
+          findNextEnabledIndex(panelItems, prev, 1, optionDisabledField)
         );
         break;
       }
       case 'ArrowUp': {
         e.preventDefault();
-        setHighlightedIndex((prev) => (prev > 0 ? prev - 1 : 0));
+        setHighlightedIndex((prev) =>
+          prev < 0
+            ? findNextEnabledIndex(panelItems, -1, 1, optionDisabledField)
+            : findNextEnabledIndex(panelItems, prev, -1, optionDisabledField)
+        );
         break;
       }
       case 'Home': {
         e.preventDefault();
-        setHighlightedIndex(0);
+        setHighlightedIndex(findNextEnabledIndex(panelItems, -1, 1, optionDisabledField));
         break;
       }
       case 'End': {
         e.preventDefault();
-        setHighlightedIndex(displaySuggestions.length - 1);
+        setHighlightedIndex(findNextEnabledIndex(panelItems, panelItems.length, -1, optionDisabledField));
         break;
       }
       case 'Enter': {
         e.preventDefault();
-        if (highlightedIndex >= 0 && displaySuggestions[highlightedIndex]) {
-          selectItem(displaySuggestions[highlightedIndex], e);
-        } else if (allowCustomValue && inputValue.trim()) {
+        if (highlightedIndex >= 0 && panelItems[highlightedIndex]) {
+          selectItem(panelItems[highlightedIndex], e);
+        } else if (allowCustomValue && inputValue.trim() && !belowMinLength) {
           if (multiple) {
             const current = [...selectedValues];
             if (!selectionLimit || current.length < selectionLimit) {
-              current.push(inputValue);
+              current.push(inputValue.trim());
               updateValue(current, e);
               setInputValue('');
             }
           } else {
-            updateValue(inputValue, e);
+            updateValue(inputValue.trim(), e);
             if (hideOnSelect) hidePanel();
           }
         }
@@ -430,8 +541,8 @@ export function AutoComplete(props) {
         break;
       }
       case 'Tab': {
-        if (panelVisible && highlightedIndex >= 0 && displaySuggestions[highlightedIndex]) {
-          selectItem(displaySuggestions[highlightedIndex], e);
+        if (panelVisible && highlightedIndex >= 0 && panelItems[highlightedIndex]) {
+          selectItem(panelItems[highlightedIndex], e);
         }
         hidePanel();
         break;
@@ -448,35 +559,53 @@ export function AutoComplete(props) {
   const handleBlur = (e) => {
     setIsFocused(false);
 
-    if (forceSelection && !multiple && inputValue) {
-      const match = displaySuggestions.find(
-        (s) => getOptionLabel(s, field).toLowerCase() === inputValue.toLowerCase()
-      );
-      if (match) {
-        updateValue(match, e);
-        setInputValue(getDisplayValue(match));
+    if (forceSelection && inputValue.trim()) {
+      if (multiple) {
+        const match = displaySuggestions.find(
+          (s) => getOptionLabel(s, field).toLowerCase() === inputValue.toLowerCase().trim()
+        );
+        if (match && !isOptionDisabled(match, optionDisabledField)) {
+          const current = [...selectedValues];
+          const exists = current.some((v) => isEqualOption(v, match, field));
+          if (!exists && (!selectionLimit || current.length < selectionLimit)) {
+            current.push(match);
+            updateValue(current, e);
+          }
+          setInputValue('');
+        } else if (!allowCustomValue) {
+          setInputValue('');
+        }
       } else {
-        setInputValue(getDisplayValue(value));
-        if (!allowCustomValue) {
-          updateValue(null, e);
+        const match = displaySuggestions.find(
+          (s) => getOptionLabel(s, field).toLowerCase() === inputValue.toLowerCase().trim()
+        );
+        if (match) {
+          updateValue(match, e);
+          setInputValue(getDisplayValue(match));
+        } else {
+          setInputValue(getDisplayValue(value));
+          if (!allowCustomValue) {
+            updateValue(null, e);
+          }
         }
       }
-    } else if (selectOnBlur && highlightedIndex >= 0 && displaySuggestions[highlightedIndex]) {
-      selectItem(displaySuggestions[highlightedIndex], e);
+    } else if (selectOnBlur && highlightedIndex >= 0 && panelItems[highlightedIndex]) {
+      selectItem(panelItems[highlightedIndex], e);
     }
   };
 
   const handleFocus = () => {
     setIsFocused(true);
-    if (inputValue.length >= minLength || options) {
+    const canSearch = inputValue.length === 0 || inputValue.length >= minLength;
+    if (canSearch && (options || completeMethod)) {
       triggerSearch(inputValue, { type: 'focus' });
       showPanel();
     }
   };
 
   useEffect(() => {
-    if (!multiple && value != null && !isFocused) {
-      setInputValue(getDisplayValue(value));
+    if (!multiple && !isFocused) {
+      setInputValue(value == null ? '' : getDisplayValue(value));
     }
   }, [value, multiple, field, isFocused, getDisplayValue]);
 
@@ -485,13 +614,39 @@ export function AutoComplete(props) {
   }, [autoFocus]);
 
   useEffect(() => {
-    if (highlightedIndex >= 0 && listRef.current) {
-      const item = listRef.current.querySelector(
-        `[data-index="${highlightedIndex}"]`
-      );
-      item?.scrollIntoView({ block: 'nearest' });
+    if (!panelVisible || appendTo !== 'body') return undefined;
+
+    updatePanelPosition();
+    window.addEventListener('scroll', updatePanelPosition, true);
+    window.addEventListener('resize', updatePanelPosition);
+
+    return () => {
+      window.removeEventListener('scroll', updatePanelPosition, true);
+      window.removeEventListener('resize', updatePanelPosition);
+    };
+  }, [panelVisible, appendTo, updatePanelPosition]);
+
+  useEffect(() => {
+    if (highlightedIndex < 0) return;
+
+    if (virtualEnabled) {
+      scrollToIndex(highlightedIndex);
+      return;
     }
-  }, [highlightedIndex]);
+
+    if (listRef.current) {
+      const item = listRef.current.querySelector(`[data-index="${highlightedIndex}"]`);
+      if (typeof item?.scrollIntoView === 'function') {
+        item.scrollIntoView({ block: 'nearest' });
+      }
+    }
+  }, [highlightedIndex, virtualEnabled, scrollToIndex]);
+
+  useEffect(() => {
+    if (virtualEnabled && listRef.current) {
+      listRef.current.scrollTop = scrollTop;
+    }
+  }, [scrollTop, virtualEnabled]);
 
   const hasValue = multiple
     ? selectedValues.length > 0
@@ -506,12 +661,40 @@ export function AutoComplete(props) {
   );
 
   const renderItem = (item, index) => {
+    if (isCreatableOption(item)) {
+      const isHighlighted = index === highlightedIndex;
+      const labelText = creatableMessage
+        ? creatableMessage.replace('{value}', item.value)
+        : `Add "${item.value}"`;
+
+      return (
+        <li key="creatable" role="presentation">
+          <div
+            id={`${inputId}-option-${index}`}
+            role="option"
+            aria-selected={false}
+            data-index={index}
+            className={cn(
+              'rpa-item',
+              'rpa-item--creatable',
+              isHighlighted && 'rpa-item--highlighted'
+            )}
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={(e) => selectItem(item, e)}
+            onMouseEnter={() => setHighlightedIndex(index)}
+          >
+            {labelText}
+          </div>
+        </li>
+      );
+    }
+
     const itemLabel = getOptionLabel(item, field);
     const isHighlighted = index === highlightedIndex;
     const isSelected = multiple
       ? selectedValues.some((v) => isEqualOption(v, item, field))
       : isEqualOption(value, item, field);
-
+    const isDisabled = isOptionDisabled(item, optionDisabledField);
     const groupLabel = groupHeaders.get(index);
 
     return (
@@ -519,12 +702,13 @@ export function AutoComplete(props) {
         {groupLabel && (
           <div
             className="rpa-item rpa-item--group-header"
-            role="presentation"
+            role="group"
+            aria-label={groupLabel}
           >
             {optionGroupTemplate
-              ? optionGroupTemplate(options.find(
-                  (g) => getOptionLabel(g, optionGroupLabel) === groupLabel
-                ))
+              ? optionGroupTemplate(
+                  options.find((g) => getOptionLabel(g, optionGroupLabel) === groupLabel)
+                )
               : groupLabel}
           </div>
         )}
@@ -532,15 +716,17 @@ export function AutoComplete(props) {
           id={`${inputId}-option-${index}`}
           role="option"
           aria-selected={isSelected}
+          aria-disabled={isDisabled || undefined}
           data-index={index}
           className={cn(
             'rpa-item',
             isHighlighted && 'rpa-item--highlighted',
-            isSelected && 'rpa-item--selected'
+            isSelected && 'rpa-item--selected',
+            isDisabled && 'rpa-item--disabled'
           )}
           onMouseDown={(e) => e.preventDefault()}
-          onClick={(e) => selectItem(item, e)}
-          onMouseEnter={() => setHighlightedIndex(index)}
+          onClick={(e) => !isDisabled && selectItem(item, e)}
+          onMouseEnter={() => !isDisabled && setHighlightedIndex(index)}
         >
           {itemTemplate
             ? itemTemplate(item, index)
@@ -555,9 +741,6 @@ export function AutoComplete(props) {
   const panelContent = (
     <div
       ref={panelRef}
-      id={listboxId}
-      role="listbox"
-      aria-label="Suggestions"
       className={cn(
         'rpa-panel',
         appendTo === 'body' && 'rpa-panel--portal',
@@ -581,13 +764,20 @@ export function AutoComplete(props) {
           <span className="rpa-spinner" />
           {loadingMessage}
         </div>
-      ) : displaySuggestions.length === 0 ? (
+      ) : belowMinLength ? (
+        <div className="rpa-empty" role="status">
+          {`Type at least ${minLength} character${minLength === 1 ? '' : 's'}`}
+        </div>
+      ) : panelItems.length === 0 ? (
         <div className="rpa-empty" role="status">
           {emptyMessage}
         </div>
       ) : (
         <ul
           ref={listRef}
+          id={listboxId}
+          role="listbox"
+          aria-label="Suggestions"
           className={cn('rpa-list', virtualEnabled && 'rpa-list--virtual')}
           style={virtualEnabled ? { maxHeight: PANEL_MAX_HEIGHT } : undefined}
           onScroll={virtualEnabled ? onVirtualScroll : undefined}
@@ -597,14 +787,13 @@ export function AutoComplete(props) {
               <ul
                 className="rpa-virtual-content"
                 style={{ transform: `translateY(${virtualState.offsetY}px)` }}
+                role="presentation"
               >
-                {visibleItems.map((item, i) =>
-                  renderItem(item, visibleOffset + i)
-                )}
+                {visibleItems.map((item, i) => renderItem(item, visibleOffset + i))}
               </ul>
             </li>
           ) : (
-            displaySuggestions.map((item, i) => renderItem(item, i))
+            panelItems.map((item, i) => renderItem(item, i))
           )}
         </ul>
       )}
@@ -621,13 +810,11 @@ export function AutoComplete(props) {
       )}
     >
       {multiple && (
-        <div className="rpa-chips" role="listbox" aria-orientation="horizontal">
+        <div className="rpa-chips" role="list" aria-label="Selected items">
           {selectedValues.map((chip, i) => (
-            <span key={i} className="rpa-chip" role="option" aria-label={getDisplayValue(chip)}>
+            <span key={i} className="rpa-chip" role="listitem">
               <span className="rpa-chip-label">
-                {selectedItemTemplate
-                  ? selectedItemTemplate(chip)
-                  : getDisplayValue(chip)}
+                {selectedItemTemplate ? selectedItemTemplate(chip) : getDisplayValue(chip)}
               </span>
               {!disabled && (
                 <button
@@ -635,7 +822,6 @@ export function AutoComplete(props) {
                   className="rpa-chip-remove"
                   onClick={(e) => removeChip(i, e)}
                   aria-label={`Remove ${getDisplayValue(chip)}`}
-                  tabIndex={-1}
                 >
                   <ChipRemoveIcon />
                 </button>
@@ -661,7 +847,7 @@ export function AutoComplete(props) {
             style={inputStyle}
             aria-autocomplete="list"
             aria-expanded={panelVisible}
-            aria-controls={listboxId}
+            aria-controls={panelVisible ? listboxId : undefined}
             aria-activedescendant={
               highlightedIndex >= 0 ? `${inputId}-option-${highlightedIndex}` : undefined
             }
@@ -694,7 +880,7 @@ export function AutoComplete(props) {
           style={inputStyle}
           aria-autocomplete="list"
           aria-expanded={panelVisible}
-          aria-controls={listboxId}
+          aria-controls={panelVisible ? listboxId : undefined}
           aria-activedescendant={
             highlightedIndex >= 0 ? `${inputId}-option-${highlightedIndex}` : undefined
           }
@@ -773,11 +959,8 @@ export function AutoComplete(props) {
         inputElement
       )}
 
-      {panelVisible && (
-        appendTo === 'body'
-          ? createPortal(panelContent, document.body)
-          : panelContent
-      )}
+      {panelVisible &&
+        (appendTo === 'body' ? createPortal(panelContent, document.body) : panelContent)}
 
       {helperText && !invalid && (
         <span id={helperId} className="rpa-helper">
@@ -791,9 +974,7 @@ export function AutoComplete(props) {
       )}
 
       <span className="rpa-sr-only" aria-live="polite">
-        {displaySuggestions.length > 0
-          ? `${displaySuggestions.length} suggestions available`
-          : ''}
+        {panelItems.length > 0 ? `${panelItems.length} suggestions available` : ''}
       </span>
     </div>
   );

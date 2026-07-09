@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="120" viewBox="0 0 360 120">
+  <rect width="360" height="120" fill="#f9fafb" rx="8"/>
+  <rect x="20" y="16" width="88" height="32" fill="#3b82f6" rx="10 0 0 10"/>
+  <text x="44" y="37" fill="#fff" font-family="system-ui,sans-serif" font-size="13" font-weight="600">Save</text>
+  <rect x="108" y="16" width="36" height="32" fill="#3b82f6" rx="0 10 10 0"/>
+  <text x="120" y="38" fill="#fff" font-family="system-ui,sans-serif" font-size="14">¾</text>
+  <rect x="20" y="58" width="124" height="52" fill="#fff" stroke="#e5e7eb" rx="10"/>
+  <text x="32" y="80" fill="#111827" font-family="system-ui,sans-serif" font-size="13">Update</text>
+  <line x1="28" y1="90" x2="136" y2="90" stroke="#e5e7eb"/>
+  <text x="32" y="104" fill="#ef4444" font-family="system-ui,sans-serif" font-size="13">Delete</text>
+</svg>

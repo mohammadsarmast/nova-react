@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="56" viewBox="0 0 360 56">
+  <rect width="360" height="56" fill="#f9fafb" rx="8"/>
+  <rect x="20" y="12" width="80" height="32" fill="#8b5cf6" rx="10"/>
+  <text x="38" y="33" fill="#fff" font-family="system-ui,sans-serif" font-size="13" font-weight="600">Purple</text>
+  <rect x="112" y="12" width="72" height="32" fill="#fff" stroke="#ec4899" stroke-width="2" rx="10"/>
+  <text x="130" y="33" fill="#ec4899" font-family="system-ui,sans-serif" font-size="13" font-weight="600">Pink</text>
+  <rect x="196" y="12" width="68" height="32" fill="#ccfbf1" rx="10"/>
+  <text x="214" y="33" fill="#14b8a6" font-family="system-ui,sans-serif" font-size="13" font-weight="600">Teal</text>
+  <rect x="276" y="12" width="72" height="32" fill="url(#grad)" rx="10"/>
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </linearGradient>
+  </defs>
+  <text x="290" y="33" fill="#fff" font-family="system-ui,sans-serif" font-size="13" font-weight="600">Sunset</text>
+</svg>

@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 
@@ -6,18 +6,13 @@ const root = resolve(import.meta.dirname);
 
 export default defineConfig({
   plugins: [react({ jsxRuntime: 'automatic' })],
-  root: resolve(root, 'demo'),
-  esbuild: {
-    jsx: 'automatic',
-  },
-  server: {
-    fs: {
-      allow: [root],
-    },
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['./vitest.setup.js'],
+    globals: true,
   },
   resolve: {
     alias: {
-      'nova-react/autocomplete': resolve(root, 'src/autocomplete/index.js'),
       'nova-react/button': resolve(root, 'src/button/index.js'),
     },
   },

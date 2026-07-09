@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="56" viewBox="0 0 360 56">
+  <rect width="360" height="56" fill="#f9fafb" rx="8"/>
+  <rect x="20" y="14" width="88" height="32" fill="#3b82f6" rx="10"/>
+  <text x="42" y="35" fill="#fff" font-size="13" font-weight="600" font-family="system-ui">Emails</text>
+  <circle cx="100" cy="14" r="11" fill="#ef4444" stroke="#fff" stroke-width="2"/>
+  <text x="96" y="18" fill="#fff" font-size="10" font-weight="700" font-family="system-ui">8</text>
+  <rect x="124" y="14" width="118" height="32" fill="#fff" stroke="#3b82f6" stroke-width="1.5" rx="10"/>
+  <text x="154" y="35" fill="#3b82f6" font-size="13" font-weight="600" font-family="system-ui">Messages</text>
+  <circle cx="234" cy="14" r="11" fill="#ef4444" stroke="#fff" stroke-width="2"/>
+  <text x="230" y="18" fill="#fff" font-size="10" font-weight="700" font-family="system-ui">2</text>
+</svg>

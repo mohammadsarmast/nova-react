@@ -17,7 +17,17 @@ export function useVirtualScroll(itemCount, itemSize, containerHeight) {
     setScrollTop(e.target.scrollTop);
   }, []);
 
+  const scrollToIndex = useCallback((index) => {
+    setScrollTop((prev) => {
+      const itemTop = index * itemSize;
+      const itemBottom = itemTop + itemSize;
+      if (itemTop < prev) return itemTop;
+      if (itemBottom > prev + containerHeight) return itemBottom - containerHeight;
+      return prev;
+    });
+  }, [itemSize, containerHeight]);
+
   const reset = useCallback(() => setScrollTop(0), []);
 
-  return { state, onScroll, reset, scrollTop };
+  return { state, onScroll, reset, scrollTop, setScrollTop, scrollToIndex };
 }

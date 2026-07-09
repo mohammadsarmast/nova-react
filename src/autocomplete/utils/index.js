@@ -8,9 +8,25 @@ export function getOptionLabel(option, field) {
   return String(option);
 }
 
+export function isOptionDisabled(option, disabledField = 'disabled') {
+  if (option == null || typeof option !== 'object') return false;
+  if (disabledField && option[disabledField]) return true;
+  return !!option.disabled;
+}
+
+export function createMatchFilter(matchMode = 'contains') {
+  return (option, query, field) => {
+    const label = getOptionLabel(option, field).toLowerCase();
+    const q = query.toLowerCase().trim();
+    if (!q) return true;
+    if (matchMode === 'startsWith') return label.startsWith(q);
+    if (matchMode === 'equals') return label === q;
+    return label.includes(q);
+  };
+}
+
 export function defaultFilter(option, query, field) {
-  const label = getOptionLabel(option, field).toLowerCase();
-  return label.includes(query.toLowerCase().trim());
+  return createMatchFilter('contains')(option, query, field);
 }
 
 export function filterOptions(options, query, field, filterFn, maxSuggestions) {
@@ -54,4 +70,14 @@ export function cn(...classes) {
 
 export function escapeRegExp(str) {
   return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+export const CREATABLE_OPTION = Symbol('rpa-creatable');
+
+export function isCreatableOption(option) {
+  return option && typeof option === 'object' && option.__creatable === CREATABLE_OPTION;
+}
+
+export function createCreatableOption(value) {
+  return { __creatable: CREATABLE_OPTION, value };
 }

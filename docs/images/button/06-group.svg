@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="56" viewBox="0 0 360 56">
+  <rect width="360" height="56" fill="#f9fafb" rx="8"/>
+  <rect x="20" y="12" width="320" height="32" fill="#fff" stroke="#e5e7eb" rx="10"/>
+  <rect x="20" y="12" width="106" height="32" fill="#3b82f6" rx="10"/>
+  <text x="48" y="33" fill="#fff" font-size="12" font-weight="600" font-family="system-ui">Save</text>
+  <rect x="126" y="12" width="106" height="32" fill="#ef4444" rx="0"/>
+  <text x="150" y="33" fill="#fff" font-size="12" font-weight="600" font-family="system-ui">Delete</text>
+  <rect x="232" y="12" width="108" height="32" fill="#fff" stroke="#cbd5e1" rx="0 10 10 0"/>
+  <text x="256" y="33" fill="#64748b" font-size="12" font-weight="600" font-family="system-ui">Cancel</text>
+</svg>

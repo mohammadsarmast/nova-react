@@ -347,6 +347,18 @@
   font-weight: 500;
 }
 
+.rpa-item--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.rpa-item--creatable {
+  color: var(--rpa-primary);
+  font-weight: 500;
+  border-top: 1px solid #e5e7eb;
+}
+
 .rpa-item--group-header {
   font-weight: 600;
   font-size: 11px;
@@ -396,4 +408,13 @@
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rpa-spinner,
+  .rpa-item,
+  .rpa-panel {
+    animation: none !important;
+    transition: none !important;
+  }
 }

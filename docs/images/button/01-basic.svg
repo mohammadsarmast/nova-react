@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="56" viewBox="0 0 360 56">
+  <rect width="360" height="56" fill="#f9fafb" rx="8"/>
+  <rect x="20" y="12" width="88" height="32" fill="#3b82f6" rx="10"/>
+  <text x="44" y="33" fill="#fff" font-family="system-ui,sans-serif" font-size="13" font-weight="600">Submit</text>
+  <rect x="120" y="12" width="130" height="32" fill="#10b981" rx="10"/>
+  <text x="140" y="33" fill="#fff" font-family="system-ui,sans-serif" font-size="13" font-weight="600">Save Changes</text>
+</svg>

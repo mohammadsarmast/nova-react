@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { AutoComplete } from 'nova-react/autocomplete';
 
 const countries = [
@@ -58,19 +58,25 @@ export function Demo() {
   const [customVal, setCustomVal] = useState('');
   const [virtualVal, setVirtualVal] = useState('');
   const [asyncVal, setAsyncVal] = useState('');
-  const [asyncSuggestions, setAsyncSuggestions] = useState([]);
-  const [asyncLoading, setAsyncLoading] = useState(false);
   const [invalidVal, setInvalidVal] = useState('');
+  const [rtlVal, setRtlVal] = useState('');
+  const [portalVal, setPortalVal] = useState('');
+
+  const persianCountries = ['ایران', 'آلمان', 'فرانسه', 'ژاپن', 'آمریکا', 'ترکیه', 'عراق', 'افغانستان'];
+
+  const disabledOptions = [
+    { name: 'Germany', code: 'DE', disabled: true },
+    { name: 'France', code: 'FR' },
+    { name: 'Iran', code: 'IR' },
+    { name: 'Japan', code: 'JP', disabled: true },
+    { name: 'United States', code: 'US' },
+  ];
 
   const bigList = Array.from({ length: 5000 }, (_, i) => `Item ${i + 1}`);
 
   const asyncSearch = async ({ query }) => {
-    setAsyncLoading(true);
     await new Promise((r) => setTimeout(r, 500));
-    setAsyncSuggestions(
-      countries.filter((c) => c.toLowerCase().includes(query.toLowerCase()))
-    );
-    setAsyncLoading(false);
+    return countries.filter((c) => c.toLowerCase().includes(query.toLowerCase()));
   };
 
   return (
@@ -188,15 +194,13 @@ export function Demo() {
 
       <Section title="10. Async Search (simulated API)">
         <AutoComplete
-          suggestions={asyncSuggestions}
           completeMethod={asyncSearch}
           value={asyncVal}
           onChange={(e) => setAsyncVal(e.value)}
-          loading={asyncLoading}
           minLength={2}
           delay={300}
           placeholder="Type at least 2 chars..."
-          helperText="Simulated 500ms API delay"
+          helperText="Returns suggestions from completeMethod (race-safe)"
         />
       </Section>
 
@@ -222,6 +226,63 @@ export function Demo() {
 
       <Section title="13. Disabled">
         <AutoComplete disabled placeholder="Disabled" options={countries} />
+      </Section>
+
+      <Section title="14. RTL (Persian)">
+        <div dir="rtl">
+          <AutoComplete
+            rtl
+            options={persianCountries}
+            value={rtlVal}
+            onChange={(e) => setRtlVal(e.value)}
+            placeholder="جستجوی کشور..."
+            showClear
+            highlightMatches
+          />
+          <p style={{ fontSize: 12, color: '#6b7280', marginTop: 4 }}>انتخاب شده: {rtlVal || '—'}</p>
+        </div>
+      </Section>
+
+      <Section title="15. Portal (appendTo body)">
+        <AutoComplete
+          appendTo="body"
+          dropdown
+          options={countries}
+          value={portalVal}
+          onChange={(e) => setPortalVal(e.value)}
+          placeholder="Panel renders in document.body..."
+          helperText="Useful inside overflow:hidden containers"
+        />
+      </Section>
+
+      <Section title="16. Match Mode (startsWith)">
+        <AutoComplete
+          matchMode="startsWith"
+          options={countries}
+          placeholder="Type 'Ger' to find Germany..."
+          helperText="Only matches from the start of the label"
+        />
+      </Section>
+
+      <Section title="17. Disabled Options">
+        <AutoComplete
+          field="name"
+          options={disabledOptions}
+          placeholder="Germany and Japan are disabled..."
+          itemTemplate={(c) => (
+            <span style={{ opacity: c.disabled ? 0.5 : 1 }}>{c.name} {c.disabled ? '(disabled)' : ''}</span>
+          )}
+          helperText="Disabled items are skipped in keyboard navigation"
+        />
+      </Section>
+
+      <Section title="18. Creatable (Add new)">
+        <AutoComplete
+          allowCustomValue
+          options={tags}
+          placeholder="Type a new tag..."
+          helperText='Shows "Add ..." option when no match found'
+        />
       </Section>
     </div>
   );

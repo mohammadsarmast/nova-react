@@ -1,6 +1,6 @@
 {
   "name": "nova-react",
-  "version": "1.0.0",
+  "version": "1.4.0",
   "description": "A modular React UI component library — import only what you need.",
   "author": "Mohammad Sarmast <mohammadsarmast1379@gmail.com>",
   "license": "MIT",
@@ -10,7 +10,12 @@
       "import": "./dist/autocomplete/index.js",
       "require": "./dist/autocomplete/index.cjs"
     },
-    "./autocomplete/styles.css": "./dist/autocomplete/index.css"
+    "./autocomplete/styles.css": "./dist/autocomplete/index.css",
+    "./button": {
+      "import": "./dist/button/index.js",
+      "require": "./dist/button/index.cjs"
+    },
+    "./button/styles.css": "./dist/button/index.css"
   },
   "files": [
     "dist",
@@ -22,6 +27,8 @@
     "dev": "tsup --watch",
     "demo": "vite demo",
     "demo:build": "vite build demo",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
@@ -29,11 +36,17 @@
     "react-dom": ">=17.0.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@vitejs/plugin-react": "^4.3.4",
+    "jsdom": "^29.1.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "tsup": "^8.3.5",
-    "vite": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vite": "^6.0.3",
+    "vitest": "^4.1.10"
   },
   "keywords": [
     "react",
@@ -42,7 +55,7 @@
     "components",
     "autocomplete",
     "typeahead",
-    "combobox"
+    "button"
   ],
   "repository": {
     "type": "git",

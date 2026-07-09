@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="56" viewBox="0 0 360 56">
+  <rect width="360" height="56" fill="#f9fafb" rx="8"/>
+  <rect x="20" y="12" width="72" height="32" fill="#fff" stroke="#3b82f6" stroke-width="2" rx="10"/>
+  <text x="38" y="33" fill="#3b82f6" font-family="system-ui,sans-serif" font-size="13" font-weight="600">Bold</text>
+  <rect x="104" y="12" width="76" height="32" fill="#eff6ff" stroke="#3b82f6" stroke-width="2" rx="10"/>
+  <text x="120" y="33" fill="#3b82f6" font-family="system-ui,sans-serif" font-size="13" font-weight="600">Italic</text>
+  <rect x="192" y="12" width="40" height="32" fill="#fffbeb" stroke="#f59e0b" stroke-width="2" rx="10"/>
+  <text x="206" y="33" fill="#f59e0b" font-family="system-ui,sans-serif" font-size="14"></text>
+</svg>
