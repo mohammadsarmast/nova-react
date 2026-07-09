@@ -21,6 +21,7 @@ export default defineConfig(({ mode }) => ({
     alias: {
       'nova-react/autocomplete': resolve(root, 'src/autocomplete/index.js'),
       'nova-react/button': resolve(root, 'src/button/index.js'),
+      'nova-react/chart': resolve(root, 'src/chart/index.js'),
     },
   },
   build: {
@@ -31,6 +32,7 @@ export default defineConfig(({ mode }) => ({
         main: resolve(demoRoot, 'index.html'),
         autocomplete: resolve(demoRoot, 'autocomplete.html'),
         button: resolve(demoRoot, 'button.html'),
+        chart: resolve(demoRoot, 'chart.html'),
       },
     },
   },

@@ -14,6 +14,7 @@ export default defineConfig({
   resolve: {
     alias: {
       'nova-react/button': resolve(root, 'src/button/index.js'),
+      'nova-react/chart': resolve(root, 'src/chart/index.js'),
     },
   },
 });

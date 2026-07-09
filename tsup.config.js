@@ -6,7 +6,7 @@ const shared = {
   dts: false,
   splitting: false,
   sourcemap: true,
-  external: ['react', 'react-dom'],
+  external: ['react', 'react-dom', 'chart.js'],
   injectStyle: false,
   esbuildOptions(options) {
     options.banner = { js: '"use client";' };
@@ -31,6 +31,14 @@ export default defineConfig([
     outDir: 'dist/button',
     onSuccess() {
       copyFileSync('src/button/styles/button.css', 'dist/button/index.css');
+    },
+  },
+  {
+    ...shared,
+    entry: ['src/chart/index.js'],
+    outDir: 'dist/chart',
+    onSuccess() {
+      copyFileSync('src/chart/styles/chart.css', 'dist/chart/index.css');
     },
   },
 ]);

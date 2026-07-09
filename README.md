@@ -14,6 +14,7 @@ Try each component online on GitHub Pages:
 |-----------|-----------|
 | **AutoComplete** | [Open Demo](https://mohammadsarmast.github.io/nova-react/autocomplete.html) |
 | **Button** | [Open Demo](https://mohammadsarmast.github.io/nova-react/button.html) |
+| **Chart** | [Open Demo](https://mohammadsarmast.github.io/nova-react/chart.html) |
 
 [All demos →](https://mohammadsarmast.github.io/nova-react/)
 
@@ -23,6 +24,7 @@ Try each component online on GitHub Pages:
 |-----------|--------|---------------|
 | **AutoComplete** | `nova-react/autocomplete` | [📖 Docs](./docs/autocomplete.md) |
 | **Button** | `nova-react/button` | [📖 Docs](./docs/button.md) |
+| **Chart** | `nova-react/chart` | [📖 Docs](./docs/chart.md) |
 
 ## AutoComplete
 
@@ -261,6 +263,49 @@ import 'nova-react/button/styles.css';
 <Button label="Help" tooltip="More info" tooltipPosition="top" />
 <Button label="Brand" color="#8b5cf6" />
 <Button label="ثبت" rtl icon={<CheckIcon />} />
+```
+
+---
+
+## Chart
+
+```bash
+npm install chart.js
+```
+
+```jsx
+import { Chart } from 'nova-react/chart';
+import 'nova-react/chart/styles.css';
+
+<Chart
+  type="bar"
+  data={{
+    labels: ['Jan', 'Feb', 'Mar'],
+    datasets: [{ label: 'Sales', data: [12, 19, 14] }],
+  }}
+  title="Sales Overview"
+  showToolbar
+  height={320}
+/>
+```
+
+[📖 Full Chart documentation](./docs/chart.md) · [🎮 Live Demo](https://mohammadsarmast.github.io/nova-react/chart.html)
+
+### Themes, Palettes & Sparkline
+
+```jsx
+<Chart type="line" data={data} preset="glass" palette="pastel" title="Users" />
+<Chart type="bar" data={data} theme="dark" showToolbar />
+<Chart type="line" data={data} sparkline height={56} />
+<Chart type="line" data={data} colors={['#14b8a6', '#f97316', '#a855f7']} />
+```
+
+### Combo, Radar & RTL
+
+```jsx
+<Chart type="radar" data={data} palette="sunset" />
+<Chart type="bar" data={comboData} options={{ scales: { y: {}, y1: { position: 'right' } } }} />
+<Chart type="bar" data={data} rtl title="نمودار فروش" />
 ```
 
 ---

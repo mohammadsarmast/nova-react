@@ -16,6 +16,13 @@ const demos = [
     href: './button.html',
     importPath: 'nova-react/button',
   },
+  {
+    id: 'chart',
+    title: 'Chart',
+    description: 'Beautiful Chart.js wrapper with themes, palettes, toolbar, sparkline, combo charts, RTL, and full customization.',
+    href: './chart.html',
+    importPath: 'nova-react/chart',
+  },
 ];
 
 const cardStyle = {

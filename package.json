@@ -1,6 +1,6 @@
 {
   "name": "nova-react",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "A modular React UI component library — import only what you need.",
   "author": "Mohammad Sarmast <mohammadsarmast1379@gmail.com>",
   "license": "MIT",
@@ -15,7 +15,12 @@
       "import": "./dist/button/index.js",
       "require": "./dist/button/index.cjs"
     },
-    "./button/styles.css": "./dist/button/index.css"
+    "./button/styles.css": "./dist/button/index.css",
+    "./chart": {
+      "import": "./dist/chart/index.js",
+      "require": "./dist/chart/index.cjs"
+    },
+    "./chart/styles.css": "./dist/chart/index.css"
   },
   "files": [
     "dist",
@@ -34,13 +39,15 @@
   },
   "peerDependencies": {
     "react": ">=17.0.0",
-    "react-dom": ">=17.0.0"
+    "react-dom": ">=17.0.0",
+    "chart.js": ">=4.0.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
     "@vitejs/plugin-react": "^4.3.4",
+    "chart.js": "^4.5.1",
     "jsdom": "^29.1.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -56,7 +63,9 @@
     "components",
     "autocomplete",
     "typeahead",
-    "button"
+    "button",
+    "chart",
+    "chartjs"
   ],
   "repository": {
     "type": "git",
