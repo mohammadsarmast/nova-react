@@ -5,6 +5,7 @@ import { processTableData } from '../utils/processData.js';
 import { sortData } from '../utils/sort.js';
 import { getFieldValue } from '../utils/getFieldValue.js';
 import { formatNumber, formatTemplate, resolveDataTableLocale } from '../utils/locale.js';
+import { datatableColorsToCssVars, resolveDatatableThemeColors } from '../utils/themeColors.js';
 
 const sample = [
   { id: 1, name: 'Alpha', category: 'A', quantity: 10, country: { name: 'USA' } },
@@ -29,6 +30,18 @@ describe('datatable locale', () => {
         totalRecords: formatNumber(12, 'fa'),
       })
     ).toBe('۱ تا ۴ از ۱۲');
+  });
+});
+
+describe('datatable theme colors', () => {
+  it('resolves dark defaults and maps custom colors to css vars', () => {
+    const dark = resolveDatatableThemeColors('dark');
+    expect(dark.bg).toBe('#0f172a');
+
+    expect(datatableColorsToCssVars({ accent: '#7c3aed', background: '#fff' })).toEqual({
+      '--nr-dt-accent': '#7c3aed',
+      '--nr-dt-bg': '#fff',
+    });
   });
 });
 

@@ -14,6 +14,7 @@ import { exportDataAsCsv } from './utils/exportCsv.js';
 import { FILTER_MATCH_MODES } from './utils/filter.js';
 import { getFieldValue, setFieldValue } from './utils/getFieldValue.js';
 import { formatNumber, resolveDataTableLocale, resolveLocale } from './utils/locale.js';
+import { datatableColorsToCssVars, resolveDatatableThemeColors } from './utils/themeColors.js';
 import { parseColumns } from './utils/parseColumns.js';
 import { processTableData } from './utils/processData.js';
 import {
@@ -139,6 +140,9 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
     style,
     rtl = false,
     locale: localeProp,
+    theme = 'light',
+    colors,
+    fontFamily,
     paginatorTemplate,
     currentPageReportTemplate,
     paginatorLeft,
@@ -723,6 +727,17 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
 
   const hasGlobalFilter = showGlobalFilter ?? globalFilterFields.length > 0;
 
+  const resolvedThemeColors = useMemo(
+    () => resolveDatatableThemeColors(theme, colors),
+    [theme, colors]
+  );
+
+  const rootStyle = useMemo(() => ({
+    ...datatableColorsToCssVars(resolvedThemeColors),
+    ...(fontFamily ? { fontFamily } : {}),
+    ...style,
+  }), [resolvedThemeColors, fontFamily, style]);
+
   const paginatorNode = paginator ? (
     <Paginator
       first={first}
@@ -751,9 +766,10 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
         scrollable && 'nr-datatable--scrollable',
         loading && 'nr-datatable--loading',
         rtl && 'nr-datatable--rtl',
+        theme === 'dark' && 'nr-datatable--dark',
         className
       )}
-      style={style}
+      style={rootStyle}
       data-responsive={responsiveLayout}
     >
       {header || hasGlobalFilter ? (

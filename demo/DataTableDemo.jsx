@@ -252,6 +252,46 @@ export function DataTableDemo() {
           </DataTable>
         </div>
       </Section>
+
+      <Section title="8. Theme, dark mode & custom colors">
+        <p style={{ marginTop: 0, color: '#6b7280', fontSize: 14 }}>
+          Set <code>theme</code>, override <code>colors</code>, or wrap the table in your own font. NovaReact inherits the parent font by default.
+        </p>
+        <div style={{ display: 'grid', gap: 20 }}>
+          <div style={{ fontFamily: '"Segoe UI", Tahoma, sans-serif' }}>
+            <DataTable
+              value={products.slice(0, 5)}
+              dataKey="id"
+              paginator
+              rows={3}
+              stripedRows
+              colors={{
+                accent: '#7c3aed',
+                rowSelected: '#f5f3ff',
+                headerBg: '#faf5ff',
+              }}
+            >
+              <Column field="name" header="Custom purple theme" sortable />
+              <Column field="category" header="Category" />
+              <Column field="quantity" header="Qty" sortable />
+            </DataTable>
+          </div>
+
+          <DataTable
+            value={products.slice(0, 5)}
+            dataKey="id"
+            theme="dark"
+            paginator
+            rows={3}
+            stripedRows
+            showGridlines
+          >
+            <Column field="name" header="Dark mode" sortable />
+            <Column field="category" header="Category" />
+            <Column field="quantity" header="Qty" sortable />
+          </DataTable>
+        </div>
+      </Section>
     </div>
   );
 }

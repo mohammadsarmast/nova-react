@@ -89,6 +89,7 @@ useEffect(() => {
 | **Editing** | Cell / row edit hooks |
 | **Export** | `ref.exportCSV()` |
 | **RTL / Persian** | `rtl` + `locale="fa"` |
+| **Theme** | `theme="light\|dark"`, `colors`, `fontFamily` |
 | **Stateful** | `stateStorage` + `stateKey` |
 | **Styling** | `size`, `stripedRows`, `showGridlines`, dark-ready CSS vars |
 | **Frozen rows** | `frozenValue` |
@@ -119,6 +120,9 @@ useEffect(() => {
 | `sortField` / `sortOrder` | | Controlled sort state |
 | `expandedRows` | `array/object` | Row expansion state |
 | `rowExpansionTemplate` | `function` | Expanded content renderer |
+| `theme` | `'light'\|'dark'` | Built-in color theme |
+| `colors` | `object` | Override theme tokens (`accent`, `bg`, `text`, …) |
+| `fontFamily` | `string` | Optional font override (inherits parent by default) |
 | `ref.exportCSV()` | | Export current processed rows |
 
 ## Column Props
@@ -137,5 +141,53 @@ useEffect(() => {
 | `editor` | Edit mode cell editor |
 | `rowEditor` | Row edit actions column |
 | `frozen` | Sticky column |
+
+## Theme, colors & font
+
+DataTable inherits `font-family` from the parent by default. Wrap it in any container with your font, or pass `fontFamily` directly.
+
+### Dark mode
+
+```jsx
+<DataTable value={products} theme="dark">
+  <Column field="name" header="Name" />
+</DataTable>
+```
+
+### Custom colors
+
+Override palette tokens with the `colors` prop or CSS variables on a wrapper:
+
+```jsx
+<DataTable
+  value={products}
+  colors={{
+    accent: '#7c3aed',
+    background: '#ffffff',
+    headerBg: '#faf5ff',
+    text: '#312e81',
+  }}
+>
+  <Column field="name" header="Name" />
+</DataTable>
+```
+
+Available `colors` keys: `bg`/`background`, `border`, `headerBg`, `headerText`, `text`, `muted`, `rowHover`, `rowSelected`, `rowSelectedBorder`, `accent`/`primary`, `accentContrast`, `surface`, `stripe`, `rowBorder`, `expansionBg`, `frozenBg`, `radius`, `shadow`.
+
+CSS override example:
+
+```css
+.my-table {
+  --nr-dt-bg: #111827;
+  --nr-dt-text: #f9fafb;
+  --nr-dt-accent: #22c55e;
+}
+```
+
+```jsx
+<div className="my-table">
+  <DataTable value={products} theme="dark" />
+</div>
+```
 
 [← Back to components index](./README.md)

@@ -144,6 +144,23 @@ describe('DataTable', () => {
     expect(handleSelectionChange).toHaveBeenCalled();
   });
 
+  it('applies dark theme class and custom color vars', () => {
+    const { container } = render(
+      <DataTable
+        value={products}
+        theme="dark"
+        colors={{ accent: '#7c3aed' }}
+        fontFamily="Georgia, serif"
+      >
+        <Column field="name" header="Name" />
+      </DataTable>
+    );
+
+    const root = container.querySelector('.nr-datatable');
+    expect(root).toHaveClass('nr-datatable--dark');
+    expect(root).toHaveStyle({ '--nr-dt-accent': '#7c3aed', fontFamily: 'Georgia, serif' });
+  });
+
   it('exposes exportCSV via ref', () => {
     const ref = createRef();
     const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
