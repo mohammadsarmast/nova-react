@@ -182,11 +182,12 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
   const tableRef = useRef(null);
 
   const isPaginatorControlled = firstProp != null;
+  const isSortControlled = typeof onSort === 'function';
   const first = isPaginatorControlled ? firstProp : firstState;
   const pageRows = isPaginatorControlled ? rows : rowsState;
-  const sortField = sortFieldProp ?? sortFieldState;
-  const sortOrder = sortOrderProp ?? sortOrderState;
-  const multiSortMeta = multiSortMetaProp ?? multiSortMetaState;
+  const sortField = isSortControlled ? (sortFieldProp ?? sortFieldState) : sortFieldState;
+  const sortOrder = isSortControlled ? (sortOrderProp ?? sortOrderState) : sortOrderState;
+  const multiSortMeta = isSortControlled ? (multiSortMetaProp ?? multiSortMetaState) : multiSortMetaState;
   const filters = filtersProp ?? filtersState;
   const globalFilter = globalFilterProp ?? filters?.global?.value ?? null;
 
@@ -246,14 +247,16 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
   }, [isPaginatorControlled, onPage]);
 
   const emitSort = useCallback((next) => {
-    if (sortFieldProp == null) setSortFieldState(next.sortField ?? null);
-    if (sortOrderProp == null) setSortOrderState(next.sortOrder ?? null);
-    if (multiSortMetaProp == null) setMultiSortMetaState(next.multiSortMeta ?? []);
+    if (!isSortControlled) {
+      setSortFieldState(next.sortField ?? null);
+      setSortOrderState(next.sortOrder ?? null);
+      setMultiSortMetaState(next.multiSortMeta ?? []);
+    }
     if (!lazy) {
       if (firstProp == null) setFirstState(0);
     }
     onSort?.(next);
-  }, [sortFieldProp, sortOrderProp, multiSortMetaProp, lazy, firstProp, onSort]);
+  }, [isSortControlled, lazy, firstProp, onSort]);
 
   const emitFilter = useCallback((nextFilters) => {
     if (filtersProp == null) setFiltersState(nextFilters);

@@ -68,6 +68,26 @@ describe('DataTable', () => {
     });
   });
 
+  it('sorts rows on client side when sortable columns are clicked', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <DataTable value={products} sortField="name" sortOrder={1} removableSort>
+        <Column field="code" header="Code" sortable />
+        <Column field="name" header="Name" sortable />
+      </DataTable>
+    );
+
+    const rows = () => screen.getAllByRole('row').slice(1).map((row) => row.textContent);
+    expect(rows()[0]).toContain('D1');
+
+    await user.click(screen.getByRole('button', { name: 'Code' }));
+
+    await waitFor(() => {
+      expect(rows()[0]).toContain('A1');
+    });
+  });
+
   it('expands and collapses rows with the expander column', async () => {
     const user = userEvent.setup();
 
