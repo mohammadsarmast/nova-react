@@ -1,8 +1,21 @@
 import { getFieldValue } from './getFieldValue.js';
 
 export function getRowKey(row, dataKey, index) {
-  if (dataKey && row?.[dataKey] != null) return row[dataKey];
+  if (dataKey != null) {
+    const value = getFieldValue(row, dataKey);
+    if (value != null) return value;
+  }
   return index;
+}
+
+export function getRowStateKey(row, dataKey, rowIndex, { frozen = false } = {}) {
+  const base = dataKey != null ? getFieldValue(row, dataKey) : JSON.stringify(row);
+  return frozen ? `frozen:${base}` : String(base);
+}
+
+export function getReactRowKey(row, dataKey, rowIndex, { frozen = false } = {}) {
+  const base = dataKey != null ? getFieldValue(row, dataKey) : rowIndex;
+  return frozen ? `frozen-${base}` : `row-${base}`;
 }
 
 export function isRowSelected(row, selection, { selectionMode, dataKey }) {
@@ -59,6 +72,11 @@ export function toggleAllSelection(rows, selection, dataKey, checked) {
   }
 
   return [...rows];
+}
+
+export function getSelectionData(selection) {
+  if (selection == null) return null;
+  return selection;
 }
 
 export function isAllPageSelected(rows, selection, dataKey) {

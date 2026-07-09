@@ -3,6 +3,12 @@ export function paginateData(data, first = 0, rows = 10) {
   return data.slice(first, first + rows);
 }
 
+export function clampFirst(first = 0, rows = 10, totalRecords = 0) {
+  if (!rows || rows <= 0 || totalRecords <= 0) return 0;
+  const maxFirst = Math.max(0, (Math.ceil(totalRecords / rows) - 1) * rows);
+  return Math.min(first, maxFirst);
+}
+
 export function getPageCount(totalRecords, rows) {
   if (!rows || rows <= 0) return 0;
   return Math.ceil(totalRecords / rows);

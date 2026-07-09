@@ -35,6 +35,58 @@ Data is passed fully from frontend. Table slices/sorts/filters locally.
 </DataTable>
 ```
 
+## Client-side search
+
+Toolbar search filters locally when `globalFilterFields` is set:
+
+```jsx
+<DataTable
+  value={products}
+  filters={filters}
+  onFilter={(e) => setFilters(e.filters)}
+  globalFilterFields={['name', 'category', 'code']}
+>
+  <Column field="name" header="Name" filter filterPlaceholder="Name" />
+</DataTable>
+```
+
+## Server-side search (API)
+
+In `lazy` mode, search is not applied on the client. Use `onGlobalFilter` for toolbar search and `onFilter` for column filters, then fetch from your API:
+
+```jsx
+<DataTable
+  value={rows}
+  lazy
+  loading={loading}
+  totalRecords={totalRecords}
+  filters={state.filters}
+  globalFilterFields={['name', 'company', 'country.name']}
+  onGlobalFilter={(e) => setState((s) => ({ ...s, filters: e.filters, first: 0 }))}
+  onFilter={(e) => setState((s) => ({ ...s, filters: e.filters, first: 0 }))}
+  filterDelay={300}
+>
+  <Column field="name" header="Name" filter filterPlaceholder="Search name" />
+</DataTable>
+```
+
+## Row selection with full data
+
+`onSelectionChange` returns the complete row object in `data`:
+
+```jsx
+<DataTable
+  selectionMode="single"
+  selection={selected}
+  onSelectionChange={(e) => setSelected(e.data)}
+  dataKey="id"
+>
+  <Column field="name" header="Name" />
+</DataTable>
+
+// e.data = { id: 1, name: 'Watch', category: 'Accessories', ... }
+```
+
 ## Server-side lazy pagination (API)
 
 Pass only current page rows. Use `lazy`, `totalRecords`, and event callbacks to fetch from API.
@@ -107,9 +159,14 @@ useEffect(() => {
 | `totalRecords` | `number` | Total count from API (lazy mode) |
 | `onPage` | `function` | `{ first, rows, page, pageCount, totalRecords }` |
 | `onSort` | `function` | `{ sortField, sortOrder, multiSortMeta }` |
-| `onFilter` | `function` | `{ filters, first }` |
+| `onFilter` | `function` | `{ filters, first }` — column filters (client or API) |
+| `onGlobalFilter` | `function` | `{ value, filters, first }` — toolbar search (client or API) |
+| `filterDelay` | `number` | Debounce ms for search/filter (default `300` in lazy mode) |
+| `globalFilter` | `string` | Controlled toolbar search value |
+| `globalFilterFields` | `string[]` | Fields searched by the toolbar search box |
 | `selection` | `any` | Selected row(s) |
 | `selectionMode` | `string` | `single`, `multiple`, `checkbox`, `radiobutton` |
+| `onSelectionChange` | `function` | `{ value, data }` — `data` is the full row object or array |
 | `dataKey` | `string` | Unique row id field |
 | `loading` | `boolean` | Loading overlay |
 | `filters` | `object` | Controlled filter state |

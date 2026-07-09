@@ -1,5 +1,5 @@
 import React, { createRef } from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { DataTable, Column } from '../DataTable.jsx';
@@ -141,7 +141,84 @@ describe('DataTable', () => {
     );
 
     await user.click(screen.getByText('Shirt'));
-    expect(handleSelectionChange).toHaveBeenCalled();
+    expect(handleSelectionChange).toHaveBeenCalledWith({
+      value: products[1],
+      data: products[1],
+    });
+  });
+
+  it('calls onGlobalFilter without duplicating onFilter', () => {
+    vi.useFakeTimers();
+    const handleGlobalFilter = vi.fn();
+    const handleFilter = vi.fn();
+
+    render(
+      <DataTable
+        value={products}
+        lazy
+        globalFilterFields={['name']}
+        onGlobalFilter={handleGlobalFilter}
+        onFilter={handleFilter}
+        filterDelay={300}
+      >
+        <Column field="name" header="Name" />
+      </DataTable>
+    );
+
+    fireEvent.change(screen.getByRole('searchbox'), { target: { value: 'Watch' } });
+    vi.advanceTimersByTime(300);
+
+    expect(handleGlobalFilter).toHaveBeenCalledTimes(1);
+    expect(handleFilter).not.toHaveBeenCalled();
+
+    vi.useRealTimers();
+  });
+
+  it('highlights checkbox-selected rows', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <DataTable
+        value={products}
+        selectionMode="checkbox"
+        selection={[products[1]]}
+        onSelectionChange={() => {}}
+        dataKey="id"
+      >
+        <Column selectionMode="multiple" headerStyle={{ width: '3rem' }} />
+        <Column field="name" header="Name" />
+      </DataTable>
+    );
+
+    expect(screen.getByText('Shirt').closest('tr')).toHaveClass('nr-datatable__row--selected');
+    expect(screen.getByText('Watch').closest('tr')).not.toHaveClass('nr-datatable__row--selected');
+  });
+
+  it('clears all filters through ref.clearFilters', () => {
+    vi.useFakeTimers();
+    const handleFilter = vi.fn();
+    const ref = createRef();
+
+    render(
+      <DataTable
+        ref={ref}
+        value={products}
+        onFilter={handleFilter}
+        filterDisplay="row"
+      >
+        <Column field="name" header="Name" filter />
+      </DataTable>
+    );
+
+    ref.current.clearFilters();
+    vi.runAllTimers();
+
+    expect(handleFilter).toHaveBeenCalled();
+    const nextFilters = handleFilter.mock.calls.at(-1)[0].filters;
+    expect(nextFilters.global.value).toBeNull();
+    expect(nextFilters.name.constraints[0].value).toBeNull();
+
+    vi.useRealTimers();
   });
 
   it('applies dark theme class and custom color vars', () => {

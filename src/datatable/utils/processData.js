@@ -1,6 +1,6 @@
 import { sortData } from './sort.js';
 import { filterData } from './filter.js';
-import { paginateData } from './paginate.js';
+import { paginateData, clampFirst } from './paginate.js';
 
 export function processTableData({
   value = [],
@@ -20,16 +20,20 @@ export function processTableData({
     return {
       rows: Array.isArray(value) ? value : [],
       totalRecords: totalRecords ?? value?.length ?? 0,
+      allRows: Array.isArray(value) ? value : [],
     };
   }
 
   const filtered = filterData(value, filters, globalFilter, globalFilterFields);
   const sorted = sortData(filtered, { sortField, sortOrder, multiSortMeta });
   const total = sorted.length;
-  const rowsData = paginator ? paginateData(sorted, first, rows) : sorted;
+  const safeFirst = paginator ? clampFirst(first, rows, total) : first;
+  const rowsData = paginator ? paginateData(sorted, safeFirst, rows) : sorted;
 
   return {
     rows: rowsData,
     totalRecords: total,
+    allRows: sorted,
+    first: safeFirst,
   };
 }

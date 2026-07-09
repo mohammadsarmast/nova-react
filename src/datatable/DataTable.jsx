@@ -11,7 +11,7 @@ import { Column } from './Column.jsx';
 import { Paginator } from './Paginator.jsx';
 import { cn } from './utils/cn.js';
 import { exportDataAsCsv } from './utils/exportCsv.js';
-import { FILTER_MATCH_MODES } from './utils/filter.js';
+import { filterData, createEmptyFilters, FILTER_MATCH_MODES } from './utils/filter.js';
 import { getFieldValue, setFieldValue } from './utils/getFieldValue.js';
 import { formatNumber, resolveDataTableLocale, resolveLocale } from './utils/locale.js';
 import { datatableColorsToCssVars, resolveDatatableThemeColors } from './utils/themeColors.js';
@@ -19,6 +19,9 @@ import { parseColumns } from './utils/parseColumns.js';
 import { processTableData } from './utils/processData.js';
 import {
   getRowKey,
+  getRowStateKey,
+  getReactRowKey,
+  getSelectionData,
   isAllPageSelected,
   isRowSelected,
   toggleAllSelection,
@@ -90,6 +93,8 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
     onPage,
     onSort,
     onFilter,
+    onGlobalFilter,
+    filterDelay: filterDelayProp,
     sortMode = 'single',
     sortField: sortFieldProp,
     sortOrder: sortOrderProp,
@@ -170,7 +175,7 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
   const resolvedSearchPlaceholder = globalFilterPlaceholder ?? localeText.search.placeholder;
 
   const persisted = useMemo(
-    () => (stateKey ? loadTableState(stateKey, stateStorage) : null),
+    () => (stateKey ? loadTableState(stateKey, stateStorage ?? 'session') : null),
     [stateKey, stateStorage]
   );
 
@@ -183,17 +188,23 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
   const [editingRowsState, setEditingRowsState] = useState(editingRows ?? {});
   const [draftRows, setDraftRows] = useState({});
   const [openFilterMenu, setOpenFilterMenu] = useState(null);
+  const [pendingFilters, setPendingFilters] = useState(null);
+  const filterTimerRef = useRef(null);
   const tableRef = useRef(null);
 
   const isPaginatorControlled = firstProp != null;
   const isSortControlled = typeof onSort === 'function';
+  const isFilterControlled = typeof onFilter === 'function';
+  const filterDelay = filterDelayProp ?? (lazy ? 300 : 0);
   const first = isPaginatorControlled ? firstProp : firstState;
   const pageRows = isPaginatorControlled ? rows : rowsState;
   const sortField = isSortControlled ? (sortFieldProp ?? sortFieldState) : sortFieldState;
   const sortOrder = isSortControlled ? (sortOrderProp ?? sortOrderState) : sortOrderState;
   const multiSortMeta = isSortControlled ? (multiSortMetaProp ?? multiSortMetaState) : multiSortMetaState;
-  const filters = filtersProp ?? filtersState;
+  const filters = isFilterControlled ? (filtersProp ?? { global: { value: null } }) : filtersState;
+  const displayFilters = pendingFilters ?? filters;
   const globalFilter = globalFilterProp ?? filters?.global?.value ?? null;
+  const displayGlobalFilter = globalFilterProp ?? displayFilters?.global?.value ?? null;
 
   const processed = useMemo(
     () => processTableData({
@@ -228,10 +239,18 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
 
   const displayRows = processed.rows;
   const totalRecords = processed.totalRecords;
+  const allRows = processed.allRows ?? displayRows;
   const frozenRows = Array.isArray(frozenValue) ? frozenValue : [];
 
+  const effectiveSelectionMode = selectionMode
+    || columns.find((column) => column.selectionMode)?.selectionMode
+    || 'single';
+  const normalizedSelectionMode = effectiveSelectionMode === 'checkbox'
+    ? 'multiple'
+    : effectiveSelectionMode;
+
   useEffect(() => {
-    if (!stateKey || !stateStorage) return;
+    if (!stateKey) return;
     saveTableState(stateKey, {
       first,
       rows: pageRows,
@@ -239,8 +258,18 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
       sortOrder,
       multiSortMeta,
       filters,
-    }, stateStorage);
+    }, stateStorage ?? 'session');
   }, [stateKey, stateStorage, first, pageRows, sortField, sortOrder, multiSortMeta, filters]);
+
+  useEffect(() => {
+    if (lazy || isPaginatorControlled || !paginator) return;
+    const safeFirst = processed.first ?? 0;
+    if (safeFirst !== firstState) setFirstState(safeFirst);
+  }, [lazy, isPaginatorControlled, paginator, processed.first, firstState]);
+
+  useEffect(() => () => {
+    if (filterTimerRef.current) clearTimeout(filterTimerRef.current);
+  }, []);
 
   const emitPage = useCallback((event) => {
     if (!isPaginatorControlled) {
@@ -262,11 +291,37 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
     onSort?.(next);
   }, [isSortControlled, lazy, firstProp, onSort]);
 
-  const emitFilter = useCallback((nextFilters) => {
-    if (filtersProp == null) setFiltersState(nextFilters);
-    if (firstProp == null) setFirstState(0);
-    onFilter?.({ filters: nextFilters, first: 0 });
-  }, [filtersProp, firstProp, onFilter]);
+  const emitFilter = useCallback((nextFilters, { globalOnly = false } = {}) => {
+    const emit = () => {
+      setPendingFilters(null);
+      if (!isFilterControlled) setFiltersState(nextFilters);
+      if (!isPaginatorControlled && !lazy) setFirstState(0);
+
+      const payload = { filters: nextFilters, first: 0 };
+      if (globalOnly) {
+        onGlobalFilter?.({
+          value: nextFilters.global?.value ?? null,
+          ...payload,
+        });
+        if (!onGlobalFilter) onFilter?.(payload);
+      } else {
+        onFilter?.(payload);
+      }
+    };
+
+    if (filterDelay > 0) {
+      if (filterTimerRef.current) clearTimeout(filterTimerRef.current);
+      filterTimerRef.current = setTimeout(emit, filterDelay);
+      return;
+    }
+
+    emit();
+  }, [isFilterControlled, isPaginatorControlled, lazy, filterDelay, onFilter, onGlobalFilter]);
+
+  const applyFilters = useCallback((nextFilters, options = {}) => {
+    if (filterDelay > 0) setPendingFilters(nextFilters);
+    emitFilter(nextFilters, options);
+  }, [emitFilter, filterDelay]);
 
   const handleSort = (column, event) => {
     if (!column.sortable) return;
@@ -303,26 +358,29 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
 
   const updateFilterValue = (field, value, matchMode = FILTER_MATCH_MODES.contains) => {
     const next = {
-      ...filters,
+      ...displayFilters,
       [field]: {
-        operator: filters[field]?.operator || 'and',
+        operator: displayFilters[field]?.operator || 'and',
         constraints: [{ value, matchMode }],
-        dataType: filters[field]?.dataType,
+        dataType: displayFilters[field]?.dataType,
       },
     };
-    emitFilter(next);
+    applyFilters(next);
   };
 
   const updateGlobalFilter = (value) => {
     const next = {
-      ...filters,
+      ...displayFilters,
       global: { value, matchMode: FILTER_MATCH_MODES.contains },
     };
-    emitFilter(next);
+    applyFilters(next, { globalOnly: true });
   };
 
   const handleSelectionChange = (nextSelection, row, selected) => {
-    onSelectionChange?.({ value: nextSelection });
+    onSelectionChange?.({
+      value: nextSelection,
+      data: getSelectionData(nextSelection),
+    });
     if (row) {
       if (selected) onRowSelect?.({ data: row });
       else onRowUnselect?.({ data: row });
@@ -358,10 +416,10 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
 
   const renderSelectionHeader = (column) => {
     if (column.selectionMode !== 'multiple') return null;
-    const pageRowsForSelection = selectionPageOnly ? displayRows : displayRows;
+    const rowsForSelection = selectionPageOnly || lazy ? displayRows : allRows;
     const checked = lazy
       ? !!selectAll
-      : isAllPageSelected(pageRowsForSelection, selection, dataKey);
+      : isAllPageSelected(rowsForSelection, selection, dataKey);
 
     return (
       <input
@@ -374,7 +432,7 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
             onSelectAllChange({ checked: event.target.checked });
             return;
           }
-          const next = toggleAllSelection(pageRowsForSelection, selection, dataKey, event.target.checked);
+          const next = toggleAllSelection(rowsForSelection, selection, dataKey, event.target.checked);
           handleSelectionChange(next);
         }}
       />
@@ -459,16 +517,16 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
     else onRowExpand?.({ data: row });
   };
 
-  const startRowEdit = (row) => {
-    const key = dataKey ? getFieldValue(row, dataKey) : JSON.stringify(row);
+  const startRowEdit = (row, rowIndex, frozen = false) => {
+    const key = getRowStateKey(row, dataKey, rowIndex, { frozen });
     setDraftRows((current) => ({ ...current, [key]: { ...row } }));
     const next = { ...(editingRows ?? editingRowsState), [key]: true };
     setEditingRowsState(next);
     onRowEditChange?.({ data: next });
   };
 
-  const cancelRowEdit = (row) => {
-    const key = dataKey ? getFieldValue(row, dataKey) : JSON.stringify(row);
+  const cancelRowEdit = (row, rowIndex, frozen = false) => {
+    const key = getRowStateKey(row, dataKey, rowIndex, { frozen });
     setDraftRows((current) => {
       const clone = { ...current };
       delete clone[key];
@@ -480,8 +538,8 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
     onRowEditChange?.({ data: next });
   };
 
-  const saveRowEdit = (row) => {
-    const key = dataKey ? getFieldValue(row, dataKey) : JSON.stringify(row);
+  const saveRowEdit = (row, rowIndex, frozen = false) => {
+    const key = getRowStateKey(row, dataKey, rowIndex, { frozen });
     const draft = draftRows[key] ?? row;
     onRowEditComplete?.({ newData: draft, data: row, index: displayRows.indexOf(row) });
     cancelRowEdit(row);
@@ -492,7 +550,7 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
     const sortable = !!column.sortable;
     const order = getSortOrderForColumn(column);
     const filterField = column.filterField || column.field;
-    const filterValue = filters[filterField]?.constraints?.[0]?.value ?? filters[filterField]?.value ?? '';
+    const filterValue = displayFilters[filterField]?.constraints?.[0]?.value ?? displayFilters[filterField]?.value ?? '';
 
     return (
       <th
@@ -524,7 +582,7 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
             {typeof column.filterElement === 'function'
               ? column.filterElement({
                   value: filterValue,
-                  filterModel: filters[filterField],
+                  filterModel: displayFilters[filterField],
                   field: filterField,
                   filterCallback: (value) => updateFilterValue(filterField, value),
                 })
@@ -554,7 +612,7 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
                 {typeof column.filterElement === 'function'
                   ? column.filterElement({
                       value: filterValue,
-                      filterModel: filters[filterField],
+                      filterModel: displayFilters[filterField],
                       field: filterField,
                       filterCallback: (value) => updateFilterValue(filterField, value),
                     })
@@ -579,13 +637,13 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
   };
 
   const renderRow = (row, rowIndex, frozen = false) => {
-    const key = getRowKey(row, dataKey, rowIndex);
+    const key = getReactRowKey(row, dataKey, rowIndex, { frozen });
     const selected = isRowSelected(row, selection, {
-      selectionMode: selectionMode || 'single',
+      selectionMode: normalizedSelectionMode,
       dataKey,
     });
     const expanded = isRowExpanded(row, rowIndex);
-    const rowKey = dataKey ? getFieldValue(row, dataKey) : key;
+    const rowKey = getRowStateKey(row, dataKey, rowIndex, { frozen });
     const editing = (editingRows ?? editingRowsState)?.[rowKey];
     const draft = draftRows[rowKey] ?? row;
     const rowClasses = typeof rowClassName === 'function' ? rowClassName(row) : rowClassName;
@@ -646,11 +704,11 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
                 <td key={`cell-editor-${columnIndex}`} className="nr-datatable__body-cell nr-datatable__body-cell--editor">
                   {editing ? (
                     <div className="nr-datatable__row-editor-actions">
-                      <button type="button" onClick={() => saveRowEdit(row)}>Save</button>
-                      <button type="button" onClick={() => cancelRowEdit(row)}>Cancel</button>
+                      <button type="button" onClick={() => saveRowEdit(row, rowIndex, frozen)}>Save</button>
+                      <button type="button" onClick={() => cancelRowEdit(row, rowIndex, frozen)}>Cancel</button>
                     </div>
                   ) : (
-                    <button type="button" onClick={() => startRowEdit(row)}>Edit</button>
+                    <button type="button" onClick={() => startRowEdit(row, rowIndex, frozen)}>Edit</button>
                   )}
                 </td>
               );
@@ -718,7 +776,7 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
       columns,
       fileName: options.fileName || exportFileName,
     }),
-    clearFilters: () => emitFilter({ global: { value: null } }),
+    clearFilters: () => applyFilters(createEmptyFilters(columns)),
     getProcessedRows: () => displayRows,
     getTableElement: () => tableRef.current,
   }));
@@ -777,7 +835,7 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
           {header ? <div className="nr-datatable__toolbar-header">{header}</div> : <span />}
           {hasGlobalFilter ? (
             <GlobalSearch
-              value={globalFilter}
+              value={displayGlobalFilter}
               placeholder={resolvedSearchPlaceholder}
               ariaLabel={labels.globalSearch}
               onChange={updateGlobalFilter}

@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { filterData, FILTER_MATCH_MODES } from '../utils/filter.js';
-import { paginateData } from '../utils/paginate.js';
+import { paginateData, clampFirst } from '../utils/paginate.js';
 import { processTableData } from '../utils/processData.js';
 import { sortData } from '../utils/sort.js';
 import { getFieldValue } from '../utils/getFieldValue.js';
 import { formatNumber, formatTemplate, resolveDataTableLocale } from '../utils/locale.js';
 import { datatableColorsToCssVars, resolveDatatableThemeColors } from '../utils/themeColors.js';
+import { getReactRowKey, getRowKey, getRowStateKey } from '../utils/selection.js';
 
 const sample = [
   { id: 1, name: 'Alpha', category: 'A', quantity: 10, country: { name: 'USA' } },
@@ -77,6 +78,20 @@ describe('datatable filter', () => {
 describe('datatable paginate', () => {
   it('slices rows for client pagination', () => {
     expect(paginateData(sample, 1, 2).map((row) => row.id)).toEqual([2, 3]);
+  });
+
+  it('clamps first offset when page is out of range', () => {
+    expect(clampFirst(20, 5, 12)).toBe(10);
+    expect(clampFirst(20, 5, 0)).toBe(0);
+  });
+});
+
+describe('datatable selection keys', () => {
+  it('supports nested dataKey values and frozen row keys', () => {
+    const row = { id: 1, country: { code: 'US' } };
+    expect(getRowKey(row, 'country.code', 0)).toBe('US');
+    expect(getReactRowKey(row, 'country.code', 0, { frozen: true })).toBe('frozen-US');
+    expect(getRowStateKey(row, null, 2)).toBe(JSON.stringify(row));
   });
 });
 

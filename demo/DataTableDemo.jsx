@@ -41,6 +41,17 @@ function mockFetchCustomers({ first, rows, sortField, sortOrder, filters }) {
     data = data.filter((item) => item.name.toLowerCase().includes(String(nameFilter).toLowerCase()));
   }
 
+  const globalTerm = filters?.global?.value;
+  if (globalTerm) {
+    const term = String(globalTerm).toLowerCase();
+    data = data.filter((item) => (
+      item.name.toLowerCase().includes(term)
+      || item.company.toLowerCase().includes(term)
+      || item.country.name.toLowerCase().includes(term)
+      || item.representative.name.toLowerCase().includes(term)
+    ));
+  }
+
   if (sortField) {
     data.sort((a, b) => {
       const left = sortField.includes('.') ? sortField.split('.').reduce((v, k) => v?.[k], a) : a[sortField];
@@ -61,6 +72,7 @@ export function DataTableDemo() {
   const tableRef = useRef(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [selectedProducts, setSelectedProducts] = useState([]);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [expandedRows, setExpandedRows] = useState(null);
   const [filters, setFilters] = useState({
     global: { value: null },
@@ -73,7 +85,7 @@ export function DataTableDemo() {
     rows: 5,
     sortField: 'name',
     sortOrder: 1,
-    filters: { name: { constraints: [{ value: null }] } },
+    filters: { global: { value: null }, name: { constraints: [{ value: null }] } },
   });
   const [lazyCustomers, setLazyCustomers] = useState([]);
   const [lazyTotal, setLazyTotal] = useState(0);
@@ -129,6 +141,9 @@ export function DataTableDemo() {
       </Section>
 
       <Section title="3. Client Pagination + Sort + Filter">
+        <p style={{ marginTop: 0, color: '#6b7280', fontSize: 14 }}>
+          Search and filters run on the frontend. Toolbar search scans multiple columns; column filters target one field.
+        </p>
         <DataTable
           value={products}
           header={<strong>Products</strong>}
@@ -153,9 +168,9 @@ export function DataTableDemo() {
         </DataTable>
       </Section>
 
-      <Section title="4. Server-side Lazy Pagination (API style)">
+      <Section title="4. Server-side Lazy Pagination + Search (API style)">
         <p style={{ marginTop: 0, color: '#6b7280', fontSize: 14 }}>
-          Simulates backend pagination: changing page/sort/filter calls API and loads new rows.
+          Simulates backend pagination and search: toolbar search and column filters call the API. Select a row to get the full record.
         </p>
         <DataTable
           value={lazyCustomers}
@@ -169,6 +184,11 @@ export function DataTableDemo() {
           sortField={lazyState.sortField}
           sortOrder={lazyState.sortOrder}
           filters={lazyState.filters}
+          globalFilterFields={['name', 'company', 'country.name', 'representative.name']}
+          globalFilterPlaceholder="Search customers (API)..."
+          selectionMode="single"
+          selection={selectedCustomer}
+          onSelectionChange={(event) => setSelectedCustomer(event.data)}
           onPage={(event) => setLazyState((state) => ({ ...state, first: event.first, rows: event.rows }))}
           onSort={(event) => setLazyState((state) => ({
             ...state,
@@ -177,6 +197,11 @@ export function DataTableDemo() {
             first: 0,
           }))}
           onFilter={(event) => setLazyState((state) => ({ ...state, filters: event.filters, first: 0 }))}
+          onGlobalFilter={(event) => setLazyState((state) => ({
+            ...state,
+            filters: event.filters,
+            first: 0,
+          }))}
           filterDisplay="row"
         >
           <Column field="name" header="Name" sortable filter filterPlaceholder="Search name" />
@@ -184,6 +209,17 @@ export function DataTableDemo() {
           <Column field="company" header="Company" sortable />
           <Column field="representative.name" header="Representative" />
         </DataTable>
+        <pre style={{
+          marginTop: 12,
+          padding: 12,
+          background: '#f8fafc',
+          borderRadius: 10,
+          fontSize: 12,
+          overflow: 'auto',
+        }}
+        >
+          {selectedCustomer ? JSON.stringify(selectedCustomer, null, 2) : 'Select a row to see the full record'}
+        </pre>
       </Section>
 
       <Section title="5. Selection — single, multiple, checkbox">
@@ -192,7 +228,7 @@ export function DataTableDemo() {
             value={products.slice(0, 6)}
             selectionMode="single"
             selection={selectedProduct}
-            onSelectionChange={(event) => setSelectedProduct(event.value)}
+            onSelectionChange={(event) => setSelectedProduct(event.data)}
             dataKey="id"
           >
             <Column field="code" header="Code" />
@@ -203,7 +239,7 @@ export function DataTableDemo() {
             value={products.slice(0, 6)}
             selectionMode="checkbox"
             selection={selectedProducts}
-            onSelectionChange={(event) => setSelectedProducts(event.value || [])}
+            onSelectionChange={(event) => setSelectedProducts(event.data || [])}
             dataKey="id"
           >
             <Column selectionMode="multiple" headerStyle={{ width: '3rem' }} />
@@ -214,6 +250,17 @@ export function DataTableDemo() {
         <p style={{ color: '#374151', fontSize: 14 }}>
           Selected: {selectedProduct?.name || 'none'} | Multiple: {selectedProducts.map((item) => item.name).join(', ') || 'none'}
         </p>
+        <pre style={{
+          marginTop: 8,
+          padding: 12,
+          background: '#f8fafc',
+          borderRadius: 10,
+          fontSize: 12,
+          overflow: 'auto',
+        }}
+        >
+          {selectedProduct ? JSON.stringify(selectedProduct, null, 2) : 'Click a row to get the full product object'}
+        </pre>
       </Section>
 
       <Section title="6. Row Expansion">
