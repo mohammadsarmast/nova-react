@@ -131,6 +131,7 @@ export function DataTableDemo() {
       <Section title="3. Client Pagination + Sort + Filter">
         <DataTable
           value={products}
+          header={<strong>Products</strong>}
           paginator
           rows={5}
           rowsPerPageOptions={[5, 10, 25]}
@@ -142,6 +143,7 @@ export function DataTableDemo() {
           onFilter={(event) => setFilters(event.filters)}
           filterDisplay="row"
           globalFilterFields={['name', 'category', 'code']}
+          globalFilterPlaceholder="Search products..."
           currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
         >
           <Column field="code" header="Code" sortable filter filterPlaceholder="Code" />

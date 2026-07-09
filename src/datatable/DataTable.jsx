@@ -51,6 +51,30 @@ function DefaultFilterInput({ value, onChange, placeholder, ariaLabel }) {
   );
 }
 
+function SearchIcon() {
+  return (
+    <svg viewBox="0 0 20 20" fill="currentColor" width="1em" height="1em" aria-hidden="true">
+      <path fillRule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clipRule="evenodd" />
+    </svg>
+  );
+}
+
+function GlobalSearch({ value, onChange, placeholder, ariaLabel }) {
+  return (
+    <div className="nr-datatable__search">
+      <span className="nr-datatable__search-icon"><SearchIcon /></span>
+      <input
+        type="search"
+        className="nr-datatable__search-input"
+        value={value ?? ''}
+        placeholder={placeholder}
+        aria-label={ariaLabel}
+        onChange={(event) => onChange(event.target.value)}
+      />
+    </div>
+  );
+}
+
 export const DataTable = forwardRef(function DataTable(props, ref) {
   const {
     value = [],
@@ -74,6 +98,9 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
     filterDisplay = 'menu',
     globalFilter: globalFilterProp,
     globalFilterFields = [],
+    showGlobalFilter,
+    globalFilterPlaceholder = 'Search...',
+    paginatorPosition = 'bottom',
     selection,
     selectionMode,
     onSelectionChange,
@@ -151,8 +178,9 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
   const [openFilterMenu, setOpenFilterMenu] = useState(null);
   const tableRef = useRef(null);
 
-  const first = firstProp ?? firstState;
-  const pageRows = rows;
+  const isPaginatorControlled = firstProp != null;
+  const first = isPaginatorControlled ? firstProp : firstState;
+  const pageRows = isPaginatorControlled ? rows : rowsState;
   const sortField = sortFieldProp ?? sortFieldState;
   const sortOrder = sortOrderProp ?? sortOrderState;
   const multiSortMeta = multiSortMetaProp ?? multiSortMetaState;
@@ -207,10 +235,12 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
   }, [stateKey, stateStorage, first, pageRows, sortField, sortOrder, multiSortMeta, filters]);
 
   const emitPage = useCallback((event) => {
-    if (firstProp == null) setFirstState(event.first);
-    if (rows !== event.rows && firstProp == null) setRowsState(event.rows);
+    if (!isPaginatorControlled) {
+      setFirstState(event.first);
+      setRowsState(event.rows);
+    }
     onPage?.(event);
-  }, [firstProp, onPage, rows]);
+  }, [isPaginatorControlled, onPage]);
 
   const emitSort = useCallback((next) => {
     if (sortFieldProp == null) setSortFieldState(next.sortField ?? null);
@@ -662,6 +692,26 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
 
   const colSpan = columns.length || 1;
 
+  const hasGlobalFilter = showGlobalFilter ?? globalFilterFields.length > 0;
+
+  const paginatorNode = paginator ? (
+    <Paginator
+      first={first}
+      rows={pageRows}
+      totalRecords={totalRecords}
+      rowsPerPageOptions={rowsPerPageOptions}
+      template={paginatorTemplate}
+      currentPageReportTemplate={currentPageReportTemplate || defaultLocale.paginator.currentPageReport}
+      left={paginatorLeft}
+      right={paginatorRight}
+      rtl={rtl}
+      locale={locale}
+      labels={labels}
+      onPageChange={emitPage}
+      onRowsChange={emitPage}
+    />
+  ) : null;
+
   return (
     <div
       className={cn(
@@ -677,7 +727,21 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
       style={style}
       data-responsive={responsiveLayout}
     >
-      {header ? <div className="nr-datatable__header">{header}</div> : null}
+      {header || hasGlobalFilter ? (
+        <div className="nr-datatable__toolbar">
+          {header ? <div className="nr-datatable__toolbar-header">{header}</div> : <span />}
+          {hasGlobalFilter ? (
+            <GlobalSearch
+              value={globalFilter}
+              placeholder={globalFilterPlaceholder}
+              ariaLabel="Global search"
+              onChange={updateGlobalFilter}
+            />
+          ) : null}
+        </div>
+      ) : null}
+
+      {paginator && (paginatorPosition === 'top' || paginatorPosition === 'both') ? paginatorNode : null}
 
       <div
         className="nr-datatable__wrapper"
@@ -717,34 +781,7 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
         </table>
       </div>
 
-      {globalFilterFields.length || filters?.global != null ? (
-        <div className="nr-datatable__global-filter">
-          <DefaultFilterInput
-            value={globalFilter}
-            placeholder="Global search"
-            ariaLabel="Global search"
-            onChange={updateGlobalFilter}
-          />
-        </div>
-      ) : null}
-
-      {paginator ? (
-        <Paginator
-          first={first}
-          rows={pageRows}
-          totalRecords={totalRecords}
-          rowsPerPageOptions={rowsPerPageOptions}
-          template={paginatorTemplate}
-          currentPageReportTemplate={currentPageReportTemplate || defaultLocale.paginator.currentPageReport}
-          left={paginatorLeft}
-          right={paginatorRight}
-          rtl={rtl}
-          locale={locale}
-          labels={labels}
-          onPageChange={emitPage}
-          onRowsChange={emitPage}
-        />
-      ) : null}
+      {paginator && (paginatorPosition === 'bottom' || paginatorPosition === 'both') ? paginatorNode : null}
     </div>
   );
 });

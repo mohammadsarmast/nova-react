@@ -112,6 +112,10 @@ useEffect(() => {
 | `dataKey` | `string` | Unique row id field |
 | `loading` | `boolean` | Loading overlay |
 | `filters` | `object` | Controlled filter state |
+| `globalFilterFields` | `string[]` | Fields searched by the top global search box |
+| `showGlobalFilter` | `boolean` | Force-show/hide the global search box |
+| `globalFilterPlaceholder` | `string` | Placeholder for the global search box |
+| `paginatorPosition` | `'top'\|'bottom'\|'both'` | Where to render the paginator (default `bottom`) |
 | `sortField` / `sortOrder` | | Controlled sort state |
 | `expandedRows` | `array/object` | Row expansion state |
 | `rowExpansionTemplate` | `function` | Expanded content renderer |
