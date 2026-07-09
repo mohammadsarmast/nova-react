@@ -1,4 +1,4 @@
-import React, { createRef } from 'react';
+import React, { createRef, useState } from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -169,5 +169,34 @@ describe('Chart', () => {
       intersect: false,
       axis: 'xy',
     });
+  });
+
+  it('does not recreate chart when parent re-renders with same props', async () => {
+    const user = userEvent.setup();
+
+    function Wrapper() {
+      const [count, setCount] = useState(0);
+      return (
+        <>
+          <button type="button" onClick={() => setCount((value) => value + 1)}>
+            Bump {count}
+          </button>
+          <Chart type="bar" data={sampleData} height={240} />
+        </>
+      );
+    }
+
+    render(<Wrapper />);
+
+    await waitFor(() => {
+      expect(MockChart.instances).toHaveLength(1);
+    });
+
+    expect(mockDestroy).toHaveBeenCalledTimes(0);
+
+    await user.click(screen.getByRole('button', { name: /Bump 0/i }));
+
+    expect(mockDestroy).toHaveBeenCalledTimes(0);
+    expect(MockChart.instances).toHaveLength(1);
   });
 });

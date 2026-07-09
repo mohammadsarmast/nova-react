@@ -59,12 +59,14 @@ function Spinner() {
   );
 }
 
+const EMPTY_PLUGINS = [];
+
 export const Chart = forwardRef(function Chart(props, ref) {
   const {
     type = 'bar',
     data,
     options,
-    plugins = [],
+    plugins: pluginsProp,
     width,
     height = 320,
     aspectRatio,
@@ -114,7 +116,12 @@ export const Chart = forwardRef(function Chart(props, ref) {
   const canvasRef = useRef(null);
   const chartRef = useRef(null);
   const containerRef = useRef(null);
+  const onReadyRef = useRef(onReady);
+  const pluginsRef = useRef(pluginsProp ?? EMPTY_PLUGINS);
   const [legendVisible, setLegendVisible] = useState(showLegend);
+
+  onReadyRef.current = onReady;
+  pluginsRef.current = pluginsProp ?? EMPTY_PLUGINS;
 
   const locale = resolveLocale(rtl, localeProp);
 
@@ -148,8 +155,8 @@ export const Chart = forwardRef(function Chart(props, ref) {
   );
 
   const chartData = useMemo(
-    () => (data ? applyPaletteToData(data, paletteColors) : data),
-    [data, paletteColors]
+    () => (data ? applyPaletteToData(data, paletteColors, type) : data),
+    [data, paletteColors, type]
   );
 
   const isEmpty = !loading && !hasChartData(chartData);
@@ -182,7 +189,8 @@ export const Chart = forwardRef(function Chart(props, ref) {
     }
 
     if (onLegendClick) {
-      const defaultLegendClick = merged.plugins?.legend?.onClick;
+      const defaultLegendClick = merged.plugins?.legend?.onClick
+        ?? ChartJS.defaults?.plugins?.legend?.onClick;
       merged.plugins = merged.plugins || {};
       merged.plugins.legend = merged.plugins.legend || {};
       merged.plugins.legend.onClick = (event, legendItem, legend) => {
@@ -239,41 +247,36 @@ export const Chart = forwardRef(function Chart(props, ref) {
     }
   }, []);
 
-  const createChart = useCallback(() => {
-    if (!canvasRef.current || loading || isEmpty) return null;
-
-    const chartPlugins = [...plugins];
-
-    const chart = new ChartJS(canvasRef.current, {
-      type,
-      data: chartData,
-      options: getMergedOptions(),
-      plugins: chartPlugins,
-    });
-
-    chartRef.current = chart;
-    onReady?.(chart);
-    return chart;
-  }, [type, chartData, getMergedOptions, plugins, loading, isEmpty, onReady]);
-
   useEffect(() => {
     if (loading || isEmpty) {
       destroyChart();
       return undefined;
     }
 
-    destroyChart();
-    createChart();
+    if (!canvasRef.current) return undefined;
 
-    return destroyChart;
-  }, [type, loading, isEmpty, createChart, destroyChart]);
+    const chart = new ChartJS(canvasRef.current, {
+      type,
+      data: chartData,
+      options: getMergedOptions(),
+      plugins: [...pluginsRef.current],
+    });
+
+    chartRef.current = chart;
+    onReadyRef.current?.(chart);
+
+    return () => {
+      chart.destroy();
+      chartRef.current = null;
+    };
+  }, [type, loading, isEmpty, destroyChart]);
 
   useEffect(() => {
     if (!chartRef.current || loading || isEmpty) return;
     chartRef.current.data = chartData;
     chartRef.current.options = getMergedOptions();
     chartRef.current.update();
-  }, [chartData, getMergedOptions, loading, isEmpty]);
+  }, [chartData, getMergedOptions, loading, isEmpty, type]);
 
   useEffect(() => {
     setLegendVisible(showLegend);
@@ -297,7 +300,9 @@ export const Chart = forwardRef(function Chart(props, ref) {
       const link = document.createElement('a');
       link.href = url;
       link.download = `${fileName}.png`;
+      document.body.appendChild(link);
       link.click();
+      link.remove();
     },
     [downloadFileName]
   );

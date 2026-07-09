@@ -73,7 +73,7 @@ export function buildDefaultOptions({
     boxPadding: 6,
   };
 
-  const tooltipLabelFormatter = createTooltipLabelFormatter(locale);
+  const tooltipLabelFormatter = createTooltipLabelFormatter(locale, indexAxis ?? 'x');
   if (tooltipLabelFormatter) {
     tooltip.callbacks = {
       label: tooltipLabelFormatter,
@@ -157,7 +157,7 @@ export function buildDefaultOptions({
         ...common.plugins,
         legend: {
           ...legend,
-          position: rtl ? 'right' : 'right',
+          position: rtl ? 'left' : 'right',
           align: 'center',
         },
       },

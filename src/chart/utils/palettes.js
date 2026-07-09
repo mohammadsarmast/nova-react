@@ -11,8 +11,12 @@ export function resolvePalette(name) {
   return palettes[name] || palettes.nova;
 }
 
-export function applyPaletteToData(data, colors) {
+const ARC_TYPES = new Set(['pie', 'doughnut', 'polarArea']);
+
+export function applyPaletteToData(data, colors, type = 'bar') {
   if (!data?.datasets?.length) return data;
+
+  const usePerPointColors = data.datasets.length === 1 && ARC_TYPES.has(type);
 
   return {
     ...data,
@@ -21,7 +25,7 @@ export function applyPaletteToData(data, colors) {
       const next = { ...dataset };
 
       if (next.backgroundColor == null) {
-        next.backgroundColor = Array.isArray(next.data)
+        next.backgroundColor = usePerPointColors && Array.isArray(next.data)
           ? next.data.map((_, i) => colors[i % colors.length])
           : color;
       }

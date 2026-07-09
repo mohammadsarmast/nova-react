@@ -14,11 +14,14 @@ export function createAxisTickFormatter(locale) {
   return (value) => toPersianDigits(value);
 }
 
-export function createTooltipLabelFormatter(locale) {
+export function createTooltipLabelFormatter(locale, indexAxis = 'x') {
   if (locale !== 'fa') return undefined;
   return (context) => {
     const label = context.dataset.label || '';
-    const raw = context.parsed?.y ?? context.parsed?.x ?? context.parsed ?? context.raw;
+    const parsed = context.parsed;
+    const raw = indexAxis === 'y'
+      ? (parsed?.x ?? context.raw)
+      : (parsed?.y ?? parsed?.x ?? context.raw);
     const value = raw == null ? '' : toPersianDigits(raw);
     return label ? `${label}: ${value}` : `${value}`;
   };

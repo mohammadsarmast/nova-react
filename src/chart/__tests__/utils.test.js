@@ -10,12 +10,24 @@ describe('chart palettes', () => {
     expect(resolvePalette('unknown')).toEqual(resolvePalette('nova'));
   });
 
-  it('applies palette colors to datasets', () => {
+  it('applies per-point colors for single arc charts', () => {
     const data = {
       datasets: [{ data: [1, 2, 3] }],
     };
-    const next = applyPaletteToData(data, ['#111111', '#222222']);
+    const next = applyPaletteToData(data, ['#111111', '#222222'], 'pie');
     expect(next.datasets[0].backgroundColor).toEqual(['#111111', '#222222', '#111111']);
+  });
+
+  it('applies per-dataset colors for multi-series bar charts', () => {
+    const data = {
+      datasets: [
+        { label: 'Revenue', data: [1, 2, 3] },
+        { label: 'Expenses', data: [4, 5, 6] },
+      ],
+    };
+    const next = applyPaletteToData(data, ['#111111', '#222222'], 'bar');
+    expect(next.datasets[0].backgroundColor).toBe('#111111');
+    expect(next.datasets[1].backgroundColor).toBe('#222222');
   });
 
   it('detects empty chart data', () => {
