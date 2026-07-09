@@ -185,7 +185,7 @@ export function ChartDemo() {
       </Section>
 
       <Section title="5. Radar & Polar Area">
-        <Chart type="radar" data={radarData()} title="Product Comparison" height={320} palette="sunset" />
+        <Chart type="radar" data={radarData} title="Product Comparison" height={320} palette="sunset" />
         <Chart type="polarArea" data={pieData()} title="Device Share" height={320} palette="pastel" />
       </Section>
 
