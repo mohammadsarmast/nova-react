@@ -3,6 +3,20 @@ import { Chart, styleGroupedBarDatasets, styleStackedDatasets } from 'nova-react
 
 const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
 
+const monthIcons = {
+  Jan: { color: '#3b82f6', emoji: '❄️' },
+  Feb: { color: '#8b5cf6', emoji: '💜' },
+  Mar: { color: '#10b981', emoji: '🌱' },
+  Apr: { color: '#f59e0b', emoji: '🌼' },
+  May: { color: '#ef4444', emoji: '🌞' },
+  Jun: { color: '#06b6d4', emoji: '🏖️' },
+};
+
+function monthIconSrc(color) {
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 28 28"><rect width="28" height="28" rx="8" fill="${color}"/><circle cx="14" cy="14" r="5" fill="white" fill-opacity="0.9"/></svg>`;
+  return `data:image/svg+xml,${encodeURIComponent(svg)}`;
+}
+
 function Section({ title, children, wide = false }) {
   return (
     <section style={{ marginBottom: 36 }}>
@@ -178,6 +192,7 @@ export function ChartDemo() {
             >
               <thead>
                 <tr style={{ background: '#f8fafc', textAlign: 'left' }}>
+                  <th style={{ padding: '10px 12px', borderBottom: '1px solid #e5e7eb', width: 52 }}>Icon</th>
                   <th style={{ padding: '10px 12px', borderBottom: '1px solid #e5e7eb' }}>Month</th>
                   {sales.datasets.map((dataset) => (
                     <th
@@ -192,6 +207,7 @@ export function ChartDemo() {
               <tbody>
                 {months.map((month, monthIndex) => {
                   const rowSelected = selection?.index === monthIndex;
+                  const icon = monthIcons[month];
                   return (
                     <tr
                       key={month}
@@ -199,6 +215,19 @@ export function ChartDemo() {
                         background: rowSelected ? '#eff6ff' : 'transparent',
                       }}
                     >
+                      <td style={{ padding: '10px 12px', borderBottom: '1px solid #f1f5f9' }}>
+                        <img
+                          src={monthIconSrc(icon.color)}
+                          alt={`${month} icon`}
+                          width={28}
+                          height={28}
+                          style={{
+                            display: 'block',
+                            borderRadius: 8,
+                            objectFit: 'cover',
+                          }}
+                        />
+                      </td>
                       <td
                         style={{
                           padding: '10px 12px',
@@ -206,7 +235,10 @@ export function ChartDemo() {
                           fontWeight: rowSelected ? 600 : 500,
                         }}
                       >
-                        {month}
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                          <span aria-hidden="true">{icon.emoji}</span>
+                          {month}
+                        </span>
                       </td>
                       {sales.datasets.map((dataset, datasetIndex) => {
                         const cellSelected =
@@ -232,7 +264,18 @@ export function ChartDemo() {
                               cursor: 'pointer',
                             }}
                           >
-                            {dataset.data[monthIndex].toLocaleString()}
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                              {cellSelected ? (
+                                <img
+                                  src={monthIconSrc(icon.color)}
+                                  alt=""
+                                  width={20}
+                                  height={20}
+                                  style={{ borderRadius: 6, objectFit: 'cover' }}
+                                />
+                              ) : null}
+                              {dataset.data[monthIndex].toLocaleString()}
+                            </span>
                           </td>
                         );
                       })}
