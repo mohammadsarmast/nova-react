@@ -41,4 +41,12 @@ export default defineConfig([
       copyFileSync('src/chart/styles/chart.css', 'dist/chart/index.css');
     },
   },
+  {
+    ...shared,
+    entry: ['src/datatable/index.js'],
+    outDir: 'dist/datatable',
+    onSuccess() {
+      copyFileSync('src/datatable/styles/datatable.css', 'dist/datatable/index.css');
+    },
+  },
 ]);

@@ -22,6 +22,7 @@ export default defineConfig(({ mode }) => ({
       'nova-react/autocomplete': resolve(root, 'src/autocomplete/index.js'),
       'nova-react/button': resolve(root, 'src/button/index.js'),
       'nova-react/chart': resolve(root, 'src/chart/index.js'),
+      'nova-react/datatable': resolve(root, 'src/datatable/index.js'),
     },
   },
   build: {
@@ -33,6 +34,7 @@ export default defineConfig(({ mode }) => ({
         autocomplete: resolve(demoRoot, 'autocomplete.html'),
         button: resolve(demoRoot, 'button.html'),
         chart: resolve(demoRoot, 'chart.html'),
+        datatable: resolve(demoRoot, 'datatable.html'),
       },
     },
   },

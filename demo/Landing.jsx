@@ -23,6 +23,13 @@ const demos = [
     href: './chart.html',
     importPath: 'nova-react/chart',
   },
+  {
+    id: 'datatable',
+    title: 'DataTable',
+    description: 'Full-featured data table with client/server pagination, sort, filter, selection, expansion, export, RTL, and lazy API mode.',
+    href: './datatable.html',
+    importPath: 'nova-react/datatable',
+  },
 ];
 
 const cardStyle = {

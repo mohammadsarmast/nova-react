@@ -5,6 +5,7 @@ const navItems = [
   { id: 'autocomplete', label: 'AutoComplete', href: './autocomplete.html' },
   { id: 'button', label: 'Button', href: './button.html' },
   { id: 'chart', label: 'Chart', href: './chart.html' },
+  { id: 'datatable', label: 'DataTable', href: './datatable.html' },
 ];
 
 const layoutStyle = {
