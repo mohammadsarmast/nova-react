@@ -146,6 +146,23 @@ useEffect(() => {
 | **Styling** | `size`, `stripedRows`, `showGridlines`, dark-ready CSS vars |
 | **Frozen rows** | `frozenValue` |
 | **Responsive** | `responsiveLayout="stack"` on mobile |
+| **Column resize** | `resizableColumns` + drag header edge |
+
+## Resizable columns (optional)
+
+```jsx
+<DataTable value={products} resizableColumns onColumnResize={(e) => console.log(e.widths)}>
+  <Column field="code" header="Code" style={{ width: '120px' }} />
+  <Column field="name" header="Name" minWidth={160} />
+  <Column field="category" header="Category" resizable={false} />
+</DataTable>
+```
+
+- `resizableColumns` — enables drag-to-resize on column headers
+- `onColumnResize` — `{ columnKey, width, widths }`
+- `columnWidths` — controlled widths map keyed by column field
+- Column `resizable={false}` — disable resize for one column
+- Column `minWidth` / `maxWidth` — resize limits
 
 ## Key Props
 
@@ -180,6 +197,9 @@ useEffect(() => {
 | `theme` | `'light'\|'dark'` | Built-in color theme |
 | `colors` | `object` | Override theme tokens (`accent`, `bg`, `text`, …) |
 | `fontFamily` | `string` | Optional font override (inherits parent by default) |
+| `resizableColumns` | `boolean` | Enable drag-to-resize column widths |
+| `columnWidths` | `object` | Controlled column width map |
+| `onColumnResize` | `function` | `{ columnKey, width, widths }` |
 | `ref.exportCSV()` | | Export current processed rows |
 
 ## Column Props
@@ -198,6 +218,8 @@ useEffect(() => {
 | `editor` | Edit mode cell editor |
 | `rowEditor` | Row edit actions column |
 | `frozen` | Sticky column |
+| `resizable` | Allow/disable resize when table `resizableColumns` is on (default `true`) |
+| `minWidth` / `maxWidth` | Resize limits in pixels |
 
 ## Theme, colors & font
 

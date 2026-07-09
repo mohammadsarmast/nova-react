@@ -221,6 +221,49 @@ describe('DataTable', () => {
     vi.useRealTimers();
   });
 
+  it('renders resize handles when resizableColumns is enabled', () => {
+    const { container } = render(
+      <DataTable value={products} resizableColumns dataKey="id">
+        <Column field="code" header="Code" style={{ width: '120px' }} />
+        <Column field="name" header="Name" />
+      </DataTable>
+    );
+
+    expect(container.querySelector('.nr-datatable--resizable-columns')).toBeInTheDocument();
+    expect(screen.getAllByRole('separator', { name: 'Resize column' })).toHaveLength(2);
+  });
+
+  it('updates column width while dragging the resize handle', () => {
+    const handleColumnResize = vi.fn();
+
+    const { container } = render(
+      <DataTable
+        value={products}
+        resizableColumns
+        onColumnResize={handleColumnResize}
+        dataKey="id"
+      >
+        <Column field="name" header="Name" />
+      </DataTable>
+    );
+
+    const header = container.querySelector('.nr-datatable__header-cell');
+    const handle = screen.getByRole('separator', { name: 'Resize column' });
+    Object.defineProperty(header, 'getBoundingClientRect', {
+      value: () => ({ width: 160, left: 100, right: 260, top: 0, bottom: 40 }),
+    });
+
+    fireEvent.mouseDown(handle, { clientX: 260 });
+    fireEvent.mouseMove(document, { clientX: 300 });
+    fireEvent.mouseUp(document);
+
+    expect(handleColumnResize).toHaveBeenCalled();
+    const lastCall = handleColumnResize.mock.calls.at(-1)[0];
+    expect(lastCall.columnKey).toBe('name');
+    expect(lastCall.width).toBeGreaterThan(160);
+    expect(header.style.width).toBe(`${lastCall.width}px`);
+  });
+
   it('applies dark theme class and custom color vars', () => {
     const { container } = render(
       <DataTable

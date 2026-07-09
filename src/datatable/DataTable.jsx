@@ -16,6 +16,8 @@ import { getFieldValue, setFieldValue } from './utils/getFieldValue.js';
 import { formatNumber, resolveDataTableLocale, resolveLocale } from './utils/locale.js';
 import { datatableColorsToCssVars, resolveDatatableThemeColors } from './utils/themeColors.js';
 import { parseColumns } from './utils/parseColumns.js';
+import { getColumnResizeKey, isColumnResizable, mergeWidthStyle } from './utils/columnResize.js';
+import { useColumnResize } from './hooks/useColumnResize.js';
 import { processTableData } from './utils/processData.js';
 import {
   getRowKey,
@@ -138,6 +140,8 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
     rowClassName,
     cellClassName,
     resizableColumns = false,
+    columnWidths: columnWidthsProp,
+    onColumnResize,
     reorderableRows = false,
     onRowReorder,
     tableStyle,
@@ -168,16 +172,26 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
   } = props;
 
   const columns = useMemo(() => parseColumns(children), [children]);
+  const persisted = useMemo(
+    () => (stateKey ? loadTableState(stateKey, stateStorage ?? 'session') : null),
+    [stateKey, stateStorage]
+  );
+  const {
+    columnWidths,
+    getWidthStyle,
+    startResize,
+  } = useColumnResize({
+    enabled: resizableColumns,
+    rtl,
+    columnWidths: columnWidthsProp,
+    onColumnResize,
+    initialWidths: persisted?.columnWidths ?? {},
+  });
   const locale = resolveLocale(rtl, localeProp);
   const localeText = resolveDataTableLocale(locale);
   const labels = localeText.aria;
   const resolvedEmptyMessage = emptyMessage ?? labels.emptyMessage;
   const resolvedSearchPlaceholder = globalFilterPlaceholder ?? localeText.search.placeholder;
-
-  const persisted = useMemo(
-    () => (stateKey ? loadTableState(stateKey, stateStorage ?? 'session') : null),
-    [stateKey, stateStorage]
-  );
 
   const [firstState, setFirstState] = useState(persisted?.first ?? 0);
   const [rowsState, setRowsState] = useState(persisted?.rows ?? rows);
@@ -258,8 +272,9 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
       sortOrder,
       multiSortMeta,
       filters,
+      columnWidths,
     }, stateStorage ?? 'session');
-  }, [stateKey, stateStorage, first, pageRows, sortField, sortOrder, multiSortMeta, filters]);
+  }, [stateKey, stateStorage, first, pageRows, sortField, sortOrder, multiSortMeta, filters, columnWidths]);
 
   useEffect(() => {
     if (lazy || isPaginatorControlled || !paginator) return;
@@ -545,6 +560,32 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
     cancelRowEdit(row);
   };
 
+  const getColumnStyle = (column, index, baseStyle) => mergeWidthStyle(
+    baseStyle,
+    resizableColumns ? getWidthStyle(getColumnResizeKey(column, index), column) : {}
+  );
+
+  const renderResizeHandle = (column, index) => {
+    if (!isColumnResizable(column, resizableColumns)) return null;
+
+    const columnKey = getColumnResizeKey(column, index);
+
+    return (
+      <span
+        role="separator"
+        aria-orientation="vertical"
+        aria-label={labels.resizeColumn}
+        className="nr-datatable__resize-handle"
+        onMouseDown={(event) => startResize(
+          event,
+          columnKey,
+          event.currentTarget.closest('th'),
+          column
+        )}
+      />
+    );
+  };
+
   const renderHeaderCell = (column, index) => {
     const field = column.sortField || column.field;
     const sortable = !!column.sortable;
@@ -559,10 +600,11 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
           'nr-datatable__header-cell',
           sortable && 'nr-datatable__header-cell--sortable',
           column.frozen && 'nr-datatable__header-cell--frozen',
+          isColumnResizable(column, resizableColumns) && 'nr-datatable__header-cell--resizable',
           column.headerClassName,
           column.className
         )}
-        style={column.headerStyle || column.style}
+        style={getColumnStyle(column, index, column.headerStyle || column.style)}
         aria-sort={order === 1 ? 'ascending' : order === -1 ? 'descending' : 'none'}
       >
         {column.selectionMode ? renderSelectionHeader(column) : (
@@ -632,6 +674,7 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
             ) : null}
           </div>
         ) : null}
+        {renderResizeHandle(column, index)}
       </th>
     );
   };
@@ -744,7 +787,7 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
               <td
                 key={`cell-${cellField || columnIndex}`}
                 className={cn('nr-datatable__body-cell', column.frozen && 'nr-datatable__body-cell--frozen', cellClass)}
-                style={column.bodyStyle || column.style}
+                style={getColumnStyle(column, columnIndex, column.bodyStyle || column.style)}
               >
                 {content}
               </td>
@@ -825,6 +868,7 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
         loading && 'nr-datatable--loading',
         rtl && 'nr-datatable--rtl',
         theme === 'dark' && 'nr-datatable--dark',
+        resizableColumns && 'nr-datatable--resizable-columns',
         className
       )}
       style={rootStyle}

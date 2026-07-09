@@ -140,6 +140,52 @@
   position: relative;
 }
 
+.nr-datatable--resizable-columns .nr-datatable__table {
+  table-layout: fixed;
+}
+
+.nr-datatable__header-cell--resizable {
+  overflow: hidden;
+}
+
+.nr-datatable__resize-handle {
+  position: absolute;
+  top: 0;
+  inset-inline-end: 0;
+  width: 8px;
+  height: 100%;
+  cursor: col-resize;
+  touch-action: none;
+  user-select: none;
+  z-index: 3;
+}
+
+.nr-datatable__resize-handle::after {
+  content: '';
+  position: absolute;
+  top: 18%;
+  bottom: 18%;
+  inset-inline-end: 3px;
+  width: 2px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--nr-dt-muted) 55%, transparent);
+  transition: background 150ms ease;
+}
+
+.nr-datatable__resize-handle:hover::after,
+.nr-datatable--column-resizing .nr-datatable__resize-handle::after {
+  background: var(--nr-dt-accent);
+}
+
+body.nr-datatable--column-resizing {
+  cursor: col-resize;
+  user-select: none;
+}
+
+body.nr-datatable--column-resizing * {
+  cursor: col-resize !important;
+}
+
 .nr-datatable__header-btn {
   display: inline-flex;
   align-items: center;

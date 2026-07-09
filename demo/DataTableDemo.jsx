@@ -339,6 +339,24 @@ export function DataTableDemo() {
           </DataTable>
         </div>
       </Section>
+
+      <Section title="9. Resizable columns (optional)">
+        <p style={{ marginTop: 0, color: '#6b7280', fontSize: 14 }}>
+          Enable <code>resizableColumns</code> and drag the edge of a header cell to resize that column.
+        </p>
+        <DataTable
+          value={products.slice(0, 6)}
+          dataKey="id"
+          resizableColumns
+          stripedRows
+          showGridlines
+        >
+          <Column field="code" header="Code" style={{ width: '110px' }} />
+          <Column field="name" header="Name" style={{ width: '220px' }} />
+          <Column field="category" header="Category" />
+          <Column field="quantity" header="Qty" style={{ width: '90px' }} />
+        </DataTable>
+      </Section>
     </div>
   );
 }

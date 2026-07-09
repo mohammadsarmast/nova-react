@@ -24,6 +24,7 @@ const enLocale = {
     globalSearch: 'Global search',
     loading: 'Loading...',
     emptyMessage: 'No results found',
+    resizeColumn: 'Resize column',
   },
   paginator: {
     currentPageReport: '{first} to {last} of {totalRecords}',
@@ -58,6 +59,7 @@ const faLocale = {
     globalSearch: 'جستجو',
     loading: 'در حال بارگذاری...',
     emptyMessage: 'موردی یافت نشد',
+    resizeColumn: 'تغییر اندازه ستون',
   },
   paginator: {
     currentPageReport: '{first} تا {last} از {totalRecords}',
