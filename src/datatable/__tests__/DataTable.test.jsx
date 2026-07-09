@@ -68,6 +68,43 @@ describe('DataTable', () => {
     });
   });
 
+  it('expands and collapses rows with the expander column', async () => {
+    const user = userEvent.setup();
+
+    function ExpansionTable() {
+      const [expandedRows, setExpandedRows] = React.useState(null);
+
+      return (
+        <DataTable
+          value={products}
+          dataKey="id"
+          expandedRows={expandedRows}
+          onRowToggle={(event) => setExpandedRows(event.data)}
+          rowExpansionTemplate={(row) => <div>Details for {row.name}</div>}
+        >
+          <Column expander style={{ width: '4rem' }} />
+          <Column field="name" header="Name" />
+        </DataTable>
+      );
+    }
+
+    render(<ExpansionTable />);
+
+    expect(screen.queryByText('Details for Watch')).not.toBeInTheDocument();
+
+    await user.click(screen.getAllByRole('button', { name: 'Expand row' })[0]);
+
+    await waitFor(() => {
+      expect(screen.getByText('Details for Watch')).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Collapse row' }));
+
+    await waitFor(() => {
+      expect(screen.queryByText('Details for Watch')).not.toBeInTheDocument();
+    });
+  });
+
   it('supports row selection callback', async () => {
     const user = userEvent.setup();
     const handleSelectionChange = vi.fn();

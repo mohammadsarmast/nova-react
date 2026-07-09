@@ -424,7 +424,30 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
 
   const toggleRowExpanded = (row) => {
     const expanded = isRowExpanded(row);
-    onRowToggle?.({ data: expandedRows });
+    let nextExpandedRows = expandedRows;
+
+    if (dataKey) {
+      const key = getFieldValue(row, dataKey);
+      const current = expandedRows && !Array.isArray(expandedRows) ? { ...expandedRows } : {};
+
+      if (expanded) {
+        delete current[key];
+        nextExpandedRows = Object.keys(current).length ? current : null;
+      } else {
+        nextExpandedRows = { ...current, [key]: true };
+      }
+    } else if (Array.isArray(expandedRows) || expandedRows == null) {
+      const current = Array.isArray(expandedRows) ? [...expandedRows] : [];
+
+      if (expanded) {
+        nextExpandedRows = current.filter((item) => item !== row);
+        if (nextExpandedRows.length === 0) nextExpandedRows = null;
+      } else {
+        nextExpandedRows = [...current, row];
+      }
+    }
+
+    onRowToggle?.({ data: nextExpandedRows });
     if (expanded) onRowCollapse?.({ data: row });
     else onRowExpand?.({ data: row });
   };
