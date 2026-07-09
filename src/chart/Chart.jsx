@@ -193,6 +193,24 @@ export const Chart = forwardRef(function Chart(props, ref) {
       };
     }
 
+    if (onChartClick) {
+      const userOnClick = merged.onClick;
+      merged.interaction = deepMerge(
+        { mode: 'nearest', intersect: false, axis: 'xy' },
+        merged.interaction || {}
+      );
+      merged.onClick = (event, elements, chart) => {
+        onChartClick(
+          { nativeEvent: event.native ?? event },
+          elements,
+          chart
+        );
+        if (typeof userOnClick === 'function') {
+          userOnClick(event, elements, chart);
+        }
+      };
+    }
+
     return merged;
   }, [
     type,
@@ -211,6 +229,7 @@ export const Chart = forwardRef(function Chart(props, ref) {
     maintainAspectRatio,
     aspectRatio,
     onLegendClick,
+    onChartClick,
   ]);
 
   const destroyChart = useCallback(() => {
@@ -270,20 +289,6 @@ export const Chart = forwardRef(function Chart(props, ref) {
     observer.observe(containerRef.current);
     return () => observer.disconnect();
   }, [responsive]);
-
-  const handleCanvasClick = useCallback(
-    (event) => {
-      if (!chartRef.current || !onChartClick) return;
-      const elements = chartRef.current.getElementsAtEventForMode(
-        event.nativeEvent,
-        'nearest',
-        { intersect: true },
-        false
-      );
-      onChartClick(event, elements, chartRef.current);
-    },
-    [onChartClick]
-  );
 
   const download = useCallback(
     (fileName = downloadFileName) => {
@@ -416,7 +421,6 @@ export const Chart = forwardRef(function Chart(props, ref) {
         <canvas
           ref={canvasRef}
           className={cn('nr-chart__canvas', canvasClassName)}
-          onClick={onChartClick ? handleCanvasClick : undefined}
           role="img"
           aria-label={canvasAriaLabel}
           {...canvasProps}

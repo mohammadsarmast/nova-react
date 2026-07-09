@@ -147,8 +147,7 @@ describe('Chart', () => {
     expect(container.firstChild).toHaveClass('nr-chart--dark');
   });
 
-  it('calls onChartClick with chart elements', async () => {
-    const user = userEvent.setup();
+  it('calls onChartClick through chart options', async () => {
     const onChartClick = vi.fn();
     render(<Chart type="bar" data={sampleData} height={240} onChartClick={onChartClick} />);
 
@@ -156,8 +155,19 @@ describe('Chart', () => {
       expect(MockChart.instances).toHaveLength(1);
     });
 
-    await user.click(screen.getByRole('img'));
-    expect(onChartClick).toHaveBeenCalled();
-    expect(mockGetElements).toHaveBeenCalled();
+    const chart = MockChart.instances[0];
+    const elements = [{ datasetIndex: 0, index: 1 }];
+    chart.config.options.onClick({ native: new MouseEvent('click') }, elements, chart);
+
+    expect(onChartClick).toHaveBeenCalledWith(
+      expect.objectContaining({ nativeEvent: expect.any(MouseEvent) }),
+      elements,
+      chart
+    );
+    expect(chart.config.options.interaction).toEqual({
+      mode: 'nearest',
+      intersect: false,
+      axis: 'xy',
+    });
   });
 });

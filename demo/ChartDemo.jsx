@@ -120,6 +120,17 @@ export function ChartDemo() {
     []
   );
 
+  const selectValue = (datasetIndex, index) => {
+    const dataset = sales.datasets[datasetIndex];
+    setSelection({
+      month: months[index],
+      series: dataset.label,
+      value: dataset.data[index],
+      datasetIndex,
+      index,
+    });
+  };
+
   return (
     <div>
       <Section title="1. Bar Chart — toolbar, title, click events">
@@ -135,14 +146,7 @@ export function ChartDemo() {
           onChartClick={(_, elements) => {
             if (!elements.length) return;
             const { datasetIndex, index } = elements[0];
-            const dataset = sales.datasets[datasetIndex];
-            setSelection({
-              month: months[index],
-              series: dataset.label,
-              value: dataset.data[index],
-              datasetIndex,
-              index,
-            });
+            selectValue(datasetIndex, index);
           }}
         />
         <div
@@ -210,12 +214,22 @@ export function ChartDemo() {
                         return (
                           <td
                             key={dataset.label}
+                            role="button"
+                            tabIndex={0}
+                            onClick={() => selectValue(datasetIndex, monthIndex)}
+                            onKeyDown={(event) => {
+                              if (event.key === 'Enter' || event.key === ' ') {
+                                event.preventDefault();
+                                selectValue(datasetIndex, monthIndex);
+                              }
+                            }}
                             style={{
                               padding: '10px 12px',
                               borderBottom: '1px solid #f1f5f9',
                               color: cellSelected ? '#1d4ed8' : '#374151',
                               fontWeight: cellSelected ? 700 : 400,
                               background: cellSelected ? '#dbeafe' : 'transparent',
+                              cursor: 'pointer',
                             }}
                           >
                             {dataset.data[monthIndex].toLocaleString()}
