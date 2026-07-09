@@ -4,12 +4,33 @@ import { paginateData } from '../utils/paginate.js';
 import { processTableData } from '../utils/processData.js';
 import { sortData } from '../utils/sort.js';
 import { getFieldValue } from '../utils/getFieldValue.js';
+import { formatNumber, formatTemplate, resolveDataTableLocale } from '../utils/locale.js';
 
 const sample = [
   { id: 1, name: 'Alpha', category: 'A', quantity: 10, country: { name: 'USA' } },
   { id: 2, name: 'Beta', category: 'B', quantity: 5, country: { name: 'UK' } },
   { id: 3, name: 'Gamma', category: 'A', quantity: 20, country: { name: 'Japan' } },
 ];
+
+describe('datatable locale', () => {
+  it('formats numbers with Persian digits', () => {
+    expect(formatNumber(12, 'fa')).toBe('۱۲');
+    expect(formatNumber(12, 'en')).toBe('12');
+  });
+
+  it('provides Persian paginator labels and report template', () => {
+    const fa = resolveDataTableLocale('fa');
+    expect(fa.aria.rowsPerPage).toBe('تعداد در هر صفحه');
+    expect(fa.paginator.currentPageReport).toBe('{first} تا {last} از {totalRecords}');
+    expect(
+      formatTemplate(fa.paginator.currentPageReport, {
+        first: formatNumber(1, 'fa'),
+        last: formatNumber(4, 'fa'),
+        totalRecords: formatNumber(12, 'fa'),
+      })
+    ).toBe('۱ تا ۴ از ۱۲');
+  });
+});
 
 describe('datatable field utils', () => {
   it('reads nested field values', () => {

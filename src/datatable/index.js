@@ -6,4 +6,4 @@ export { filterData, createEmptyFilters, FILTER_MATCH_MODES } from './utils/filt
 export { paginateData, createPageEvent } from './utils/paginate.js';
 export { exportDataAsCsv } from './utils/exportCsv.js';
 export { getFieldValue, setFieldValue } from './utils/getFieldValue.js';
-export { resolveLocale, toPersianDigits, formatTemplate } from './utils/locale.js';
+export { resolveLocale, resolveDataTableLocale, toPersianDigits, formatTemplate } from './utils/locale.js';

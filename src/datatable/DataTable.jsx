@@ -13,7 +13,7 @@ import { cn } from './utils/cn.js';
 import { exportDataAsCsv } from './utils/exportCsv.js';
 import { FILTER_MATCH_MODES } from './utils/filter.js';
 import { getFieldValue, setFieldValue } from './utils/getFieldValue.js';
-import { defaultLocale, formatNumber, resolveLocale } from './utils/locale.js';
+import { formatNumber, resolveDataTableLocale, resolveLocale } from './utils/locale.js';
 import { parseColumns } from './utils/parseColumns.js';
 import { processTableData } from './utils/processData.js';
 import {
@@ -99,7 +99,7 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
     globalFilter: globalFilterProp,
     globalFilterFields = [],
     showGlobalFilter,
-    globalFilterPlaceholder = 'Search...',
+    globalFilterPlaceholder,
     paginatorPosition = 'bottom',
     selection,
     selectionMode,
@@ -120,7 +120,7 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
     editingRows,
     onRowEditChange,
     loading = false,
-    emptyMessage = 'No results found',
+    emptyMessage,
     header,
     footer,
     size = 'normal',
@@ -160,7 +160,10 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
 
   const columns = useMemo(() => parseColumns(children), [children]);
   const locale = resolveLocale(rtl, localeProp);
-  const labels = defaultLocale.aria;
+  const localeText = resolveDataTableLocale(locale);
+  const labels = localeText.aria;
+  const resolvedEmptyMessage = emptyMessage ?? labels.emptyMessage;
+  const resolvedSearchPlaceholder = globalFilterPlaceholder ?? localeText.search.placeholder;
 
   const persisted = useMemo(
     () => (stateKey ? loadTableState(stateKey, stateStorage) : null),
@@ -701,7 +704,7 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
       totalRecords={totalRecords}
       rowsPerPageOptions={rowsPerPageOptions}
       template={paginatorTemplate}
-      currentPageReportTemplate={currentPageReportTemplate || defaultLocale.paginator.currentPageReport}
+      currentPageReportTemplate={currentPageReportTemplate || localeText.paginator.currentPageReport}
       left={paginatorLeft}
       right={paginatorRight}
       rtl={rtl}
@@ -733,8 +736,8 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
           {hasGlobalFilter ? (
             <GlobalSearch
               value={globalFilter}
-              placeholder={globalFilterPlaceholder}
-              ariaLabel="Global search"
+              placeholder={resolvedSearchPlaceholder}
+              ariaLabel={labels.globalSearch}
               onChange={updateGlobalFilter}
             />
           ) : null}
@@ -747,7 +750,7 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
         className="nr-datatable__wrapper"
         style={scrollable && scrollHeight ? { maxHeight: scrollHeight } : undefined}
       >
-        {loading ? <div className="nr-datatable__loading" role="status">Loading...</div> : null}
+        {loading ? <div className="nr-datatable__loading" role="status">{labels.loading}</div> : null}
         <table
           ref={tableRef}
           className="nr-datatable__table"
@@ -767,7 +770,7 @@ export const DataTable = forwardRef(function DataTable(props, ref) {
               ? displayRows.map((row, index) => renderRow(row, index))
               : (
                 <tr className="nr-datatable__empty-row">
-                  <td colSpan={colSpan} className="nr-datatable__empty-message">{emptyMessage}</td>
+                  <td colSpan={colSpan} className="nr-datatable__empty-message">{resolvedEmptyMessage}</td>
                 </tr>
               )}
           </tbody>

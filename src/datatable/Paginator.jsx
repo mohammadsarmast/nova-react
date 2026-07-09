@@ -135,7 +135,7 @@ export function Paginator({
       case 'RowsPerPageDropdown':
         return (
           <label key={part} className="nr-paginator__rows">
-            <span className="nr-paginator__rows-label">{labels.rowsPerPage || 'Rows'}</span>
+            <span className="nr-paginator__rows-label">{labels.rowsPerPage || 'Rows per page'}</span>
             <select
               className="nr-paginator__select"
               value={rows}

@@ -37,6 +37,18 @@ describe('DataTable', () => {
     expect(screen.getByText('Nothing here')).toBeInTheDocument();
   });
 
+  it('renders Persian paginator labels when locale is fa', () => {
+    render(
+      <DataTable value={products} paginator rows={2} rtl locale="fa">
+        <Column field="name" header="نام" />
+      </DataTable>
+    );
+
+    expect(screen.getByText('تعداد در هر صفحه')).toBeInTheDocument();
+    expect(screen.getByText('۱ تا ۲ از ۴')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'صفحه بعد' })).toBeInTheDocument();
+  });
+
   it('paginates on client side', async () => {
     const user = userEvent.setup();
     render(
