@@ -6,6 +6,17 @@ A modular React UI component library — import only what you need.
 npm install nova-react
 ```
 
+## Live Demos
+
+Try each component online on GitHub Pages:
+
+| Component | Live Demo |
+|-----------|-----------|
+| **AutoComplete** | [Open Demo](https://mohammadsarmast.github.io/nova-react/autocomplete.html) |
+| **Button** | [Open Demo](https://mohammadsarmast.github.io/nova-react/button.html) |
+
+[All demos →](https://mohammadsarmast.github.io/nova-react/)
+
 ## Components
 
 | Component | Import | Documentation |
@@ -34,7 +45,7 @@ function App() {
 }
 ```
 
-[📖 Full documentation with all props & examples](./docs/autocomplete.md)
+[📖 Full documentation with all props & examples](./docs/autocomplete.md) · [🎮 Live Demo](https://mohammadsarmast.github.io/nova-react/autocomplete.html)
 
 ---
 
@@ -53,8 +64,6 @@ function App() {
 />
 ```
 
-![Basic](./docs/images/autocomplete/01-basic.svg)
-
 ---
 
 ### 2. Dropdown Button
@@ -62,8 +71,6 @@ function App() {
 ```jsx
 <AutoComplete dropdown options={countries} value={value} onChange={(e) => setValue(e.value)} />
 ```
-
-![Dropdown](./docs/images/autocomplete/02-dropdown.svg)
 
 ---
 
@@ -84,8 +91,6 @@ function App() {
 />
 ```
 
-![Objects with template](./docs/images/autocomplete/03-objects-template.svg)
-
 ---
 
 ### 4. Multiple Selection
@@ -93,8 +98,6 @@ function App() {
 ```jsx
 <AutoComplete multiple options={tags} value={value} onChange={(e) => setValue(e.value)} selectionLimit={5} />
 ```
-
-![Multiple selection](./docs/images/autocomplete/04-multiple.svg)
 
 ---
 
@@ -110,8 +113,6 @@ function App() {
 />
 ```
 
-![Grouped options](./docs/images/autocomplete/05-grouped.svg?v=2)
-
 ---
 
 ### 6. Force Selection
@@ -119,8 +120,6 @@ function App() {
 ```jsx
 <AutoComplete forceSelection options={countries} value={value} onChange={(e) => setValue(e.value)} />
 ```
-
-![Force selection](./docs/images/autocomplete/06-force-selection.svg)
 
 ---
 
@@ -130,8 +129,6 @@ function App() {
 <AutoComplete floatLabel label="Search country" options={countries} value={value} onChange={(e) => setValue(e.value)} />
 ```
 
-![Float label](./docs/images/autocomplete/07-float-label.svg)
-
 ---
 
 ### 8. Allow Custom Value
@@ -139,8 +136,6 @@ function App() {
 ```jsx
 <AutoComplete allowCustomValue options={tags} value={value} onChange={(e) => setValue(e.value)} />
 ```
-
-![Custom value](./docs/images/autocomplete/08-custom-value.svg)
 
 ---
 
@@ -155,8 +150,6 @@ function App() {
   onChange={(e) => setValue(e.value)}
 />
 ```
-
-![Virtual scroll](./docs/images/autocomplete/09-virtual-scroll.svg)
 
 ---
 
@@ -174,8 +167,6 @@ function App() {
 />
 ```
 
-![Async search](./docs/images/autocomplete/10-async.svg)
-
 ---
 
 ### 11. Invalid / Error State
@@ -191,8 +182,6 @@ function App() {
 />
 ```
 
-![Invalid state](./docs/images/autocomplete/11-invalid.svg)
-
 ---
 
 ### 12. Sizes (sm / md / lg)
@@ -203,8 +192,6 @@ function App() {
 <AutoComplete size="lg" options={countries} placeholder="Large" />
 ```
 
-![Sizes](./docs/images/autocomplete/12-sizes.svg)
-
 ---
 
 ### 13. Disabled
@@ -212,8 +199,6 @@ function App() {
 ```jsx
 <AutoComplete disabled options={countries} placeholder="Disabled" />
 ```
-
-![Disabled](./docs/images/autocomplete/13-disabled.svg)
 
 ### 14. RTL · 15. Portal · 16. Match Mode · 17. Disabled Options · 18. Creatable
 
@@ -238,7 +223,7 @@ import 'nova-react/button/styles.css';
 <Button label="Help" tooltip="More info" color="#8b5cf6" />
 ```
 
-[📖 Full Button documentation](./docs/button.md)
+[📖 Full Button documentation](./docs/button.md) · [🎮 Live Demo](https://mohammadsarmast.github.io/nova-react/button.html)
 
 ### Basic & Severity
 
@@ -248,20 +233,12 @@ import 'nova-react/button/styles.css';
 <Button label="Danger" severity="danger" variant="outlined" />
 ```
 
-![Basic](./docs/images/button/01-basic.svg)
-
-![Severity](./docs/images/button/02-severity.svg)
-
 ### Gradient & Loading
 
 ```jsx
 <Button label="Get Started" variant="gradient" raised />
 <Button label="Save" loading loadingText="Saving..." />
 ```
-
-![Gradient](./docs/images/button/03-gradient.svg)
-
-![Loading](./docs/images/button/04-loading.svg)
 
 ### Badges & Button Group
 
@@ -273,10 +250,6 @@ import 'nova-react/button/styles.css';
   <Button label="Cancel" severity="secondary" variant="outlined" />
 </ButtonGroup>
 ```
-
-![Badges](./docs/images/button/05-badges.svg)
-
-![Button Group](./docs/images/button/06-group.svg)
 
 ### Toggle, Split, Tooltip, Color & RTL
 
@@ -290,25 +263,16 @@ import 'nova-react/button/styles.css';
 <Button label="ثبت" rtl icon={<CheckIcon />} />
 ```
 
-![ToggleButton](./docs/images/button/07-toggle.svg)
-
-![SplitButton](./docs/images/button/08-split.svg)
-
-![Tooltip](./docs/images/button/09-tooltip.svg)
-
-![Custom Color](./docs/images/button/11-color.svg)
-
-![RTL](./docs/images/button/10-rtl.svg)
-
 ---
 
 ## Development
 
 ```bash
 npm install
-npm run demo      # run demo locally
-npm run test      # run unit tests
-npm run build     # build for npm publish
+npm run demo          # run demos locally (home, autocomplete, button)
+npm run demo:build    # build static demos for GitHub Pages
+npm run test          # run unit tests
+npm run build         # build library for npm publish
 ```
 
 ## License

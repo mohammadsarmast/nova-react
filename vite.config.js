@@ -3,10 +3,12 @@ import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 
 const root = resolve(import.meta.dirname);
+const demoRoot = resolve(root, 'demo');
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
+  base: mode === 'production' ? '/nova-react/' : '/',
   plugins: [react({ jsxRuntime: 'automatic' })],
-  root: resolve(root, 'demo'),
+  root: demoRoot,
   esbuild: {
     jsx: 'automatic',
   },
@@ -21,4 +23,15 @@ export default defineConfig({
       'nova-react/button': resolve(root, 'src/button/index.js'),
     },
   },
-});
+  build: {
+    outDir: resolve(demoRoot, 'dist'),
+    emptyOutDir: true,
+    rollupOptions: {
+      input: {
+        main: resolve(demoRoot, 'index.html'),
+        autocomplete: resolve(demoRoot, 'autocomplete.html'),
+        button: resolve(demoRoot, 'button.html'),
+      },
+    },
+  },
+}));

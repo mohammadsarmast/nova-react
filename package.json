@@ -25,8 +25,9 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "demo": "vite demo",
-    "demo:build": "vite build demo",
+    "demo": "vite",
+    "demo:build": "vite build --mode production",
+    "demo:preview": "vite preview --outDir demo/dist",
     "test": "vitest run",
     "test:watch": "vitest",
     "prepublishOnly": "npm run build"
@@ -61,7 +62,7 @@
     "type": "git",
     "url": "https://github.com/mohammadsarmast/nova-react.git"
   },
-  "homepage": "https://github.com/mohammadsarmast/nova-react#readme",
+  "homepage": "https://mohammadsarmast.github.io/nova-react/",
   "bugs": {
     "url": "https://github.com/mohammadsarmast/nova-react/issues"
   },
