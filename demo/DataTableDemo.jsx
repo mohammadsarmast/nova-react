@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { DataTable, Column } from 'nova-react/datatable';
+import { DataTable, Column, toPersianDigits } from 'nova-react/datatable';
 
 const products = [
   { id: 1, code: 'P-100', name: 'Bamboo Watch', category: 'Accessories', quantity: 24, price: 65, country: { name: 'Japan' }, image: '🎋' },
@@ -356,6 +356,35 @@ export function DataTableDemo() {
           <Column field="category" header="Category" />
           <Column field="quantity" header="Qty" style={{ width: '90px' }} />
         </DataTable>
+      </Section>
+
+      <Section title="10. RTL Persian resizable columns">
+        <p style={{ marginTop: 0, color: '#6b7280', fontSize: 14 }}>
+          In RTL mode, drag direction is reversed — pull from the inner column edge toward the reading direction.
+        </p>
+        <div dir="rtl">
+          <DataTable
+            rtl
+            locale="fa"
+            value={products.slice(0, 8)}
+            dataKey="id"
+            resizableColumns
+            paginator
+            rows={4}
+            stripedRows
+            showGridlines
+          >
+            <Column field="name" header="نام محصول" style={{ width: '190px' }} sortable />
+            <Column field="category" header="دسته" style={{ width: '130px' }} />
+            <Column
+              field="quantity"
+              header="تعداد"
+              style={{ width: '100px' }}
+              body={(row) => toPersianDigits(row.quantity)}
+            />
+            <Column field="code" header="کد" style={{ width: '110px' }} />
+          </DataTable>
+        </div>
       </Section>
     </div>
   );

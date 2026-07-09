@@ -264,6 +264,36 @@ describe('DataTable', () => {
     expect(header.style.width).toBe(`${lastCall.width}px`);
   });
 
+  it('reverses resize drag direction in rtl mode', () => {
+    const handleColumnResize = vi.fn();
+
+    const { container } = render(
+      <DataTable
+        value={products}
+        resizableColumns
+        rtl
+        locale="fa"
+        onColumnResize={handleColumnResize}
+        dataKey="id"
+      >
+        <Column field="name" header="نام" />
+      </DataTable>
+    );
+
+    const header = container.querySelector('.nr-datatable__header-cell');
+    const handle = screen.getByRole('separator', { name: 'تغییر اندازه ستون' });
+    Object.defineProperty(header, 'getBoundingClientRect', {
+      value: () => ({ width: 160, left: 100, right: 260, top: 0, bottom: 40 }),
+    });
+
+    fireEvent.mouseDown(handle, { clientX: 200 });
+    fireEvent.mouseMove(document, { clientX: 160 });
+    fireEvent.mouseUp(document);
+
+    expect(handleColumnResize).toHaveBeenCalled();
+    expect(handleColumnResize.mock.calls.at(-1)[0].width).toBe(200);
+  });
+
   it('applies dark theme class and custom color vars', () => {
     const { container } = render(
       <DataTable
