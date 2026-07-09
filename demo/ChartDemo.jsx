@@ -45,7 +45,8 @@ function pieData() {
 
 export function ChartDemo() {
   const chartRef = useRef(null);
-  const [clicked, setClicked] = useState('Click a bar to inspect values');
+  const sales = useMemo(() => salesData(), []);
+  const [selection, setSelection] = useState(null);
   const [loadingDemo, setLoadingDemo] = useState(false);
 
   const lineData = useMemo(
@@ -125,7 +126,7 @@ export function ChartDemo() {
         <Chart
           ref={chartRef}
           type="bar"
-          data={salesData()}
+          data={sales}
           title="Sales Overview"
           subtitle="Monthly revenue vs expenses"
           height={340}
@@ -134,8 +135,14 @@ export function ChartDemo() {
           onChartClick={(_, elements) => {
             if (!elements.length) return;
             const { datasetIndex, index } = elements[0];
-            const dataset = salesData().datasets[datasetIndex];
-            setClicked(`${dataset.label}: ${dataset.data[index]} in ${months[index]}`);
+            const dataset = sales.datasets[datasetIndex];
+            setSelection({
+              month: months[index],
+              series: dataset.label,
+              value: dataset.data[index],
+              datasetIndex,
+              index,
+            });
           }}
         />
         <div
@@ -146,9 +153,81 @@ export function ChartDemo() {
             background: '#fff',
             color: '#374151',
             fontSize: 14,
+            minHeight: 340,
+            display: 'flex',
+            flexDirection: 'column',
           }}
         >
-          <strong>Selection:</strong> {clicked}
+          <div style={{ marginBottom: 12 }}>
+            <strong>Selection:</strong>{' '}
+            {selection
+              ? `${selection.series}: ${selection.value.toLocaleString()} in ${selection.month}`
+              : 'Click a bar to inspect values'}
+          </div>
+          <div style={{ overflowX: 'auto', flex: 1 }}>
+            <table
+              style={{
+                width: '100%',
+                borderCollapse: 'collapse',
+                fontSize: 13,
+              }}
+            >
+              <thead>
+                <tr style={{ background: '#f8fafc', textAlign: 'left' }}>
+                  <th style={{ padding: '10px 12px', borderBottom: '1px solid #e5e7eb' }}>Month</th>
+                  {sales.datasets.map((dataset) => (
+                    <th
+                      key={dataset.label}
+                      style={{ padding: '10px 12px', borderBottom: '1px solid #e5e7eb' }}
+                    >
+                      {dataset.label}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {months.map((month, monthIndex) => {
+                  const rowSelected = selection?.index === monthIndex;
+                  return (
+                    <tr
+                      key={month}
+                      style={{
+                        background: rowSelected ? '#eff6ff' : 'transparent',
+                      }}
+                    >
+                      <td
+                        style={{
+                          padding: '10px 12px',
+                          borderBottom: '1px solid #f1f5f9',
+                          fontWeight: rowSelected ? 600 : 500,
+                        }}
+                      >
+                        {month}
+                      </td>
+                      {sales.datasets.map((dataset, datasetIndex) => {
+                        const cellSelected =
+                          selection?.index === monthIndex && selection?.datasetIndex === datasetIndex;
+                        return (
+                          <td
+                            key={dataset.label}
+                            style={{
+                              padding: '10px 12px',
+                              borderBottom: '1px solid #f1f5f9',
+                              color: cellSelected ? '#1d4ed8' : '#374151',
+                              fontWeight: cellSelected ? 700 : 400,
+                              background: cellSelected ? '#dbeafe' : 'transparent',
+                            }}
+                          >
+                            {dataset.data[monthIndex].toLocaleString()}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       </Section>
 
@@ -246,7 +325,7 @@ export function ChartDemo() {
         />
         <Chart
           type="bar"
-          data={salesData()}
+          data={sales}
           title="Dark Dashboard"
           subtitle="Grouped bars with soft top corners"
           theme="dark"
@@ -255,7 +334,7 @@ export function ChartDemo() {
         />
         <Chart
           type="bar"
-          data={salesData()}
+          data={sales}
           title="Custom Theme Colors"
           subtitle="Override background, grid, bars, and text"
           theme="dark"
@@ -325,7 +404,7 @@ export function ChartDemo() {
       <Section title="9. Loading, Empty">
         <Chart
           type="bar"
-          data={salesData()}
+          data={sales}
           title="Loading State"
           loading={loadingDemo}
           height={260}
