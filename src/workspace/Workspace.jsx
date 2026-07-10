@@ -13,7 +13,7 @@ import {
   normalizeSelection,
 } from './utils/selection.js';
 import { clampPosition, normalizeRect } from './utils/geometry.js';
-import { resolveWorkspaceItems } from './utils/items.js';
+import { getItemsForMarquee, resolveWorkspaceItems } from './utils/items.js';
 import './styles/workspace.css';
 
 const DRAG_THRESHOLD = 4;
@@ -53,7 +53,7 @@ export function Workspace({
 
   const emitSelection = useCallback((next) => {
     if (selectionProp == null) setSelectionState(next);
-    const selectedItems = resolveWorkspaceItems(next, itemsRef.current, positions);
+    const selectedItems = resolveWorkspaceItems(next, itemsRef.current, positions, containerRef.current);
     onSelectionChange?.({
       value: next,
       selection: next,
@@ -129,11 +129,7 @@ export function Workspace({
 
       const endPoint = getContainerPoint(upEvent.clientX, upEvent.clientY);
       const rect = normalizeRect(point.x, point.y, endPoint.x, endPoint.y);
-      const items = [...itemsRef.current.values()].map((item) => ({
-        ...item,
-        x: positions[item.id]?.x ?? item.x,
-        y: positions[item.id]?.y ?? item.y,
-      }));
+      const items = getItemsForMarquee(itemsRef.current, containerRef.current, positions);
       const hitIds = getMarqueeHitIds(items, rect);
       const next = applyMarqueeSelection(selection, hitIds, {
         ctrlKey: upEvent.ctrlKey,
@@ -141,7 +137,7 @@ export function Workspace({
       }, { selectionMode });
 
       emitSelection(next);
-      const selectedItems = resolveWorkspaceItems(next, itemsRef.current, positions);
+      const selectedItems = resolveWorkspaceItems(next, itemsRef.current, positions, containerRef.current);
       onMarqueeSelect?.({
         value: next,
         hitIds,
@@ -183,7 +179,7 @@ export function Workspace({
     );
 
     const handleMove = (moveEvent) => {
-      if (layoutLocked) return;
+      if (layoutLocked || item.layout !== 'free') return;
 
       const point = getContainerPoint(moveEvent.clientX, moveEvent.clientY);
       const deltaX = point.x - startPoint.x;
@@ -230,8 +226,8 @@ export function Workspace({
           metaKey: upEvent.metaKey,
         }, { selectionMode });
         emitSelection(next);
-        const selectedItems = resolveWorkspaceItems(next, itemsRef.current, positions);
-        const itemDetails = resolveWorkspaceItems([itemId], itemsRef.current, positions)[0];
+        const selectedItems = resolveWorkspaceItems(next, itemsRef.current, positions, containerRef.current);
+        const itemDetails = resolveWorkspaceItems([itemId], itemsRef.current, positions, containerRef.current)[0];
         onItemClick?.({
           id: itemId,
           item: itemDetails,

@@ -20,8 +20,8 @@ describe('Workspace', () => {
           }}
           height={300}
         >
-          <WorkspaceItem id="a" x={20} y={20} width={80} height={60} data={{ label: 'Alpha' }}>A</WorkspaceItem>
-          <WorkspaceItem id="b" x={140} y={20} width={80} height={60} data={{ label: 'Beta' }}>B</WorkspaceItem>
+          <WorkspaceItem id="a" layout="free" x={20} y={20} width={80} height={60} data={{ label: 'Alpha' }}>A</WorkspaceItem>
+          <WorkspaceItem id="b" layout="free" x={140} y={20} width={80} height={60} data={{ label: 'Beta' }}>B</WorkspaceItem>
         </Workspace>
       );
     }
@@ -35,12 +35,12 @@ describe('Workspace', () => {
       value: ['a', 'b'],
       selection: ['a', 'b'],
       selectedItems: [
-        { id: 'a', x: 20, y: 20, width: 80, height: 60, data: { label: 'Alpha' } },
-        { id: 'b', x: 140, y: 20, width: 80, height: 60, data: { label: 'Beta' } },
+        { id: 'a', layout: 'free', x: 20, y: 20, width: 80, height: 60, data: { label: 'Alpha' } },
+        { id: 'b', layout: 'free', x: 140, y: 20, width: 80, height: 60, data: { label: 'Beta' } },
       ],
       items: [
-        { id: 'a', x: 20, y: 20, width: 80, height: 60, data: { label: 'Alpha' } },
-        { id: 'b', x: 140, y: 20, width: 80, height: 60, data: { label: 'Beta' } },
+        { id: 'a', layout: 'free', x: 20, y: 20, width: 80, height: 60, data: { label: 'Alpha' } },
+        { id: 'b', layout: 'free', x: 140, y: 20, width: 80, height: 60, data: { label: 'Beta' } },
       ],
     });
 
@@ -51,10 +51,10 @@ describe('Workspace', () => {
       value: ['b'],
       selection: ['b'],
       selectedItems: [
-        { id: 'b', x: 140, y: 20, width: 80, height: 60, data: { label: 'Beta' } },
+        { id: 'b', layout: 'free', x: 140, y: 20, width: 80, height: 60, data: { label: 'Beta' } },
       ],
       items: [
-        { id: 'b', x: 140, y: 20, width: 80, height: 60, data: { label: 'Beta' } },
+        { id: 'b', layout: 'free', x: 140, y: 20, width: 80, height: 60, data: { label: 'Beta' } },
       ],
     });
   });
@@ -64,8 +64,8 @@ describe('Workspace', () => {
 
     const { container } = render(
       <Workspace onSelectionChange={handleSelectionChange} height={300}>
-        <WorkspaceItem id="a" x={30} y={30} width={80} height={60}>A</WorkspaceItem>
-        <WorkspaceItem id="b" x={180} y={120} width={80} height={60}>B</WorkspaceItem>
+        <WorkspaceItem id="a" layout="free" x={30} y={30} width={80} height={60}>A</WorkspaceItem>
+        <WorkspaceItem id="b" layout="free" x={180} y={120} width={80} height={60}>B</WorkspaceItem>
       </Workspace>
     );
 
@@ -92,8 +92,33 @@ describe('Workspace', () => {
     expect(last.value).toContain('a');
     expect(last.value).not.toContain('b');
     expect(last.selectedItems).toEqual([
-      { id: 'a', x: 30, y: 30, width: 80, height: 60, data: undefined },
+      { id: 'a', layout: 'free', x: 30, y: 30, width: 80, height: 60, data: undefined },
     ]);
+  });
+
+  it('supports flow items inside a custom flex wrapper', () => {
+    const handleSelectionChange = vi.fn();
+
+    render(
+      <Workspace onSelectionChange={handleSelectionChange} height={300}>
+        <div data-testid="flex-row" style={{ display: 'flex', gap: 12, padding: 12 }}>
+          <WorkspaceItem id="a" layout="flow" data={{ label: 'Alpha' }}>Alpha</WorkspaceItem>
+          <WorkspaceItem id="b" layout="flow" data={{ label: 'Beta' }}>Beta</WorkspaceItem>
+        </div>
+      </Workspace>
+    );
+
+    fireEvent.pointerDown(screen.getByText('Alpha'), { button: 0 });
+    fireEvent.pointerUp(document, { button: 0 });
+
+    expect(handleSelectionChange).toHaveBeenCalled();
+    const payload = handleSelectionChange.mock.calls.at(-1)[0];
+    expect(payload.value).toEqual(['a']);
+    expect(payload.selectedItems[0]).toMatchObject({
+      id: 'a',
+      layout: 'flow',
+      data: { label: 'Alpha' },
+    });
   });
 
   it('keeps items locked by default and allows drag only after unlock', () => {
@@ -105,7 +130,7 @@ describe('Workspace', () => {
         onItemPositionChange={handlePositionChange}
         height={300}
       >
-        <WorkspaceItem id="a" x={20} y={20} width={80} height={60}>A</WorkspaceItem>
+        <WorkspaceItem id="a" layout="free" x={20} y={20} width={80} height={60}>A</WorkspaceItem>
       </Workspace>
     );
 

@@ -9,4 +9,4 @@ export {
   normalizeSelection,
   isSelected,
 } from './utils/selection.js';
-export { resolveWorkspaceItems } from './utils/items.js';
+export { resolveWorkspaceItems, getItemBounds, getItemsForMarquee } from './utils/items.js';

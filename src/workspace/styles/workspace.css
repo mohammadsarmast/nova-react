@@ -138,9 +138,6 @@
 }
 
 .nr-workspace__item {
-  position: absolute;
-  top: 0;
-  left: 0;
   box-sizing: border-box;
   border: 1px solid transparent;
   border-radius: 12px;
@@ -148,6 +145,16 @@
   box-shadow: 0 10px 24px -18px rgb(15 23 42 / 0.45);
   cursor: default;
   transition: box-shadow 150ms ease, border-color 150ms ease, background 150ms ease;
+}
+
+.nr-workspace__item--free {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.nr-workspace__item--flow {
+  position: relative;
 }
 
 .nr-workspace__item--movable {
@@ -178,8 +185,6 @@
 }
 
 .nr-workspace__item-content {
-  width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -189,6 +194,11 @@
   text-align: center;
   font: inherit;
   color: #1f2937;
+}
+
+.nr-workspace__item--free .nr-workspace__item-content {
+  width: 100%;
+  height: 100%;
 }
 
 .nr-workspace__marquee {
