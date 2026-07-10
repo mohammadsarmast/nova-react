@@ -26,6 +26,11 @@ export function Workspace({
   className,
   style,
   disabled = false,
+  defaultLayoutLocked = true,
+  layoutLocked: layoutLockedProp,
+  onLayoutLockedChange,
+  showLayoutLockButton = false,
+  layoutLockButtonLabel,
   onItemPositionChange,
   onMarqueeSelect,
   onItemClick,
@@ -36,17 +41,28 @@ export function Workspace({
   const containerRef = useRef(null);
   const itemsRef = useRef(new Map());
   const [selectionState, setSelectionState] = useState(defaultSelection);
+  const [layoutLockedState, setLayoutLockedState] = useState(defaultLayoutLocked);
   const [marquee, setMarquee] = useState(null);
   const [dragSession, setDragSession] = useState(null);
   const [positions, setPositions] = useState({});
 
   const selection = selectionProp ?? selectionState;
   const selectedSet = useMemo(() => new Set(normalizeSelection(selection)), [selection]);
+  const layoutLocked = layoutLockedProp ?? layoutLockedState;
 
   const emitSelection = useCallback((next) => {
     if (selectionProp == null) setSelectionState(next);
     onSelectionChange?.({ value: next, selection: next });
   }, [selectionProp, onSelectionChange]);
+
+  const emitLayoutLocked = useCallback((next) => {
+    if (layoutLockedProp == null) setLayoutLockedState(next);
+    onLayoutLockedChange?.({ value: next, layoutLocked: next });
+  }, [layoutLockedProp, onLayoutLockedChange]);
+
+  const toggleLayoutLocked = useCallback(() => {
+    emitLayoutLocked(!layoutLocked);
+  }, [emitLayoutLocked, layoutLocked]);
 
   const registerItem = useCallback((item) => {
     itemsRef.current.set(item.id, item);
@@ -153,6 +169,8 @@ export function Workspace({
     );
 
     const handleMove = (moveEvent) => {
+      if (layoutLocked) return;
+
       const point = getContainerPoint(moveEvent.clientX, moveEvent.clientY);
       const deltaX = point.x - startPoint.x;
       const deltaY = point.y - startPoint.y;
@@ -222,6 +240,7 @@ export function Workspace({
     selectedSet,
     selection,
     selectionMode,
+    layoutLocked,
   ]);
 
   const marqueeStyle = marquee ? (() => {
@@ -243,6 +262,7 @@ export function Workspace({
     handleItemPointerDown,
     disabled,
     rtl,
+    layoutLocked,
   }), [
     selection,
     selectedSet,
@@ -252,7 +272,10 @@ export function Workspace({
     handleItemPointerDown,
     disabled,
     rtl,
+    layoutLocked,
   ]);
+
+  const lockButtonText = layoutLockButtonLabel ?? (layoutLocked ? 'Unlock layout' : 'Lock layout');
 
   return (
     <WorkspaceContext.Provider value={contextValue}>
@@ -262,6 +285,8 @@ export function Workspace({
           'nr-workspace',
           rtl && 'nr-workspace--rtl',
           disabled && 'nr-workspace--disabled',
+          layoutLocked && 'nr-workspace--layout-locked',
+          showLayoutLockButton && 'nr-workspace--with-toolbar',
           className
         )}
         style={{ ...style, height }}
@@ -269,6 +294,26 @@ export function Workspace({
         aria-label={ariaLabel}
         onPointerDown={handleCanvasPointerDown}
       >
+        {showLayoutLockButton ? (
+          <div className="nr-workspace__toolbar">
+            <button
+              type="button"
+              className={cn(
+                'nr-workspace__lock-button',
+                layoutLocked && 'nr-workspace__lock-button--locked'
+              )}
+              onClick={toggleLayoutLocked}
+              onPointerDown={(event) => event.stopPropagation()}
+              aria-pressed={!layoutLocked}
+              aria-label={lockButtonText}
+            >
+              <span className="nr-workspace__lock-button-icon" aria-hidden="true">
+                {layoutLocked ? '🔒' : '🔓'}
+              </span>
+              <span>{lockButtonText}</span>
+            </button>
+          </div>
+        ) : null}
         <div className="nr-workspace__canvas">
           {children}
         </div>

@@ -17,8 +17,9 @@ export function WorkspaceDemo() {
   return (
     <div>
       <p style={{ marginTop: 0, color: '#6b7280', fontSize: 14, lineHeight: 1.7 }}>
-        Windows-style workspace: drag items, marquee-select with mouse, <strong>Shift+click</strong> to add,
+        Windows-style workspace: marquee-select with mouse, <strong>Shift+click</strong> to add,
         <strong> Alt+click</strong> to remove from selection, <strong>Ctrl+click</strong> to toggle.
+        Items are locked by default — click <strong>Unlock layout</strong> to move cards.
       </p>
 
       <WorkspacePanel
@@ -30,6 +31,7 @@ export function WorkspaceDemo() {
         <Workspace
           selection={selection}
           onSelectionChange={(event) => setSelection(event.value)}
+          showLayoutLockButton
           height={460}
         >
           {initialItems.map((item) => (

@@ -62,6 +62,62 @@
   overflow: hidden;
   user-select: none;
   touch-action: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.nr-workspace--with-toolbar .nr-workspace__canvas {
+  flex: 1;
+  min-height: 0;
+}
+
+.nr-workspace__toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid #dbeafe;
+  background: rgb(255 255 255 / 0.82);
+  backdrop-filter: blur(6px);
+  z-index: 2;
+}
+
+.nr-workspace__lock-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border: 1px solid #bfdbfe;
+  border-radius: 10px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 150ms ease, border-color 150ms ease, color 150ms ease;
+}
+
+.nr-workspace__lock-button:hover {
+  background: #dbeafe;
+  border-color: #93c5fd;
+}
+
+.nr-workspace__lock-button--locked {
+  background: #fff;
+  border-color: #d1d5db;
+  color: #374151;
+}
+
+.nr-workspace__lock-button--locked:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.nr-workspace__lock-button-icon {
+  font-size: 14px;
+  line-height: 1;
 }
 
 .nr-workspace--rtl {
@@ -77,6 +133,8 @@
   position: relative;
   width: 100%;
   height: 100%;
+  flex: 1;
+  min-height: 0;
 }
 
 .nr-workspace__item {
@@ -90,6 +148,18 @@
   box-shadow: 0 10px 24px -18px rgb(15 23 42 / 0.45);
   cursor: default;
   transition: box-shadow 150ms ease, border-color 150ms ease, background 150ms ease;
+}
+
+.nr-workspace__item--movable {
+  cursor: grab;
+}
+
+.nr-workspace__item--movable:active {
+  cursor: grabbing;
+}
+
+.nr-workspace--layout-locked .nr-workspace__item {
+  cursor: default;
 }
 
 .nr-workspace__item:hover {

@@ -23,6 +23,7 @@ export function WorkspaceItem({
     handleItemPointerDown,
     disabled: workspaceDisabled,
     rtl,
+    layoutLocked,
   } = useWorkspaceContext();
 
   const resolvedPosition = positions[id] ?? { x, y };
@@ -44,6 +45,7 @@ export function WorkspaceItem({
         'nr-workspace__item',
         selected && 'nr-workspace__item--selected',
         isDisabled && 'nr-workspace__item--disabled',
+        !layoutLocked && 'nr-workspace__item--movable',
         className
       )}
       style={{

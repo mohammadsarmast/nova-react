@@ -72,4 +72,34 @@ describe('Workspace', () => {
     expect(last.value).toContain('a');
     expect(last.value).not.toContain('b');
   });
+
+  it('keeps items locked by default and allows drag only after unlock', () => {
+    const handlePositionChange = vi.fn();
+
+    const { container } = render(
+      <Workspace
+        showLayoutLockButton
+        onItemPositionChange={handlePositionChange}
+        height={300}
+      >
+        <WorkspaceItem id="a" x={20} y={20} width={80} height={60}>A</WorkspaceItem>
+      </Workspace>
+    );
+
+    fireEvent.pointerDown(screen.getByText('A'), { button: 0, clientX: 20, clientY: 20 });
+    fireEvent.pointerMove(document, { clientX: 80, clientY: 80 });
+    fireEvent.pointerUp(document, { button: 0, clientX: 80, clientY: 80 });
+
+    expect(handlePositionChange).not.toHaveBeenCalled();
+    expect(container.querySelector('.nr-workspace')).toHaveClass('nr-workspace--layout-locked');
+
+    fireEvent.click(screen.getByRole('button', { name: 'Unlock layout' }));
+    expect(container.querySelector('.nr-workspace')).not.toHaveClass('nr-workspace--layout-locked');
+
+    fireEvent.pointerDown(screen.getByText('A'), { button: 0, clientX: 20, clientY: 20 });
+    fireEvent.pointerMove(document, { clientX: 120, clientY: 120 });
+    fireEvent.pointerUp(document, { button: 0, clientX: 120, clientY: 120 });
+
+    expect(handlePositionChange).toHaveBeenCalled();
+  });
 });
