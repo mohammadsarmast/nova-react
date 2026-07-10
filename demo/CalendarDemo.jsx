@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Calendar } from 'nova-react/calendar';
-import 'nova-react/calendar/styles.css';
 
 const sectionStyle = {
   display: 'grid',

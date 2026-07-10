@@ -17,6 +17,13 @@ const demos = [
     importPath: 'nova-react/button',
   },
   {
+    id: 'calendar',
+    title: 'Calendar',
+    description: 'Gregorian, Jalali, and Hijri calendars with date, time, month, year, range, and inline modes inspired by PrimeReact.',
+    href: './calendar.html',
+    importPath: 'nova-react/calendar',
+  },
+  {
     id: 'chart',
     title: 'Chart',
     description: 'Beautiful Chart.js wrapper with themes, palettes, toolbar, sparkline, combo charts, RTL, and full customization.',
@@ -29,13 +36,6 @@ const demos = [
     description: 'Windows-style desktop surface with draggable items, marquee multi-select, Shift add, Alt remove, and Ctrl toggle.',
     href: './workspace.html',
     importPath: 'nova-react/workspace',
-  },
-  {
-    id: 'calendar',
-    title: 'Calendar',
-    description: 'Gregorian, Jalali, and Hijri calendars with date, time, month, year, range, and inline modes inspired by PrimeReact.',
-    href: './calendar.html',
-    importPath: 'nova-react/calendar',
   },
   {
     id: 'datatable',

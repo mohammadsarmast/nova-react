@@ -25,6 +25,7 @@ export default defineConfig(({ mode }) => ({
       'nova-react/datatable': resolve(root, 'src/datatable/index.js'),
       'nova-react/workspace': resolve(root, 'src/workspace/index.js'),
       'nova-react/calendar': resolve(root, 'src/calendar/index.js'),
+      'nova-react/calendar/styles.css': resolve(root, 'src/calendar/styles/calendar.css'),
     },
   },
   build: {
