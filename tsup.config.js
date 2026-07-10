@@ -49,4 +49,12 @@ export default defineConfig([
       copyFileSync('src/datatable/styles/datatable.css', 'dist/datatable/index.css');
     },
   },
+  {
+    ...shared,
+    entry: ['src/workspace/index.js'],
+    outDir: 'dist/workspace',
+    onSuccess() {
+      copyFileSync('src/workspace/styles/workspace.css', 'dist/workspace/index.css');
+    },
+  },
 ]);

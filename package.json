@@ -1,6 +1,6 @@
 {
   "name": "nova-react",
-  "version": "1.6.4",
+  "version": "1.7.0",
   "description": "A modular React UI component library — import only what you need.",
   "author": "Mohammad Sarmast <mohammadsarmast1379@gmail.com>",
   "license": "MIT",
@@ -25,7 +25,12 @@
       "import": "./dist/datatable/index.js",
       "require": "./dist/datatable/index.cjs"
     },
-    "./datatable/styles.css": "./dist/datatable/index.css"
+    "./datatable/styles.css": "./dist/datatable/index.css",
+    "./workspace": {
+      "import": "./dist/workspace/index.js",
+      "require": "./dist/workspace/index.cjs"
+    },
+    "./workspace/styles.css": "./dist/workspace/index.css"
   },
   "files": [
     "dist",
@@ -72,6 +77,10 @@
     "chart",
     "datatable",
     "data-table",
+    "workspace",
+    "desktop",
+    "selection",
+    "drag",
     "chartjs"
   ],
   "repository": {

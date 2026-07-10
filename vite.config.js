@@ -23,6 +23,7 @@ export default defineConfig(({ mode }) => ({
       'nova-react/button': resolve(root, 'src/button/index.js'),
       'nova-react/chart': resolve(root, 'src/chart/index.js'),
       'nova-react/datatable': resolve(root, 'src/datatable/index.js'),
+      'nova-react/workspace': resolve(root, 'src/workspace/index.js'),
     },
   },
   build: {
@@ -35,6 +36,7 @@ export default defineConfig(({ mode }) => ({
         button: resolve(demoRoot, 'button.html'),
         chart: resolve(demoRoot, 'chart.html'),
         datatable: resolve(demoRoot, 'datatable.html'),
+        workspace: resolve(demoRoot, 'workspace.html'),
       },
     },
   },

@@ -6,6 +6,7 @@ const navItems = [
   { id: 'button', label: 'Button', href: './button.html' },
   { id: 'chart', label: 'Chart', href: './chart.html' },
   { id: 'datatable', label: 'DataTable', href: './datatable.html' },
+  { id: 'workspace', label: 'Workspace', href: './workspace.html' },
 ];
 
 const layoutStyle = {

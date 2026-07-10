@@ -24,6 +24,13 @@ const demos = [
     importPath: 'nova-react/chart',
   },
   {
+    id: 'workspace',
+    title: 'Workspace',
+    description: 'Windows-style desktop surface with draggable items, marquee multi-select, Shift add, Alt remove, and Ctrl toggle.',
+    href: './workspace.html',
+    importPath: 'nova-react/workspace',
+  },
+  {
     id: 'datatable',
     title: 'DataTable',
     description: 'Full-featured data table with client/server pagination, sort, filter, selection, expansion, export, RTL, and lazy API mode.',
