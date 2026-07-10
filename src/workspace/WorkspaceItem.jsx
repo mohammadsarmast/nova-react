@@ -8,6 +8,7 @@ export function WorkspaceItem({
   y = 0,
   width = 108,
   height = 88,
+  data,
   className,
   style,
   disabled = false,
@@ -31,8 +32,15 @@ export function WorkspaceItem({
   const isDisabled = disabled || workspaceDisabled;
 
   useLayoutEffect(() => {
-    registerItem({ id, x: resolvedPosition.x, y: resolvedPosition.y, width, height });
-  }, [id, registerItem, resolvedPosition.x, resolvedPosition.y, width, height]);
+    registerItem({
+      id,
+      x: resolvedPosition.x,
+      y: resolvedPosition.y,
+      width,
+      height,
+      data,
+    });
+  }, [id, registerItem, resolvedPosition.x, resolvedPosition.y, width, height, data]);
 
   useEffect(() => () => unregisterItem(id), [id, unregisterItem]);
 

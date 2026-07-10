@@ -20,8 +20,8 @@ describe('Workspace', () => {
           }}
           height={300}
         >
-          <WorkspaceItem id="a" x={20} y={20}>A</WorkspaceItem>
-          <WorkspaceItem id="b" x={140} y={20}>B</WorkspaceItem>
+          <WorkspaceItem id="a" x={20} y={20} width={80} height={60} data={{ label: 'Alpha' }}>A</WorkspaceItem>
+          <WorkspaceItem id="b" x={140} y={20} width={80} height={60} data={{ label: 'Beta' }}>B</WorkspaceItem>
         </Workspace>
       );
     }
@@ -31,12 +31,32 @@ describe('Workspace', () => {
     fireEvent.pointerDown(screen.getByText('B'), { button: 0, shiftKey: true });
     fireEvent.pointerUp(document, { button: 0, shiftKey: true });
 
-    expect(handleSelectionChange).toHaveBeenCalledWith({ value: ['a', 'b'], selection: ['a', 'b'] });
+    expect(handleSelectionChange).toHaveBeenCalledWith({
+      value: ['a', 'b'],
+      selection: ['a', 'b'],
+      selectedItems: [
+        { id: 'a', x: 20, y: 20, width: 80, height: 60, data: { label: 'Alpha' } },
+        { id: 'b', x: 140, y: 20, width: 80, height: 60, data: { label: 'Beta' } },
+      ],
+      items: [
+        { id: 'a', x: 20, y: 20, width: 80, height: 60, data: { label: 'Alpha' } },
+        { id: 'b', x: 140, y: 20, width: 80, height: 60, data: { label: 'Beta' } },
+      ],
+    });
 
     fireEvent.pointerDown(screen.getByText('A'), { button: 0, altKey: true });
     fireEvent.pointerUp(document, { button: 0, altKey: true });
 
-    expect(handleSelectionChange).toHaveBeenLastCalledWith({ value: ['b'], selection: ['b'] });
+    expect(handleSelectionChange).toHaveBeenLastCalledWith({
+      value: ['b'],
+      selection: ['b'],
+      selectedItems: [
+        { id: 'b', x: 140, y: 20, width: 80, height: 60, data: { label: 'Beta' } },
+      ],
+      items: [
+        { id: 'b', x: 140, y: 20, width: 80, height: 60, data: { label: 'Beta' } },
+      ],
+    });
   });
 
   it('selects items using marquee drag on empty canvas', () => {
@@ -71,6 +91,9 @@ describe('Workspace', () => {
     const last = handleSelectionChange.mock.calls.at(-1)[0];
     expect(last.value).toContain('a');
     expect(last.value).not.toContain('b');
+    expect(last.selectedItems).toEqual([
+      { id: 'a', x: 30, y: 30, width: 80, height: 60, data: undefined },
+    ]);
   });
 
   it('keeps items locked by default and allows drag only after unlock', () => {

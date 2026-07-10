@@ -13,6 +13,7 @@ import {
   normalizeSelection,
 } from './utils/selection.js';
 import { clampPosition, normalizeRect } from './utils/geometry.js';
+import { resolveWorkspaceItems } from './utils/items.js';
 import './styles/workspace.css';
 
 const DRAG_THRESHOLD = 4;
@@ -52,8 +53,14 @@ export function Workspace({
 
   const emitSelection = useCallback((next) => {
     if (selectionProp == null) setSelectionState(next);
-    onSelectionChange?.({ value: next, selection: next });
-  }, [selectionProp, onSelectionChange]);
+    const selectedItems = resolveWorkspaceItems(next, itemsRef.current, positions);
+    onSelectionChange?.({
+      value: next,
+      selection: next,
+      selectedItems,
+      items: selectedItems,
+    });
+  }, [selectionProp, onSelectionChange, positions]);
 
   const emitLayoutLocked = useCallback((next) => {
     if (layoutLockedProp == null) setLayoutLockedState(next);
@@ -134,7 +141,14 @@ export function Workspace({
       }, { selectionMode });
 
       emitSelection(next);
-      onMarqueeSelect?.({ value: next, hitIds, rect });
+      const selectedItems = resolveWorkspaceItems(next, itemsRef.current, positions);
+      onMarqueeSelect?.({
+        value: next,
+        hitIds,
+        rect,
+        selectedItems,
+        items: selectedItems,
+      });
       endInteractions();
     };
 
@@ -216,10 +230,15 @@ export function Workspace({
           metaKey: upEvent.metaKey,
         }, { selectionMode });
         emitSelection(next);
+        const selectedItems = resolveWorkspaceItems(next, itemsRef.current, positions);
+        const itemDetails = resolveWorkspaceItems([itemId], itemsRef.current, positions)[0];
         onItemClick?.({
           id: itemId,
+          item: itemDetails,
           selected: next.includes(itemId),
           selection: next,
+          selectedItems,
+          items: selectedItems,
           originalEvent: upEvent,
         });
       }

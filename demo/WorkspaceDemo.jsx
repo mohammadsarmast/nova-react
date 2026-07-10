@@ -13,6 +13,7 @@ const initialItems = [
 export function WorkspaceDemo() {
   const [open, setOpen] = useState(true);
   const [selection, setSelection] = useState([]);
+  const [selectedItems, setSelectedItems] = useState([]);
 
   return (
     <div>
@@ -26,16 +27,29 @@ export function WorkspaceDemo() {
         open={open}
         onClose={() => setOpen(false)}
         title="Desktop Workspace"
-        footer={`Selected: ${selection.length ? selection.join(', ') : 'none'}`}
+        footer={selectedItems.length
+          ? selectedItems.map((item) => `${item.data?.label ?? item.id} (${item.x}, ${item.y})`).join(' | ')
+          : 'Selected: none'}
       >
         <Workspace
           selection={selection}
-          onSelectionChange={(event) => setSelection(event.value)}
+          onSelectionChange={(event) => {
+            setSelection(event.value);
+            setSelectedItems(event.selectedItems);
+          }}
           showLayoutLockButton
           height={460}
         >
           {initialItems.map((item) => (
-            <WorkspaceItem key={item.id} id={item.id} x={item.x} y={item.y} width={112} height={96}>
+            <WorkspaceItem
+              key={item.id}
+              id={item.id}
+              x={item.x}
+              y={item.y}
+              width={112}
+              height={96}
+              data={{ label: item.label, icon: item.icon }}
+            >
               <span style={{ fontSize: 30 }}>{item.icon}</span>
               <span style={{ fontSize: 13, fontWeight: 600 }}>{item.label}</span>
             </WorkspaceItem>
