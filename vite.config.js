@@ -24,6 +24,7 @@ export default defineConfig(({ mode }) => ({
       'nova-react/chart': resolve(root, 'src/chart/index.js'),
       'nova-react/datatable': resolve(root, 'src/datatable/index.js'),
       'nova-react/workspace': resolve(root, 'src/workspace/index.js'),
+      'nova-react/calendar': resolve(root, 'src/calendar/index.js'),
     },
   },
   build: {
@@ -37,6 +38,7 @@ export default defineConfig(({ mode }) => ({
         chart: resolve(demoRoot, 'chart.html'),
         datatable: resolve(demoRoot, 'datatable.html'),
         workspace: resolve(demoRoot, 'workspace.html'),
+        calendar: resolve(demoRoot, 'calendar.html'),
       },
     },
   },

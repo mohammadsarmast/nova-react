@@ -1,0 +1,345 @@
+/* NovaReact Calendar */
+
+.nr-calendar {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  width: min(100%, 320px);
+  font-family: inherit;
+}
+
+.nr-calendar--inline {
+  width: auto;
+  max-width: 100%;
+}
+
+.nr-calendar--rtl {
+  direction: rtl;
+}
+
+.nr-calendar--disabled {
+  opacity: 0.65;
+  pointer-events: none;
+}
+
+.nr-calendar__input-wrap {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+}
+
+.nr-calendar__input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: #fff;
+  color: #111827;
+  font: inherit;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 150ms ease, box-shadow 150ms ease;
+}
+
+.nr-calendar--with-icon .nr-calendar__input {
+  padding-inline-end: 42px;
+}
+
+.nr-calendar__input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgb(59 130 246 / 0.15);
+}
+
+.nr-calendar__icon-btn {
+  position: absolute;
+  top: 50%;
+  inset-inline-end: 6px;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.nr-calendar__icon-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.nr-calendar__overlay {
+  position: absolute;
+  top: calc(100% + 8px);
+  inset-inline-start: 0;
+  z-index: 30;
+}
+
+.nr-calendar-panel {
+  min-width: 280px;
+  border: 1px solid #dbe3f0;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 18px 40px -20px rgb(15 23 42 / 0.35);
+  overflow: hidden;
+}
+
+.nr-calendar--inline .nr-calendar-panel {
+  box-shadow: none;
+  border: 1px solid #dbe3f0;
+}
+
+.nr-calendar-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px 14px;
+  border-bottom: 1px solid #e5e7eb;
+  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+}
+
+.nr-calendar-panel__title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  justify-content: center;
+}
+
+.nr-calendar-panel__title,
+.nr-calendar-panel__title-btn {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.nr-calendar-panel__title-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+
+.nr-calendar-panel__title-btn:hover {
+  background: #e2e8f0;
+}
+
+.nr-calendar-panel__nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #fff;
+  color: #374151;
+  cursor: pointer;
+}
+
+.nr-calendar-panel__nav svg {
+  width: 18px;
+  height: 18px;
+}
+
+.nr-calendar-panel__body {
+  padding: 12px;
+}
+
+.nr-calendar-panel__months {
+  display: grid;
+  gap: 12px;
+}
+
+.nr-calendar-panel__months--multi {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.nr-calendar-panel__month-title {
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #475569;
+  text-align: center;
+}
+
+.nr-calendar-panel__footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  border-top: 1px solid #e5e7eb;
+  background: #f8fafc;
+}
+
+.nr-calendar-panel__footer-btn {
+  border: none;
+  background: transparent;
+  color: #2563eb;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.nr-calendar__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.nr-calendar__weekday,
+.nr-calendar__week-header,
+.nr-calendar__week-number {
+  padding: 6px 0;
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+  text-align: center;
+}
+
+.nr-calendar__day-cell {
+  padding: 2px;
+  text-align: center;
+}
+
+.nr-calendar__day {
+  width: 34px;
+  height: 34px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: #1f2937;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.nr-calendar__day:hover {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+.nr-calendar__day--today {
+  border-color: #93c5fd;
+  color: #1d4ed8;
+  font-weight: 700;
+}
+
+.nr-calendar__day--selected,
+.nr-calendar__day--range-edge {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+
+.nr-calendar__day--disabled {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+.nr-calendar__day--empty {
+  border: none;
+}
+
+.nr-calendar__month-grid,
+.nr-calendar__year-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.nr-calendar__month,
+.nr-calendar__year {
+  padding: 12px 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #fff;
+  color: #1f2937;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.nr-calendar__month:hover,
+.nr-calendar__year:hover {
+  border-color: #93c5fd;
+  background: #eff6ff;
+}
+
+.nr-calendar__month--selected,
+.nr-calendar__year--selected {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+
+.nr-calendar__time {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding-top: 8px;
+  border-top: 1px solid #e5e7eb;
+  margin-top: 8px;
+}
+
+.nr-calendar__time-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.nr-calendar__time-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.nr-calendar__time-btn {
+  width: 28px;
+  height: 24px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #fff;
+  color: #374151;
+  cursor: pointer;
+  font-size: 10px;
+}
+
+.nr-calendar__time-value {
+  min-width: 36px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+}
+
+.nr-calendar__ampm {
+  align-self: flex-end;
+  padding: 8px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #fff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nr-calendar__input,
+  .nr-calendar__day,
+  .nr-calendar__month,
+  .nr-calendar__year {
+    transition: none;
+  }
+}

@@ -57,4 +57,12 @@ export default defineConfig([
       copyFileSync('src/workspace/styles/workspace.css', 'dist/workspace/index.css');
     },
   },
+  {
+    ...shared,
+    entry: ['src/calendar/index.js'],
+    outDir: 'dist/calendar',
+    onSuccess() {
+      copyFileSync('src/calendar/styles/calendar.css', 'dist/calendar/index.css');
+    },
+  },
 ]);

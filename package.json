@@ -1,6 +1,6 @@
 {
   "name": "nova-react",
-  "version": "1.7.3",
+  "version": "1.8.0",
   "description": "A modular React UI component library — import only what you need.",
   "author": "Mohammad Sarmast <mohammadsarmast1379@gmail.com>",
   "license": "MIT",
@@ -30,7 +30,12 @@
       "import": "./dist/workspace/index.js",
       "require": "./dist/workspace/index.cjs"
     },
-    "./workspace/styles.css": "./dist/workspace/index.css"
+    "./workspace/styles.css": "./dist/workspace/index.css",
+    "./calendar": {
+      "import": "./dist/calendar/index.js",
+      "require": "./dist/calendar/index.cjs"
+    },
+    "./calendar/styles.css": "./dist/calendar/index.css"
   },
   "files": [
     "dist",
@@ -81,6 +86,11 @@
     "desktop",
     "selection",
     "drag",
+    "calendar",
+    "datepicker",
+    "jalali",
+    "hijri",
+    "persian",
     "chartjs"
   ],
   "repository": {

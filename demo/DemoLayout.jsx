@@ -7,6 +7,7 @@ const navItems = [
   { id: 'chart', label: 'Chart', href: './chart.html' },
   { id: 'datatable', label: 'DataTable', href: './datatable.html' },
   { id: 'workspace', label: 'Workspace', href: './workspace.html' },
+  { id: 'calendar', label: 'Calendar', href: './calendar.html' },
 ];
 
 const layoutStyle = {

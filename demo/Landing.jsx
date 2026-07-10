@@ -31,6 +31,13 @@ const demos = [
     importPath: 'nova-react/workspace',
   },
   {
+    id: 'calendar',
+    title: 'Calendar',
+    description: 'Gregorian, Jalali, and Hijri calendars with date, time, month, year, range, and inline modes inspired by PrimeReact.',
+    href: './calendar.html',
+    importPath: 'nova-react/calendar',
+  },
+  {
     id: 'datatable',
     title: 'DataTable',
     description: 'Full-featured data table with client/server pagination, sort, filter, selection, expansion, export, RTL, and lazy API mode.',
