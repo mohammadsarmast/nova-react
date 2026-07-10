@@ -22,7 +22,7 @@ import {
 } from './utils/calendarDate.js';
 import { formatCalendarValue } from './utils/format.js';
 import { getLocaleConfig, resolveLocale } from './utils/locale.js';
-import { resolveCalendarMode, resolvePanelView } from './utils/mode.js';
+import { resolveCalendarMode, resolvePanelView, getDefaultDateFormat } from './utils/mode.js';
 import './styles/calendar.css';
 
 function applyDaySelection(date, value, selectionMode) {
@@ -117,7 +117,7 @@ export function Calendar({
   const [draftValue, setDraftValue] = useState(normalizedValue);
 
   const displayValue = open ? draftValue : normalizedValue;
-  const effectiveDateFormat = dateFormat ?? (resolvedMode === 'year' ? 'yy' : resolvedMode === 'month' ? 'mm/yy' : 'mm/dd/yy');
+  const effectiveDateFormat = dateFormat ?? getDefaultDateFormat(resolvedMode);
 
   const formattedValue = formatCalendarValue(displayValue, {
     selectionMode,
@@ -311,6 +311,7 @@ export function Calendar({
           value={formattedValue}
           placeholder={placeholder ?? localeConfig.placeholder}
           readOnly={readOnlyInput}
+          onChange={() => {}}
           disabled={disabled}
           autoComplete="off"
           aria-haspopup="dialog"

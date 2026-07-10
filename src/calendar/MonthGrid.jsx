@@ -17,7 +17,7 @@ export function MonthGrid({
 
   return (
     <div className="nr-calendar__month-grid" role="grid">
-      {localeConfig.monthNamesShort.map((label, index) => {
+      {localeConfig.monthNames.map((label, index) => {
         const month = index + 1;
         const selected = selectedParts?.year === viewYear && selectedParts?.month === month;
 

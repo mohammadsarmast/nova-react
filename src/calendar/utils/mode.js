@@ -21,9 +21,15 @@ export function resolvePanelView(mode, panelView) {
 }
 
 export function shouldShowDateSection(mode) {
-  return mode === 'date' || mode === 'datetime';
+  return mode === 'date' || mode === 'datetime' || mode === 'month' || mode === 'year';
 }
 
 export function shouldShowTimeSection(mode) {
   return mode === 'time' || mode === 'datetime';
+}
+
+export function getDefaultDateFormat(mode) {
+  if (mode === 'year') return 'yyyy';
+  if (mode === 'month') return 'mm/yyyy';
+  return 'mm/dd/yyyy';
 }

@@ -257,7 +257,7 @@
 
 .nr-calendar__month,
 .nr-calendar__year {
-  padding: 12px 8px;
+  padding: 12px 6px;
   border: 1px solid #e2e8f0;
   border-radius: 10px;
   background: #fff;
@@ -266,6 +266,9 @@
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .nr-calendar__month:hover,

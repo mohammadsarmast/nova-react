@@ -75,13 +75,18 @@ export function DateGrid({
     weeks.push(cells.slice(i, i + 7));
   }
 
+  const orderedDayNames = Array.from({ length: 7 }, (_, index) => {
+    const weekdayIndex = (localeConfig.firstDayOfWeek + index) % 7;
+    return { key: weekdayIndex, label: localeConfig.dayNamesMin[weekdayIndex] };
+  });
+
   return (
     <table className="nr-calendar__table" role="grid">
       <thead>
         <tr>
           {showWeek ? <th className="nr-calendar__week-header">{localeConfig.weekHeader}</th> : null}
-          {localeConfig.dayNamesMin.map((day) => (
-            <th key={day} scope="col" className="nr-calendar__weekday">{day}</th>
+          {orderedDayNames.map((day) => (
+            <th key={day.key} scope="col" className="nr-calendar__weekday">{day.label}</th>
           ))}
         </tr>
       </thead>

@@ -47,9 +47,12 @@ export function CalendarPanel({
   const showTime = shouldShowTimeSection(mode);
 
   const titleMonth = localeConfig.monthNames[viewMonth - 1];
+  const decadeStart = Math.floor(viewYear / 10) * 10;
   const title = currentView === 'year'
-    ? `${formatLocaleText(viewYear - 5, locale)} - ${formatLocaleText(viewYear + 6, locale)}`
-    : `${formatLocaleText(titleMonth, locale)} ${formatLocaleText(viewYear, locale)}`;
+    ? `${formatLocaleText(decadeStart - 1, locale)} - ${formatLocaleText(decadeStart + 10, locale)}`
+    : currentView === 'month'
+      ? `${formatLocaleText(viewYear, locale)}`
+      : `${formatLocaleText(titleMonth, locale)} ${formatLocaleText(viewYear, locale)}`;
 
   const navigateMonth = (offset) => {
     const next = getAdjacentMonth(viewYear, viewMonth, offset, calendarSystem);

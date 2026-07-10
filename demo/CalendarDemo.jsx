@@ -1,5 +1,17 @@
-import React, { useState } from 'react';
-import { Calendar } from 'nova-react/calendar';
+import React, { useEffect, useState } from 'react';
+import { Calendar, formatCalendarValue, getLocaleConfig } from 'nova-react/calendar';
+
+function logCalendarOutput(label, value, system, locale) {
+  const formatted = formatCalendarValue(value, {
+    selectionMode: 'single',
+    dateFormat: 'dd/mm/yyyy',
+    mode: 'date',
+    calendarSystem: system,
+    locale,
+    localeConfig: getLocaleConfig(locale),
+  });
+  console.log(`[Calendar] ${label} (${system}/${locale}) =>`, formatted, value);
+}
 
 const sectionStyle = {
   display: 'grid',
@@ -45,6 +57,12 @@ export function CalendarDemo() {
   const [range, setRange] = useState([]);
   const [inlineDate, setInlineDate] = useState(new Date());
 
+  useEffect(() => {
+    logCalendarOutput('Gregorian', gregorianDate, 'gregorian', 'en');
+    logCalendarOutput('Jalali', jalaliDate, 'jalali', 'fa');
+    logCalendarOutput('Hijri', hijriDate, 'hijri', 'ar');
+  }, [gregorianDate, jalaliDate, hijriDate]);
+
   return (
     <div style={{ display: 'grid', gap: 20 }}>
       <p style={{ marginTop: 0, color: '#6b7280', fontSize: 14, lineHeight: 1.7 }}>
@@ -61,7 +79,7 @@ export function CalendarDemo() {
             locale="en"
             showIcon
             showButtonBar
-            dateFormat="dd/mm/yy"
+            dateFormat="dd/mm/yyyy"
           />
         </DemoBlock>
 
@@ -74,7 +92,7 @@ export function CalendarDemo() {
             rtl
             showIcon
             showButtonBar
-            dateFormat="dd/mm/yy"
+            dateFormat="dd/mm/yyyy"
           />
         </DemoBlock>
 
@@ -87,7 +105,7 @@ export function CalendarDemo() {
             rtl
             showIcon
             showButtonBar
-            dateFormat="dd/mm/yy"
+            dateFormat="dd/mm/yyyy"
           />
         </DemoBlock>
 
@@ -101,7 +119,7 @@ export function CalendarDemo() {
             showIcon
             showButtonBar
             hourFormat="24"
-            dateFormat="dd/mm/yy"
+            dateFormat="dd/mm/yyyy"
           />
         </DemoBlock>
 
@@ -125,7 +143,6 @@ export function CalendarDemo() {
             locale="fa"
             rtl
             showIcon
-            dateFormat="mm/yy"
           />
         </DemoBlock>
 
@@ -137,7 +154,6 @@ export function CalendarDemo() {
             calendarSystem="gregorian"
             locale="en"
             showIcon
-            dateFormat="yy"
           />
         </DemoBlock>
 
