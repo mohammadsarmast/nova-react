@@ -10,46 +10,57 @@ function rect(left, right) {
 }
 
 describe('resolveHorizontalPlacement', () => {
-  it('prefers forward when space is available', () => {
+  it('prefers forward in LTR when space is available to the right', () => {
     expect(
       resolveHorizontalPlacement({
         anchorRect: rect(100, 200),
         overlayWidth: 150,
         viewportWidth: 400,
-        preferForward: true,
+        rtl: false,
       })
     ).toBe('forward');
   });
 
-  it('flips backward when forward does not fit but backward does', () => {
+  it('flips backward in LTR when sublist would overflow right edge', () => {
     expect(
       resolveHorizontalPlacement({
         anchorRect: rect(300, 380),
         overlayWidth: 180,
         viewportWidth: 400,
-        preferForward: true,
+        rtl: false,
       })
     ).toBe('backward');
   });
 
-  it('picks side with more space when neither fits', () => {
+  it('picks side with more space in LTR when neither fits', () => {
     expect(
       resolveHorizontalPlacement({
         anchorRect: rect(250, 320),
         overlayWidth: 300,
         viewportWidth: 400,
-        preferForward: true,
+        rtl: false,
       })
     ).toBe('backward');
   });
 
-  it('prefers backward in RTL mode when space allows', () => {
+  it('prefers forward in RTL when sublist fits to the left', () => {
     expect(
       resolveHorizontalPlacement({
         anchorRect: rect(220, 280),
         overlayWidth: 150,
         viewportWidth: 400,
-        preferForward: false,
+        rtl: true,
+      })
+    ).toBe('forward');
+  });
+
+  it('flips backward in RTL when sublist would overflow left edge', () => {
+    expect(
+      resolveHorizontalPlacement({
+        anchorRect: rect(10, 100),
+        overlayWidth: 180,
+        viewportWidth: 400,
+        rtl: true,
       })
     ).toBe('backward');
   });
@@ -73,6 +84,15 @@ describe('resolveSublistPlacement', () => {
 
     expect(resolveSublistPlacement(rect(300, 380), 180, false)).toBe('backward');
   });
+
+  it('returns backward in RTL when sublist would overflow left edge', () => {
+    Object.defineProperty(document.documentElement, 'clientWidth', {
+      configurable: true,
+      value: 400,
+    });
+
+    expect(resolveSublistPlacement(rect(10, 100), 180, true)).toBe('backward');
+  });
 });
 
 describe('resolvePanelPlacement', () => {
@@ -83,5 +103,14 @@ describe('resolvePanelPlacement', () => {
     });
 
     expect(resolvePanelPlacement(rect(300, 400), 200, false)).toBe('backward');
+  });
+
+  it('aligns panel to end when it would overflow viewport in RTL', () => {
+    Object.defineProperty(document.documentElement, 'clientWidth', {
+      configurable: true,
+      value: 400,
+    });
+
+    expect(resolvePanelPlacement(rect(10, 180), 200, true)).toBe('backward');
   });
 });

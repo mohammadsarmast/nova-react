@@ -6,35 +6,47 @@ export function getViewportWidth() {
   return document.documentElement.clientWidth;
 }
 
+function getPlacementSpaces(anchorRect, viewportWidth, rtl, variant) {
+  const spaceBefore = anchorRect.left;
+  const spaceAfter = viewportWidth - anchorRect.right;
+
+  if (variant === 'panel') {
+    return {
+      forwardSpace: rtl ? anchorRect.right : viewportWidth - anchorRect.left,
+      backwardSpace: rtl ? viewportWidth - anchorRect.left : anchorRect.right,
+    };
+  }
+
+  return {
+    forwardSpace: rtl ? spaceBefore : spaceAfter,
+    backwardSpace: rtl ? spaceAfter : spaceBefore,
+  };
+}
+
 export function resolveHorizontalPlacement({
   anchorRect,
   overlayWidth,
   viewportWidth,
   margin = DEFAULT_MARGIN,
-  preferForward = true,
+  rtl = false,
+  variant = 'sublist',
 }) {
-  const spaceAfter = viewportWidth - anchorRect.right;
-  const spaceBefore = anchorRect.left;
+  const { forwardSpace, backwardSpace } = getPlacementSpaces(
+    anchorRect,
+    viewportWidth,
+    rtl,
+    variant
+  );
 
-  if (preferForward) {
-    const fitsForward = overlayWidth + margin <= spaceAfter;
-    const fitsBackward = overlayWidth + margin <= spaceBefore;
+  const fitsForward = overlayWidth + margin <= forwardSpace;
+  const fitsBackward = overlayWidth + margin <= backwardSpace;
 
-    if (!fitsForward && fitsBackward) return 'backward';
-    if (!fitsForward && !fitsBackward) {
-      return spaceBefore > spaceAfter ? 'backward' : 'forward';
-    }
-    return 'forward';
+  if (!fitsForward && fitsBackward) return 'backward';
+  if (fitsForward && !fitsBackward) return 'forward';
+  if (!fitsForward && !fitsBackward) {
+    return backwardSpace > forwardSpace ? 'backward' : 'forward';
   }
-
-  const fitsBackward = overlayWidth + margin <= spaceBefore;
-  const fitsForward = overlayWidth + margin <= spaceAfter;
-
-  if (!fitsBackward && fitsForward) return 'forward';
-  if (!fitsBackward && !fitsForward) {
-    return spaceAfter > spaceBefore ? 'forward' : 'backward';
-  }
-  return 'backward';
+  return 'forward';
 }
 
 export function resolveSublistPlacement(
@@ -51,7 +63,8 @@ export function resolveSublistPlacement(
     overlayWidth,
     viewportWidth,
     margin,
-    preferForward: !rtl,
+    rtl,
+    variant: 'sublist',
   });
 }
 
@@ -69,6 +82,7 @@ export function resolvePanelPlacement(
     overlayWidth,
     viewportWidth,
     margin,
-    preferForward: !rtl,
+    rtl,
+    variant: 'panel',
   });
 }

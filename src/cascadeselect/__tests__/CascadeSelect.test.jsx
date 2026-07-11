@@ -222,4 +222,35 @@ describe('CascadeSelect', () => {
       expect(document.querySelector('.nr-cs__sublist')).toHaveClass('nr-cs__sublist--backward');
     });
   });
+
+  it('flips nested sublist to backward in RTL when it would overflow left edge', async () => {
+    const user = userEvent.setup();
+    Object.defineProperty(document.documentElement, 'clientWidth', {
+      configurable: true,
+      value: 400,
+    });
+
+    const { placeholder, ...propsWithoutPlaceholder } = commonProps;
+    render(<CascadeSelect {...propsWithoutPlaceholder} locale="fa" />);
+    await user.click(screen.getByRole('combobox'));
+
+    const groupItem = screen.getByRole('menuitem', { name: /Iran/i });
+    groupItem.getBoundingClientRect = () => ({
+      left: 10,
+      right: 90,
+      top: 0,
+      bottom: 36,
+      width: 80,
+      height: 36,
+      x: 10,
+      y: 0,
+      toJSON: () => ({}),
+    });
+
+    await user.hover(groupItem);
+
+    await waitFor(() => {
+      expect(document.querySelector('.nr-cs__sublist')).toHaveClass('nr-cs__sublist--backward');
+    });
+  });
 });
