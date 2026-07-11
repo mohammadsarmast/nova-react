@@ -7,6 +7,7 @@ import React, {
   useState,
 } from 'react';
 import { useClickOutside } from './hooks/useClickOutside.js';
+import { useBreakpoint } from './hooks/useBreakpoint.js';
 import { cn } from './utils/cn.js';
 import {
   findSelectedLabel,
@@ -59,7 +60,7 @@ function CascadeSublist({
   focusReq,
   setFocusReq,
 }) {
-  const { optionLabel, optionGroupLabel, optionGroupChildren, optionValue, itemTemplate, rtl } = config;
+  const { optionLabel, optionGroupLabel, optionGroupChildren, optionValue, itemTemplate, rtl, isMobile } = config;
   const itemRefs = useRef([]);
   const forwardKey = rtl ? 'ArrowLeft' : 'ArrowRight';
   const backKey = rtl ? 'ArrowRight' : 'ArrowLeft';
@@ -144,7 +145,7 @@ function CascadeSublist({
                 disabled && 'nr-cs__option--disabled'
               )}
               onMouseEnter={() => {
-                if (disabled) return;
+                if (disabled || isMobile) return;
                 if (group) onOpen(level, option);
                 else onOpen(level, null);
               }}
@@ -160,7 +161,7 @@ function CascadeSublist({
               </span>
               {group ? (
                 <span className="nr-cs__option-arrow" aria-hidden="true">
-                  <ChevronRightIcon />
+                  {isMobile ? <ChevronDownIcon /> : <ChevronRightIcon />}
                 </span>
               ) : null}
             </button>
@@ -214,6 +215,8 @@ export function CascadeSelect(props) {
     style,
     panelClassName,
     panelStyle,
+    breakpoint = '767px',
+    scrollHeight = '300px',
     'aria-label': ariaLabel,
     'aria-labelledby': ariaLabelledby,
   } = props;
@@ -232,9 +235,13 @@ export function CascadeSelect(props) {
   const [focusReq, setFocusReq] = useState(null);
 
   const isDark = theme === 'dark';
+  const isMobile = useBreakpoint(breakpoint);
   const themeVars = useMemo(
-    () => cascadeSelectColorsToCssVars(resolveCascadeSelectThemeColors(theme, colors)),
-    [theme, colors]
+    () => ({
+      ...cascadeSelectColorsToCssVars(resolveCascadeSelectThemeColors(theme, colors)),
+      ...(scrollHeight ? { '--nr-cs-scroll-height': scrollHeight } : {}),
+    }),
+    [theme, colors, scrollHeight]
   );
 
   const config = useMemo(
@@ -245,8 +252,9 @@ export function CascadeSelect(props) {
       optionValue,
       itemTemplate,
       rtl,
+      isMobile,
     }),
-    [optionLabel, optionGroupLabel, optionGroupChildren, optionValue, itemTemplate, rtl]
+    [optionLabel, optionGroupLabel, optionGroupChildren, optionValue, itemTemplate, rtl, isMobile]
   );
 
   const selectedLabel = useMemo(
@@ -266,8 +274,15 @@ export function CascadeSelect(props) {
     if (disabled) return;
     setOpen(true);
     setOpenPath([]);
-    setFocusReq({ level: 0, option: options[0] });
+    const firstOption = options[0];
+    if (firstOption) setFocusReq({ level: 0, option: firstOption });
   }, [disabled, options]);
+
+  useEffect(() => {
+    if (!open) return;
+    setOpenPath([]);
+    setFocusReq(options[0] ? { level: 0, option: options[0] } : null);
+  }, [isMobile]);
 
   const handleSelect = useCallback(
     (option) => {
@@ -312,11 +327,10 @@ export function CascadeSelect(props) {
   };
 
   useEffect(() => {
-    if (!open) return undefined;
-    const onScroll = () => {};
-    window.addEventListener('resize', onScroll);
-    return () => window.removeEventListener('resize', onScroll);
-  }, [open]);
+    if (!open) return;
+    setOpenPath([]);
+    setFocusReq(options[0] ? { level: 0, option: options[0] } : null);
+  }, [isMobile]);
 
   const hasValue = value != null && value !== '';
   const displayLabel = hasValue
@@ -357,6 +371,7 @@ export function CascadeSelect(props) {
         'nr-cs',
         rtl && 'nr-cs--rtl',
         isDark && 'nr-cs--dark',
+        isMobile && 'nr-cs--mobile',
         disabled && 'nr-cs--disabled',
         invalid && 'nr-cs--invalid',
         open && 'nr-cs--open',

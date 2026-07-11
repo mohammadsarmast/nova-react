@@ -294,6 +294,14 @@ Use `optionGroupChildren` to define the hierarchy. Order matters — it must mat
 <CascadeSelect theme="dark" colors={{ primary: '#ec4899', hover: '#fdf2f8' }} />
 ```
 
+### Responsive
+
+Use `breakpoint` (default `767px`) so nested panels stack vertically on small screens, matching [PrimeReact CascadeSelect](https://v9.primereact.org/cascadeselect/):
+
+```jsx
+<CascadeSelect breakpoint="767px" scrollHeight="300px" style={{ width: '100%' }} />
+```
+
 All components inherit the parent `font-family`. Theme tokens can be resolved with `resolveCascadeSelectThemeColors` and `cascadeSelectColorsToCssVars`.
 
 ---

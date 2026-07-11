@@ -247,6 +247,29 @@ export function CascadeSelectDemo() {
             placeholder="Pink theme"
           />
         </DemoBlock>
+
+        <DemoBlock
+          title="Responsive (breakpoint)"
+          hint="Below 767px submenus stack vertically instead of opening to the side — like PrimeReact."
+          styles={styles}
+        >
+          <div style={{ maxWidth: 320, width: '100%' }}>
+            <CascadeSelect
+              value={city}
+              onChange={(e) => setCity(e.value)}
+              options={countries}
+              optionLabel="cname"
+              optionGroupLabel="name"
+              optionGroupChildren={['states', 'cities']}
+              optionValue="code"
+              theme={theme}
+              breakpoint="767px"
+              scrollHeight="280px"
+              placeholder="Resize window to test"
+              style={{ width: '100%' }}
+            />
+          </div>
+        </DemoBlock>
       </div>
     </div>
   );
