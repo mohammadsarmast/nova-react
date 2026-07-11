@@ -10,6 +10,13 @@ const demos = [
     importPath: 'nova-react/autocomplete',
   },
   {
+    id: 'cascadeselect',
+    title: 'CascadeSelect',
+    description: 'Nested cascade picker with keyboard navigation, float label, custom templates, dark mode, and RTL — inspired by PrimeReact.',
+    href: './cascadeselect.html',
+    importPath: 'nova-react/cascadeselect',
+  },
+  {
     id: 'button',
     title: 'Button',
     description: 'Variants, severities, loading, badges, groups, toggle, split button, tooltip, custom color, and RTL.',

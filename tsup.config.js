@@ -65,4 +65,12 @@ export default defineConfig([
       copyFileSync('src/calendar/styles/calendar.css', 'dist/calendar/index.css');
     },
   },
+  {
+    ...shared,
+    entry: ['src/cascadeselect/index.js'],
+    outDir: 'dist/cascadeselect',
+    onSuccess() {
+      copyFileSync('src/cascadeselect/styles/cascadeselect.css', 'dist/cascadeselect/index.css');
+    },
+  },
 ]);

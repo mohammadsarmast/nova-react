@@ -3,6 +3,7 @@ import React from 'react';
 const navItems = [
   { id: 'home', label: 'Home', href: './' },
   { id: 'autocomplete', label: 'AutoComplete', href: './autocomplete.html' },
+  { id: 'cascadeselect', label: 'CascadeSelect', href: './cascadeselect.html' },
   { id: 'button', label: 'Button', href: './button.html' },
   { id: 'calendar', label: 'Calendar', href: './calendar.html' },
   { id: 'chart', label: 'Chart', href: './chart.html' },

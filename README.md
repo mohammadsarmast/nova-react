@@ -13,6 +13,7 @@ Try each component online on GitHub Pages:
 | Component | Live Demo |
 |-----------|-----------|
 | **AutoComplete** | [Open Demo](https://mohammadsarmast.github.io/nova-react/autocomplete.html) |
+| **CascadeSelect** | [Open Demo](https://mohammadsarmast.github.io/nova-react/cascadeselect.html) |
 | **Button** | [Open Demo](https://mohammadsarmast.github.io/nova-react/button.html) |
 | **Calendar** | [Open Demo](https://mohammadsarmast.github.io/nova-react/calendar.html) |
 | **Chart** | [Open Demo](https://mohammadsarmast.github.io/nova-react/chart.html) |
@@ -26,6 +27,7 @@ Try each component online on GitHub Pages:
 | Component | Import | Documentation |
 |-----------|--------|---------------|
 | **AutoComplete** | `nova-react/autocomplete` | [📖 Docs](./docs/autocomplete.md) |
+| **CascadeSelect** | `nova-react/cascadeselect` | [📖 Docs](#cascadeselect) |
 | **Button** | `nova-react/button` | [📖 Docs](./docs/button.md) |
 | **Calendar** | `nova-react/calendar` | [📖 Docs](#calendar) |
 | **Chart** | `nova-react/chart` | [📖 Docs](./docs/chart.md) |
@@ -217,6 +219,82 @@ function App() {
 <AutoComplete options={[{ name: 'Iran' }, { name: 'Germany', disabled: true }]} field="name" />
 <AutoComplete allowCustomValue options={tags} placeholder="Type a new tag..." />
 ```
+
+---
+
+## CascadeSelect
+
+A [PrimeReact-inspired](https://v9.primereact.org/cascadeselect/) cascade picker for selecting a value from a nested option hierarchy (e.g. Country → State → City).
+
+```jsx
+import { useState } from 'react';
+import { CascadeSelect } from 'nova-react/cascadeselect';
+import 'nova-react/cascadeselect/styles.css';
+
+const countries = [
+  {
+    name: 'USA',
+    states: [
+      {
+        name: 'California',
+        cities: [
+          { cname: 'Los Angeles', code: 'LA' },
+          { cname: 'San Francisco', code: 'SF' },
+        ],
+      },
+    ],
+  },
+];
+
+function App() {
+  const [city, setCity] = useState(null);
+
+  return (
+    <CascadeSelect
+      value={city}
+      onChange={(e) => setCity(e.value)}
+      options={countries}
+      optionLabel="cname"
+      optionGroupLabel="name"
+      optionGroupChildren={['states', 'cities']}
+      optionValue="code"
+      placeholder="Select a City"
+    />
+  );
+}
+```
+
+### Nested options
+
+Use `optionGroupChildren` to define the hierarchy. Order matters — it must match your data structure:
+
+```jsx
+<CascadeSelect
+  options={countries}
+  optionLabel="cname"           // label for leaf options
+  optionGroupLabel="name"       // label for group headers
+  optionGroupChildren={['states', 'cities']}
+  optionValue="code"
+/>
+```
+
+### Templates, float label & validation
+
+```jsx
+<CascadeSelect itemTemplate={(option, { group }) => group ? `🌍 ${option.name}` : `📍 ${option.cname}`} />
+<CascadeSelect floatLabel label="City" />
+<CascadeSelect invalid />
+<CascadeSelect disabled />
+```
+
+### Dark mode & custom colors
+
+```jsx
+<CascadeSelect theme="dark" />
+<CascadeSelect theme="dark" colors={{ primary: '#ec4899', hover: '#fdf2f8' }} />
+```
+
+All components inherit the parent `font-family`. Theme tokens can be resolved with `resolveCascadeSelectThemeColors` and `cascadeSelectColorsToCssVars`.
 
 ---
 

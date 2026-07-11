@@ -35,7 +35,12 @@
       "import": "./dist/calendar/index.js",
       "require": "./dist/calendar/index.cjs"
     },
-    "./calendar/styles.css": "./dist/calendar/index.css"
+    "./calendar/styles.css": "./dist/calendar/index.css",
+    "./cascadeselect": {
+      "import": "./dist/cascadeselect/index.js",
+      "require": "./dist/cascadeselect/index.cjs"
+    },
+    "./cascadeselect/styles.css": "./dist/cascadeselect/index.css"
   },
   "files": [
     "dist",
@@ -91,7 +96,10 @@
     "jalali",
     "hijri",
     "persian",
-    "chartjs"
+    "chartjs",
+    "cascadeselect",
+    "cascade",
+    "dropdown"
   ],
   "repository": {
     "type": "git",
