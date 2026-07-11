@@ -65,6 +65,40 @@ const countries = [
   },
 ];
 
+const persianCountries = [
+  {
+    name: 'ایران',
+    states: [
+      {
+        name: 'تهران',
+        cities: [
+          { cname: 'تهران', code: 'THR' },
+          { cname: 'ری', code: 'REY' },
+        ],
+      },
+      {
+        name: 'فارس',
+        cities: [
+          { cname: 'شیراز', code: 'SHZ' },
+          { cname: 'مرودشت', code: 'MRV' },
+        ],
+      },
+    ],
+  },
+  {
+    name: 'آلمان',
+    states: [
+      {
+        name: 'بایرن',
+        cities: [
+          { cname: 'مونیخ', code: 'MUC' },
+          { cname: 'نورنبرگ', code: 'NUE' },
+        ],
+      },
+    ],
+  },
+];
+
 function getStyles(isDark) {
   return {
     section: {
@@ -121,6 +155,7 @@ export function CascadeSelectDemo() {
   const [city, setCity] = useState(null);
   const [floatCity, setFloatCity] = useState(null);
   const [templateCity, setTemplateCity] = useState(null);
+  const [persianCity, setPersianCity] = useState(null);
   const [theme, setTheme] = useState('light');
 
   const isDark = theme === 'dark';
@@ -245,6 +280,26 @@ export function CascadeSelectDemo() {
             theme={theme}
             colors={{ primary: '#ec4899', primaryHover: '#db2777', hover: '#fdf2f8' }}
             placeholder="Pink theme"
+          />
+        </DemoBlock>
+
+        <DemoBlock
+          title="Persian (fa)"
+          hint="locale='fa' enables RTL and Persian placeholder automatically."
+          styles={styles}
+        >
+          <CascadeSelect
+            value={persianCity}
+            onChange={(e) => setPersianCity(e.value)}
+            options={persianCountries}
+            optionLabel="cname"
+            optionGroupLabel="name"
+            optionGroupChildren={['states', 'cities']}
+            optionValue="code"
+            theme={theme}
+            locale="fa"
+            floatLabel
+            label="شهر"
           />
         </DemoBlock>
 

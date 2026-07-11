@@ -37,11 +37,20 @@ function DemoBlock({ title, hint, children, isDark }) {
 
 export function ToastDemo() {
   const toastRef = useRef(null);
+  const toastFaRef = useRef(null);
   const toastTLRef = useRef(null);
   const toastBLRef = useRef(null);
   const toastBCRef = useRef(null);
   const [theme, setTheme] = useState('light');
   const isDark = theme === 'dark';
+
+  const showPersian = () => {
+    toastFaRef.current?.show({
+      severity: 'success',
+      summary: 'موفقیت',
+      detail: 'عملیات با موفقیت انجام شد.',
+    });
+  };
 
   const showBasic = () => {
     toastRef.current?.show({
@@ -132,6 +141,7 @@ export function ToastDemo() {
       </div>
 
       <Toast ref={toastRef} theme={theme} position="top-right" />
+      <Toast ref={toastFaRef} theme={theme} locale="fa" position="top-center" />
       <Toast ref={toastTLRef} theme={theme} position="top-left" />
       <Toast ref={toastBLRef} theme={theme} position="bottom-left" />
       <Toast ref={toastBCRef} theme={theme} position="bottom-center" />
@@ -177,6 +187,10 @@ export function ToastDemo() {
 
         <DemoBlock title="Template" hint="content render prop for custom JSX" isDark={isDark}>
           <Button label="Custom Template" onClick={showTemplate} />
+        </DemoBlock>
+
+        <DemoBlock title="Persian (fa)" hint="locale='fa' enables RTL and Persian close label" isDark={isDark}>
+          <Button label="نمایش پیام فارسی" onClick={showPersian} />
         </DemoBlock>
       </div>
     </div>

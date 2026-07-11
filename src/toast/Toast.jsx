@@ -18,6 +18,11 @@ import {
   resolveToastThemeColors,
   toastColorsToCssVars,
 } from './utils/themeColors.js';
+import {
+  getToastLocaleConfig,
+  isToastRtlLocale,
+  resolveToastLocale,
+} from './utils/locale.js';
 import './styles/toast.css';
 
 const POSITIONS = [
@@ -38,15 +43,23 @@ export const Toast = forwardRef(function Toast(props, ref) {
     baseZIndex = 1100,
     theme = 'light',
     colors,
-    rtl = false,
+    locale,
+    rtl,
     className,
     style,
-    closeAriaLabel = 'Close',
+    closeAriaLabel,
   } = props;
 
   const [messages, setMessages] = useState([]);
   const timersRef = useRef(new Map());
 
+  const resolvedLocale = resolveToastLocale(locale, rtl);
+  const localeConfig = useMemo(
+    () => getToastLocaleConfig(resolvedLocale),
+    [resolvedLocale]
+  );
+  const isRtl = rtl ?? isToastRtlLocale(resolvedLocale);
+  const resolvedCloseAriaLabel = closeAriaLabel ?? localeConfig.close;
   const isDark = theme === 'dark';
   const themeVars = useMemo(
     () => toastColorsToCssVars(resolveToastThemeColors(theme, colors)),
@@ -131,11 +144,11 @@ export const Toast = forwardRef(function Toast(props, ref) {
         'nr-toast',
         `nr-toast--${resolvedPosition}`,
         isDark && 'nr-toast--dark',
-        rtl && 'nr-toast--rtl',
+        isRtl && 'nr-toast--rtl',
         className
       )}
       style={{ ...themeVars, zIndex: baseZIndex, ...style }}
-      dir={rtl ? 'rtl' : undefined}
+      dir={isRtl ? 'rtl' : undefined}
       aria-relevant="additions"
     >
       <div className="nr-toast__container">
@@ -144,7 +157,7 @@ export const Toast = forwardRef(function Toast(props, ref) {
             key={message.id}
             message={message}
             onClose={removeMessage}
-            closeAriaLabel={closeAriaLabel}
+            closeAriaLabel={resolvedCloseAriaLabel}
           />
         ))}
       </div>

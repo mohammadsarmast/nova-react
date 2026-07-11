@@ -296,6 +296,15 @@ Use `optionGroupChildren` to define the hierarchy. Order matters — it must mat
 <CascadeSelect theme="dark" colors={{ primary: '#ec4899', hover: '#fdf2f8' }} />
 ```
 
+### Persian / RTL locale
+
+```jsx
+<CascadeSelect locale="fa" options={persianCountries} />
+<CascadeSelect locale="fa" floatLabel label="شهر" />
+```
+
+`locale="fa"` (or `locale="ar"`) automatically enables RTL and localized placeholder text.
+
 ### Responsive
 
 Use `breakpoint` (default `767px`) so nested panels stack vertically on small screens, matching [PrimeReact CascadeSelect](https://v9.primereact.org/cascadeselect/):
@@ -367,6 +376,20 @@ toastBC.current.show({
 ```
 
 Positions: `top-left`, `top-center`, `top-right`, `center`, `bottom-left`, `bottom-center`, `bottom-right`. Default `life` is `3000ms`.
+
+### Persian / RTL locale
+
+```jsx
+<Toast ref={toast} locale="fa" position="top-center" />
+
+toast.current.show({
+  severity: 'success',
+  summary: 'موفقیت',
+  detail: 'عملیات با موفقیت انجام شد.',
+});
+```
+
+`locale="fa"` enables RTL layout and Persian close button label (`بستن`).
 
 ---
 

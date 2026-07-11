@@ -185,4 +185,11 @@ describe('CascadeSelect', () => {
     });
     expect(screen.getByRole('menuitem', { name: /USA/i })).toBeInTheDocument();
   });
+
+  it('applies Persian locale with rtl and placeholder', () => {
+    const { placeholder, ...propsWithoutPlaceholder } = commonProps;
+    render(<CascadeSelect {...propsWithoutPlaceholder} locale="fa" />);
+    expect(screen.getByRole('combobox')).toHaveTextContent('انتخاب کنید');
+    expect(screen.getByRole('combobox').closest('.nr-cs')).toHaveClass('nr-cs--rtl');
+  });
 });

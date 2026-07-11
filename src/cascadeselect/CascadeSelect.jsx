@@ -22,6 +22,11 @@ import {
   cascadeSelectColorsToCssVars,
   resolveCascadeSelectThemeColors,
 } from './utils/themeColors.js';
+import {
+  getCascadeSelectLocaleConfig,
+  isCascadeSelectRtlLocale,
+  resolveCascadeSelectLocale,
+} from './utils/locale.js';
 import './styles/cascadeselect.css';
 
 function ChevronDownIcon() {
@@ -199,10 +204,11 @@ export function CascadeSelect(props) {
     optionGroupLabel = 'label',
     optionGroupChildren,
     onChange,
-    placeholder = 'Select',
+    placeholder,
     disabled = false,
     invalid = false,
-    rtl = false,
+    locale,
+    rtl,
     theme = 'light',
     colors,
     itemTemplate,
@@ -236,6 +242,13 @@ export function CascadeSelect(props) {
 
   const isDark = theme === 'dark';
   const isMobile = useBreakpoint(breakpoint);
+  const resolvedLocale = resolveCascadeSelectLocale(locale, rtl);
+  const localeConfig = useMemo(
+    () => getCascadeSelectLocaleConfig(resolvedLocale),
+    [resolvedLocale]
+  );
+  const isRtl = rtl ?? isCascadeSelectRtlLocale(resolvedLocale);
+  const resolvedPlaceholder = placeholder ?? localeConfig.placeholder;
   const themeVars = useMemo(
     () => ({
       ...cascadeSelectColorsToCssVars(resolveCascadeSelectThemeColors(theme, colors)),
@@ -251,10 +264,10 @@ export function CascadeSelect(props) {
       optionGroupChildren: normalizeGroupChildren(optionGroupChildren),
       optionValue,
       itemTemplate,
-      rtl,
+      rtl: isRtl,
       isMobile,
     }),
-    [optionLabel, optionGroupLabel, optionGroupChildren, optionValue, itemTemplate, rtl, isMobile]
+    [optionLabel, optionGroupLabel, optionGroupChildren, optionValue, itemTemplate, isRtl, isMobile]
   );
 
   const selectedLabel = useMemo(
@@ -347,7 +360,7 @@ export function CascadeSelect(props) {
       aria-haspopup="tree"
       aria-expanded={open}
       aria-controls={open ? `${inputId}-panel` : undefined}
-      aria-label={ariaLabel}
+      aria-label={ariaLabel ?? localeConfig.ariaLabel}
       aria-labelledby={ariaLabelledby}
       aria-disabled={disabled || undefined}
       tabIndex={disabled ? -1 : 0}
@@ -356,7 +369,7 @@ export function CascadeSelect(props) {
       onKeyDown={handleTriggerKeyDown}
     >
       <span className={cn('nr-cs__value', !hasValue && 'nr-cs__value--placeholder')}>
-        {hasValue ? displayLabel : floatLabel ? '\u00a0' : placeholder}
+        {hasValue ? displayLabel : floatLabel ? '\u00a0' : resolvedPlaceholder}
       </span>
       <span className="nr-cs__trigger-icon" aria-hidden="true">
         <ChevronDownIcon />
@@ -369,7 +382,7 @@ export function CascadeSelect(props) {
       ref={rootRef}
       className={cn(
         'nr-cs',
-        rtl && 'nr-cs--rtl',
+        isRtl && 'nr-cs--rtl',
         isDark && 'nr-cs--dark',
         isMobile && 'nr-cs--mobile',
         disabled && 'nr-cs--disabled',
@@ -379,7 +392,7 @@ export function CascadeSelect(props) {
         className
       )}
       style={{ ...themeVars, ...style }}
-      dir={rtl ? 'rtl' : undefined}
+      dir={isRtl ? 'rtl' : undefined}
     >
       {floatLabel ? (
         <div
@@ -391,7 +404,7 @@ export function CascadeSelect(props) {
         >
           {trigger}
           <label htmlFor={inputId} className="nr-cs__float-label">
-            {label ?? placeholder}
+            {label ?? resolvedPlaceholder}
           </label>
         </div>
       ) : (

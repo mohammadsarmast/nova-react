@@ -126,4 +126,16 @@ describe('Toast', () => {
 
     expect(container.querySelector('.nr-toast__item--error')).toBeInTheDocument();
   });
+
+  it('uses Persian close label with fa locale', () => {
+    const ref = createRef();
+    const { container } = render(<Toast ref={ref} locale="fa" />);
+
+    act(() => {
+      ref.current.show({ summary: 'پیام' });
+    });
+
+    expect(screen.getByRole('button', { name: 'بستن' })).toBeInTheDocument();
+    expect(container.querySelector('.nr-toast')).toHaveClass('nr-toast--rtl');
+  });
 });

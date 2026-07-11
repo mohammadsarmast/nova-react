@@ -4,6 +4,11 @@ export {
   cascadeSelectColorsToCssVars,
 } from './utils/themeColors.js';
 export {
+  getCascadeSelectLocaleConfig,
+  resolveCascadeSelectLocale,
+  isCascadeSelectRtlLocale,
+} from './utils/locale.js';
+export {
   isGroupOption,
   getChildOptions,
   getOptionLabelValue,

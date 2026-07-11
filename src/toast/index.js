@@ -5,6 +5,11 @@ export {
   toastColorsToCssVars,
 } from './utils/themeColors.js';
 export {
+  getToastLocaleConfig,
+  resolveToastLocale,
+  isToastRtlLocale,
+} from './utils/locale.js';
+export {
   normalizeMessage,
   normalizeMessages,
   createMessageId,
