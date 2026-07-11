@@ -40,7 +40,12 @@
       "import": "./dist/cascadeselect/index.js",
       "require": "./dist/cascadeselect/index.cjs"
     },
-    "./cascadeselect/styles.css": "./dist/cascadeselect/index.css"
+    "./cascadeselect/styles.css": "./dist/cascadeselect/index.css",
+    "./toast": {
+      "import": "./dist/toast/index.js",
+      "require": "./dist/toast/index.cjs"
+    },
+    "./toast/styles.css": "./dist/toast/index.css"
   },
   "files": [
     "dist",
@@ -99,7 +104,10 @@
     "chartjs",
     "cascadeselect",
     "cascade",
-    "dropdown"
+    "dropdown",
+    "toast",
+    "notification",
+    "message"
   ],
   "repository": {
     "type": "git",

@@ -14,6 +14,7 @@ Try each component online on GitHub Pages:
 |-----------|-----------|
 | **AutoComplete** | [Open Demo](https://mohammadsarmast.github.io/nova-react/autocomplete.html) |
 | **CascadeSelect** | [Open Demo](https://mohammadsarmast.github.io/nova-react/cascadeselect.html) |
+| **Toast** | [Open Demo](https://mohammadsarmast.github.io/nova-react/toast.html) |
 | **Button** | [Open Demo](https://mohammadsarmast.github.io/nova-react/button.html) |
 | **Calendar** | [Open Demo](https://mohammadsarmast.github.io/nova-react/calendar.html) |
 | **Chart** | [Open Demo](https://mohammadsarmast.github.io/nova-react/chart.html) |
@@ -28,6 +29,7 @@ Try each component online on GitHub Pages:
 |-----------|--------|---------------|
 | **AutoComplete** | `nova-react/autocomplete` | [📖 Docs](./docs/autocomplete.md) |
 | **CascadeSelect** | `nova-react/cascadeselect` | [📖 Docs](#cascadeselect) |
+| **Toast** | `nova-react/toast` | [📖 Docs](#toast) |
 | **Button** | `nova-react/button` | [📖 Docs](./docs/button.md) |
 | **Calendar** | `nova-react/calendar` | [📖 Docs](#calendar) |
 | **Chart** | `nova-react/chart` | [📖 Docs](./docs/chart.md) |
@@ -303,6 +305,68 @@ Use `breakpoint` (default `767px`) so nested panels stack vertically on small sc
 ```
 
 All components inherit the parent `font-family`. Theme tokens can be resolved with `resolveCascadeSelectThemeColors` and `cascadeSelectColorsToCssVars`.
+
+---
+
+## Toast
+
+A [PrimeReact-inspired](https://v9.primereact.org/toast/) overlay notification component. Messages are displayed imperatively via a component ref.
+
+```jsx
+import { useRef } from 'react';
+import { Toast } from 'nova-react/toast';
+import 'nova-react/toast/styles.css';
+
+function App() {
+  const toast = useRef(null);
+
+  const notify = () => {
+    toast.current?.show({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Message sent successfully.',
+    });
+  };
+
+  return (
+    <>
+      <button type="button" onClick={notify}>Show</button>
+      <Toast ref={toast} position="top-right" />
+    </>
+  );
+}
+```
+
+### Severity, multiple & sticky
+
+```jsx
+toast.current.show({ severity: 'error', summary: 'Error', detail: 'Failed to save.' });
+toast.current.show([
+  { severity: 'info', summary: 'First' },
+  { severity: 'warn', summary: 'Second' },
+]);
+toast.current.show({ summary: 'Sticky', sticky: true });
+toast.current.clear();
+```
+
+### Position & template
+
+```jsx
+<Toast ref={toastTL} position="top-left" />
+<Toast ref={toastBR} position="bottom-right" theme="dark" />
+
+toastBC.current.show({
+  content: ({ onClose }) => (
+    <div>
+      <strong>Confirm action</strong>
+      <button type="button" onClick={onClose}>OK</button>
+    </div>
+  ),
+  sticky: true,
+});
+```
+
+Positions: `top-left`, `top-center`, `top-right`, `center`, `bottom-left`, `bottom-center`, `bottom-right`. Default `life` is `3000ms`.
 
 ---
 

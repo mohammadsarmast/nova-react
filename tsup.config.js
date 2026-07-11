@@ -73,4 +73,12 @@ export default defineConfig([
       copyFileSync('src/cascadeselect/styles/cascadeselect.css', 'dist/cascadeselect/index.css');
     },
   },
+  {
+    ...shared,
+    entry: ['src/toast/index.js'],
+    outDir: 'dist/toast',
+    onSuccess() {
+      copyFileSync('src/toast/styles/toast.css', 'dist/toast/index.css');
+    },
+  },
 ]);

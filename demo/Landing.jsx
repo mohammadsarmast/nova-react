@@ -17,6 +17,13 @@ const demos = [
     importPath: 'nova-react/cascadeselect',
   },
   {
+    id: 'toast',
+    title: 'Toast',
+    description: 'Overlay notifications with severity, position, sticky mode, custom templates, dark theme, and imperative ref API — inspired by PrimeReact.',
+    href: './toast.html',
+    importPath: 'nova-react/toast',
+  },
+  {
     id: 'button',
     title: 'Button',
     description: 'Variants, severities, loading, badges, groups, toggle, split button, tooltip, custom color, and RTL.',

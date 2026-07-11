@@ -28,6 +28,8 @@ export default defineConfig(({ mode }) => ({
       'nova-react/calendar/styles.css': resolve(root, 'src/calendar/styles/calendar.css'),
       'nova-react/cascadeselect': resolve(root, 'src/cascadeselect/index.js'),
       'nova-react/cascadeselect/styles.css': resolve(root, 'src/cascadeselect/styles/cascadeselect.css'),
+      'nova-react/toast': resolve(root, 'src/toast/index.js'),
+      'nova-react/toast/styles.css': resolve(root, 'src/toast/styles/toast.css'),
     },
   },
   build: {
@@ -43,6 +45,7 @@ export default defineConfig(({ mode }) => ({
         workspace: resolve(demoRoot, 'workspace.html'),
         calendar: resolve(demoRoot, 'calendar.html'),
         cascadeselect: resolve(demoRoot, 'cascadeselect.html'),
+        toast: resolve(demoRoot, 'toast.html'),
       },
     },
   },
