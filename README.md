@@ -14,7 +14,10 @@ Try each component online on GitHub Pages:
 |-----------|-----------|
 | **AutoComplete** | [Open Demo](https://mohammadsarmast.github.io/nova-react/autocomplete.html) |
 | **Button** | [Open Demo](https://mohammadsarmast.github.io/nova-react/button.html) |
+| **Calendar** | [Open Demo](https://mohammadsarmast.github.io/nova-react/calendar.html) |
 | **Chart** | [Open Demo](https://mohammadsarmast.github.io/nova-react/chart.html) |
+| **DataTable** | [Open Demo](https://mohammadsarmast.github.io/nova-react/datatable.html) |
+| **Workspace** | [Open Demo](https://mohammadsarmast.github.io/nova-react/workspace.html) |
 
 [All demos →](https://mohammadsarmast.github.io/nova-react/)
 
@@ -24,7 +27,10 @@ Try each component online on GitHub Pages:
 |-----------|--------|---------------|
 | **AutoComplete** | `nova-react/autocomplete` | [📖 Docs](./docs/autocomplete.md) |
 | **Button** | `nova-react/button` | [📖 Docs](./docs/button.md) |
+| **Calendar** | `nova-react/calendar` | [📖 Docs](#calendar) |
 | **Chart** | `nova-react/chart` | [📖 Docs](./docs/chart.md) |
+| **DataTable** | `nova-react/datatable` | [📖 Docs](./docs/datatable.md) |
+| **Workspace** | `nova-react/workspace` | [📖 Docs](#workspace) |
 
 ## AutoComplete
 
@@ -310,11 +316,183 @@ import 'nova-react/chart/styles.css';
 
 ---
 
+## DataTable
+
+Full-featured table with **client-side** and **server-side (lazy)** data flows.
+
+```jsx
+import { DataTable, Column } from 'nova-react/datatable';
+import 'nova-react/datatable/styles.css';
+
+<DataTable value={products} dataKey="id">
+  <Column field="code" header="Code" />
+  <Column field="name" header="Name" />
+  <Column field="category" header="Category" />
+</DataTable>
+```
+
+[📖 Full DataTable documentation](./docs/datatable.md) · [🎮 Live Demo](https://mohammadsarmast.github.io/nova-react/datatable.html)
+
+### Pagination, Sorting & Search
+
+```jsx
+<DataTable value={products} paginator rows={10} rowsPerPageOptions={[5, 10, 25]}>
+  <Column field="name" header="Name" sortable />
+</DataTable>
+
+<DataTable
+  value={products}
+  filters={filters}
+  onFilter={(e) => setFilters(e.filters)}
+  globalFilterFields={['name', 'category', 'code']}
+>
+  <Column field="name" header="Name" filter filterPlaceholder="Name" />
+</DataTable>
+```
+
+### Server-side (lazy)
+
+```jsx
+<DataTable
+  value={rows}
+  lazy
+  paginator
+  rows={rows}
+  totalRecords={totalRecords}
+  loading={loading}
+  onPage={(e) => fetchFromApi(e)}
+  onSort={(e) => fetchFromApi(e)}
+  onGlobalFilter={(e) => fetchFromApi(e)}
+>
+  <Column field="name" header="Name" sortable />
+</DataTable>
+```
+
+---
+
+## Workspace
+
+A desktop-like surface with marquee selection, multi-select, and optional drag. Place items in any layout — absolute `x`/`y` (free), flex, CSS grid, or your own wrapper.
+
+```jsx
+import { Workspace, WorkspaceItem, WorkspacePanel } from 'nova-react/workspace';
+import 'nova-react/workspace/styles.css';
+
+function App() {
+  const [selection, setSelection] = useState([]);
+
+  return (
+    <Workspace
+      selection={selection}
+      onSelectionChange={(e) => setSelection(e.value)}
+      height={460}
+    >
+      <WorkspaceItem id="docs" layout="free" x={36} y={42} width={112} height={96} data={{ label: 'Documents' }}>
+        📁 Documents
+      </WorkspaceItem>
+    </Workspace>
+  );
+}
+```
+
+[🎮 Live Demo](https://mohammadsarmast.github.io/nova-react/workspace.html)
+
+### Selection behavior
+
+- Click + drag on empty space to draw a **marquee** and select multiple items.
+- Hold **Shift** and click to add an unselected item to the selection.
+- Hold **Alt** and click a selected item to remove it from the selection.
+- `onSelectionChange` returns both `value` (ids) and `selectedItems` (full item data + layout).
+
+### Layouts, drag lock & panel
+
+```jsx
+{/* Free layout — draggable via x/y */}
+<WorkspaceItem id="a" layout="free" x={20} y={20} data={{ label: 'A' }}>A</WorkspaceItem>
+
+{/* Flow layout — inside your own flex/grid wrapper (not draggable) */}
+<div style={{ display: 'flex', gap: 16 }}>
+  <WorkspaceItem id="b" layout="flow" data={{ label: 'B' }}>B</WorkspaceItem>
+</div>
+
+{/* Drag is locked by default; show the lock toggle only when you allow re-arranging */}
+<Workspace showLayoutLockButton height={460}>{/* ...items... */}</Workspace>
+
+{/* Optional window-style panel wrapper */}
+<WorkspacePanel open={open} onClose={() => setOpen(false)} title="Workspace" footer="Selected: none">
+  <Workspace>{/* ...items... */}</Workspace>
+</WorkspacePanel>
+```
+
+---
+
+## Calendar
+
+A PrimeReact-inspired date picker supporting **Gregorian**, **Jalali** (Persian / شمسی), and **Hijri** (Islamic / قمری) calendars, with date, time, datetime, month, and year modes.
+
+```jsx
+import { useState } from 'react';
+import { Calendar } from 'nova-react/calendar';
+import 'nova-react/calendar/styles.css';
+
+function App() {
+  const [date, setDate] = useState(new Date());
+
+  return (
+    <Calendar
+      value={date}
+      onChange={(e) => setDate(e.value)}
+      dateFormat="dd/mm/yyyy"
+      showIcon
+      showButtonBar
+    />
+  );
+}
+```
+
+[🎮 Live Demo](https://mohammadsarmast.github.io/nova-react/calendar.html)
+
+### Calendar systems & locales
+
+```jsx
+{/* Gregorian (English) */}
+<Calendar value={date} onChange={(e) => setDate(e.value)} calendarSystem="gregorian" locale="en" />
+
+{/* Jalali / Shamsi (Persian, RTL, Persian digits) */}
+<Calendar value={date} onChange={(e) => setDate(e.value)} calendarSystem="jalali" locale="fa" rtl />
+
+{/* Hijri / Qamari (Arabic, RTL) */}
+<Calendar value={date} onChange={(e) => setDate(e.value)} calendarSystem="hijri" locale="ar" rtl />
+```
+
+> `calendarSystem` defaults from `locale` (`fa` → jalali, `ar` → hijri, otherwise gregorian).
+
+### Modes: date · time · datetime · month · year
+
+```jsx
+<Calendar value={value} onChange={(e) => setValue(e.value)} mode="datetime" hourFormat="24" showIcon />
+<Calendar value={value} onChange={(e) => setValue(e.value)} mode="time" hourFormat="12" showIcon />
+<Calendar value={value} onChange={(e) => setValue(e.value)} mode="month" showIcon />
+<Calendar value={value} onChange={(e) => setValue(e.value)} mode="year" showIcon />
+```
+
+### Range, inline & bounds
+
+```jsx
+<Calendar value={range} onChange={(e) => setRange(e.value)} selectionMode="range" showButtonBar readOnlyInput />
+<Calendar value={date} onChange={(e) => setDate(e.value)} inline numberOfMonths={2} showWeek />
+<Calendar value={date} onChange={(e) => setDate(e.value)} minDate={min} maxDate={max} />
+```
+
+**Format tokens:** `d`/`dd` day · `m`/`mm` month (numeric) · `M`/`MM` short/long month name · `yy`/`yyyy` year. Time is appended automatically in `datetime`/`time` modes based on `hourFormat` and `showSeconds`.
+
+---
+
 ## Development
 
 ```bash
 npm install
-npm run demo          # run demos locally (home, autocomplete, button)
+npm run demo          # run all demos locally (autocomplete, button, calendar, chart, datatable, workspace)
 npm run demo:build    # build static demos for GitHub Pages
 npm run test          # run unit tests
 npm run build         # build library for npm publish
