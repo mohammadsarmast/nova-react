@@ -23,6 +23,7 @@ import {
   isOptionDisabled,
 } from './utils/index.js';
 import { highlightText } from './utils/highlight.jsx';
+import { autoCompleteColorsToCssVars, resolveAutoCompleteThemeColors } from './utils/themeColors.js';
 import './styles/autocomplete.css';
 
 const PANEL_MAX_HEIGHT = 280;
@@ -124,6 +125,8 @@ export function AutoComplete(props) {
     readOnly = false,
     size = 'md',
     rtl = false,
+    theme = 'light',
+    colors,
     label,
     helperText,
     errorMessage,
@@ -147,6 +150,12 @@ export function AutoComplete(props) {
     'aria-labelledby': ariaLabelledby,
     'aria-describedby': ariaDescribedby,
   } = props;
+
+  const isDark = theme === 'dark';
+  const themeVars = useMemo(
+    () => autoCompleteColorsToCssVars(resolveAutoCompleteThemeColors(theme, colors)),
+    [theme, colors]
+  );
 
   const generatedId = useId();
   const inputId = inputIdProp ?? `rpa-${generatedId}`;
@@ -744,9 +753,11 @@ export function AutoComplete(props) {
       className={cn(
         'rpa-panel',
         appendTo === 'body' && 'rpa-panel--portal',
+        isDark && 'rpa-panel--dark',
         panelClassName
       )}
       style={{
+        ...themeVars,
         ...panelStyle,
         ...(appendTo === 'body'
           ? {
@@ -932,9 +943,10 @@ export function AutoComplete(props) {
         'rpa-root',
         `rpa-root--${size}`,
         rtl && 'rpa-root--rtl',
+        isDark && 'rpa-root--dark',
         className
       )}
-      style={style}
+      style={{ ...themeVars, ...style }}
     >
       {label && !floatLabel && (
         <label htmlFor={inputId} className="rpa-label">

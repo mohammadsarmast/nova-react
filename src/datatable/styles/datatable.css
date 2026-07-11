@@ -37,6 +37,12 @@
   overflow: hidden;
 }
 
+/* Inherit the user's font on all form controls */
+.nr-datatable :where(input, button, select, textarea),
+.nr-paginator :where(input, button, select, textarea) {
+  font-family: inherit;
+}
+
 .nr-datatable--small { font-size: 13px; }
 .nr-datatable--large { font-size: 15px; }
 

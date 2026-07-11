@@ -26,6 +26,11 @@
   font-size: inherit;
 }
 
+/* Inherit the user's font on all form controls */
+.nr-chart :where(input, button, select, textarea) {
+  font-family: inherit;
+}
+
 .nr-chart--dark {
   --nr-chart-bg: #0f172a;
   --nr-chart-border: #1e293b;

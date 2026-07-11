@@ -158,6 +158,27 @@
 .nr-btn--text.nr-btn--neutral { color: var(--nr-btn-neutral); }
 .nr-btn--text.nr-btn--neutral:hover:not(:disabled) { background: var(--nr-btn-neutral-soft); }
 
+/* Dark theme — keep low-contrast severities readable on dark surfaces */
+.nr-btn--dark {
+  --nr-btn-secondary: #cbd5e1;
+  --nr-btn-secondary-hover: #e2e8f0;
+  --nr-btn-neutral: #e5e7eb;
+  --nr-btn-neutral-hover: #f8fafc;
+  --nr-btn-primary-soft: rgb(59 130 246 / 0.2);
+  --nr-btn-secondary-soft: rgb(148 163 184 / 0.2);
+  --nr-btn-success-soft: rgb(16 185 129 / 0.2);
+  --nr-btn-info-soft: rgb(6 182 212 / 0.2);
+  --nr-btn-warning-soft: rgb(245 158 11 / 0.2);
+  --nr-btn-danger-soft: rgb(239 68 68 / 0.2);
+  --nr-btn-neutral-soft: rgb(148 163 184 / 0.2);
+}
+
+.nr-btn--dark.nr-btn--outlined.nr-btn--secondary,
+.nr-btn--dark.nr-btn--outlined.nr-btn--neutral { border-color: #475569; }
+
+.nr-btn--dark.nr-btn--solid.nr-btn--secondary,
+.nr-btn--dark.nr-btn--solid.nr-btn--neutral { color: #0f172a; }
+
 .nr-btn--link,
 .nr-btn--link-mode {
   background: transparent;
@@ -545,6 +566,26 @@
 
 .nr-split-btn__menu-icon {
   display: inline-flex;
+}
+
+/* Dark theme — SplitButton menu surface */
+.nr-split-btn--dark .nr-split-btn__menu {
+  background: #1e293b;
+  border-color: #334155;
+  box-shadow: 0 16px 40px -20px rgb(0 0 0 / 0.6);
+}
+
+.nr-split-btn--dark .nr-split-btn__menu-item {
+  color: #f1f5f9;
+}
+
+.nr-split-btn--dark .nr-split-btn__menu-item:hover:not(:disabled),
+.nr-split-btn--dark .nr-split-btn__menu-item--highlighted {
+  background: rgb(148 163 184 / 0.16);
+}
+
+.nr-split-btn--dark .nr-split-btn__separator {
+  background: #334155;
 }
 
 /* Custom color uses CSS vars set inline */

@@ -14,6 +14,7 @@ import {
 } from './utils/selection.js';
 import { clampPosition, normalizeRect } from './utils/geometry.js';
 import { getItemsForMarquee, resolveWorkspaceItems } from './utils/items.js';
+import { resolveWorkspaceThemeColors, workspaceColorsToCssVars } from './utils/themeColors.js';
 import './styles/workspace.css';
 
 const DRAG_THRESHOLD = 4;
@@ -37,8 +38,14 @@ export function Workspace({
   onItemClick,
   height = 420,
   rtl = false,
+  theme = 'light',
+  colors,
   ariaLabel = 'Workspace selection surface',
 }) {
+  const themeVars = useMemo(
+    () => workspaceColorsToCssVars(resolveWorkspaceThemeColors(theme, colors)),
+    [theme, colors]
+  );
   const containerRef = useRef(null);
   const itemsRef = useRef(new Map());
   const [selectionState, setSelectionState] = useState(defaultSelection);
@@ -299,12 +306,13 @@ export function Workspace({
         className={cn(
           'nr-workspace',
           rtl && 'nr-workspace--rtl',
+          theme === 'dark' && 'nr-workspace--dark',
           disabled && 'nr-workspace--disabled',
           layoutLocked && 'nr-workspace--layout-locked',
           showLayoutLockButton && 'nr-workspace--with-toolbar',
           className
         )}
-        style={{ ...style, height }}
+        style={{ ...themeVars, ...style, height }}
         role="application"
         aria-label={ariaLabel}
         onPointerDown={handleCanvasPointerDown}

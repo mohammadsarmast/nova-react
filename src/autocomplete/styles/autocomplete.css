@@ -9,6 +9,7 @@
   --rpa-bg: #ffffff;
   --rpa-text: #111827;
   --rpa-text-muted: #6b7280;
+  --rpa-hover: #f3f4f6;
   --rpa-error: #ef4444;
   --rpa-error-bg: #fef2f2;
   --rpa-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
@@ -79,6 +80,29 @@
   color: var(--rpa-primary);
 }
 
+/* Dark theme */
+.rpa-root--dark,
+.rpa-panel--dark {
+  --rpa-primary: #60a5fa;
+  --rpa-primary-hover: #93c5fd;
+  --rpa-primary-light: rgb(59 130 246 / 0.18);
+  --rpa-border: #334155;
+  --rpa-border-focus: #60a5fa;
+  --rpa-bg: #1e293b;
+  --rpa-text: #f1f5f9;
+  --rpa-text-muted: #94a3b8;
+  --rpa-hover: rgb(148 163 184 / 0.16);
+  --rpa-error: #f87171;
+  --rpa-error-bg: rgb(239 68 68 / 0.16);
+  --rpa-shadow: 0 10px 30px -12px rgb(0 0 0 / 0.6);
+}
+
+/* Inherit the user's font on all form controls */
+.rpa-root :where(input, button, select, textarea),
+.rpa-panel :where(input, button, select, textarea) {
+  font-family: inherit;
+}
+
 /* Input container */
 .rpa-input-wrapper {
   display: flex;
@@ -108,7 +132,7 @@
 }
 
 .rpa-input-wrapper--disabled {
-  background: #f3f4f6;
+  background: var(--rpa-hover);
   opacity: 0.7;
   cursor: not-allowed;
 }
@@ -221,7 +245,7 @@
 
 .rpa-btn:hover:not(:disabled) {
   color: var(--rpa-text);
-  background: #f3f4f6;
+  background: var(--rpa-hover);
 }
 
 .rpa-btn:disabled {
@@ -356,7 +380,7 @@
 .rpa-item--creatable {
   color: var(--rpa-primary);
   font-weight: 500;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--rpa-border);
 }
 
 .rpa-item--group-header {

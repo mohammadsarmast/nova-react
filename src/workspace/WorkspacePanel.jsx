@@ -1,5 +1,6 @@
 import React from 'react';
 import { cn } from './utils/cn.js';
+import { resolveWorkspaceThemeColors, workspaceColorsToCssVars } from './utils/themeColors.js';
 
 export function WorkspacePanel({
   open = true,
@@ -10,13 +11,17 @@ export function WorkspacePanel({
   style,
   height,
   footer,
+  theme = 'light',
+  colors,
 }) {
   if (!open) return null;
 
+  const themeVars = workspaceColorsToCssVars(resolveWorkspaceThemeColors(theme, colors));
+
   return (
     <section
-      className={cn('nr-workspace-panel', className)}
-      style={style}
+      className={cn('nr-workspace-panel', theme === 'dark' && 'nr-workspace-panel--dark', className)}
+      style={{ ...themeVars, ...style }}
       aria-label={title}
     >
       <header className="nr-workspace-panel__header">

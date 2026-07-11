@@ -23,6 +23,7 @@ import {
 import { formatCalendarValue } from './utils/format.js';
 import { getLocaleConfig, resolveLocale } from './utils/locale.js';
 import { resolveCalendarMode, resolvePanelView, getDefaultDateFormat } from './utils/mode.js';
+import { calendarColorsToCssVars, resolveCalendarThemeColors } from './utils/themeColors.js';
 import './styles/calendar.css';
 
 function applyDaySelection(date, value, selectionMode) {
@@ -61,6 +62,8 @@ export function Calendar({
   calendarSystem,
   locale,
   rtl,
+  theme = 'light',
+  colors,
   mode,
   view,
   showTime = false,
@@ -103,6 +106,11 @@ export function Calendar({
   const resolvedSystem = resolveCalendarSystem(calendarSystem, resolvedLocale);
   const resolvedMode = resolveCalendarMode({ mode, view, showTime, timeOnly });
   const isRtl = rtl ?? ['fa', 'ar'].includes(resolvedLocale);
+  const isDark = theme === 'dark';
+  const themeVars = useMemo(
+    () => calendarColorsToCssVars(resolveCalendarThemeColors(theme, colors)),
+    [theme, colors]
+  );
 
   const normalizedValue = normalizeValue(value, selectionMode);
   const initialView = getInitialView(
@@ -272,7 +280,7 @@ export function Calendar({
       onTimeChange={handleTimeChange}
       onToday={handleToday}
       onClear={handleClear}
-      className={panelClassName}
+      className={cn(isDark && 'nr-calendar-panel--dark', panelClassName)}
     />
   );
 
@@ -280,7 +288,8 @@ export function Calendar({
     return (
       <div
         ref={rootRef}
-        className={cn('nr-calendar', 'nr-calendar--inline', isRtl && 'nr-calendar--rtl', disabled && 'nr-calendar--disabled', className)}
+        className={cn('nr-calendar', 'nr-calendar--inline', isRtl && 'nr-calendar--rtl', isDark && 'nr-calendar--dark', disabled && 'nr-calendar--disabled', className)}
+        style={themeVars}
         dir={isRtl ? 'rtl' : undefined}
       >
         {panel}
@@ -295,10 +304,12 @@ export function Calendar({
         'nr-calendar',
         showIcon && 'nr-calendar--with-icon',
         isRtl && 'nr-calendar--rtl',
+        isDark && 'nr-calendar--dark',
         disabled && 'nr-calendar--disabled',
         open && 'nr-calendar--open',
         className
       )}
+      style={themeVars}
       dir={isRtl ? 'rtl' : undefined}
     >
       <div className="nr-calendar__input-wrap">

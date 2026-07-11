@@ -82,6 +82,7 @@ export const Button = forwardRef(function Button(props, ref) {
     rel,
     ripple = true,
     color,
+    theme = 'light',
     rtl = false,
     tooltip,
     tooltipPosition = 'top',
@@ -155,6 +156,7 @@ export const Button = forwardRef(function Button(props, ref) {
     href && 'nr-btn--href',
     showBadge && 'nr-btn--has-badge',
     color && 'nr-btn--custom-color',
+    theme === 'dark' && 'nr-btn--dark',
     rtl && 'nr-btn--rtl',
     className
   );

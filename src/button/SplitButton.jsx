@@ -23,6 +23,7 @@ export function SplitButton({
   size = 'md',
   disabled = false,
   rtl = false,
+  theme = 'light',
   className,
   menuButtonAriaLabel = 'Show menu',
   ...buttonProps
@@ -119,7 +120,7 @@ export function SplitButton({
   return (
     <div
       ref={rootRef}
-      className={cn('nr-split-btn', rtl && 'nr-split-btn--rtl', className)}
+      className={cn('nr-split-btn', rtl && 'nr-split-btn--rtl', theme === 'dark' && 'nr-split-btn--dark', className)}
       onKeyDown={handleKeyDown}
     >
       <ButtonGroup attached rtl={rtl}>
@@ -131,6 +132,7 @@ export function SplitButton({
           size={size}
           disabled={disabled}
           rtl={rtl}
+          theme={theme}
           className="nr-split-btn__main"
           onClick={(event) => {
             onClick?.(event);
@@ -143,6 +145,7 @@ export function SplitButton({
           size={size}
           disabled={disabled}
           rtl={rtl}
+          theme={theme}
           icon={menuIcon ?? <ChevronDownIcon />}
           iconOnly
           className="nr-split-btn__toggle"

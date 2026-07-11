@@ -10,3 +10,4 @@ export {
   isSelected,
 } from './utils/selection.js';
 export { resolveWorkspaceItems, getItemBounds, getItemsForMarquee } from './utils/items.js';
+export { resolveWorkspaceThemeColors, workspaceColorsToCssVars } from './utils/themeColors.js';

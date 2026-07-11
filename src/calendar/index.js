@@ -13,5 +13,6 @@ export {
 export { getLocaleConfig, resolveLocale, toLocaleDigits } from './utils/locale.js';
 export { formatDate, formatCalendarValue } from './utils/format.js';
 export { resolveCalendarMode, getDefaultDateFormat } from './utils/mode.js';
+export { resolveCalendarThemeColors, calendarColorsToCssVars } from './utils/themeColors.js';
 export { gregorianToJalali, jalaliToGregorian } from './utils/jalali.js';
 export { gregorianToHijri, hijriToGregorian } from './utils/hijri.js';

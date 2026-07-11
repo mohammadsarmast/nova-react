@@ -1,10 +1,69 @@
 /* NovaReact Calendar */
 
+.nr-calendar,
+.nr-calendar-panel {
+  --nr-cal-bg: #ffffff;
+  --nr-cal-text: #1f2937;
+  --nr-cal-text-strong: #111827;
+  --nr-cal-muted: #64748b;
+  --nr-cal-subtle: #475569;
+  --nr-cal-border: #e2e8f0;
+  --nr-cal-input-border: #cbd5e1;
+  --nr-cal-panel-border: #dbe3f0;
+  --nr-cal-header-bg: #f8fafc;
+  --nr-cal-footer-bg: #f8fafc;
+  --nr-cal-hover: #eff6ff;
+  --nr-cal-hover-border: #bfdbfe;
+  --nr-cal-accent: #2563eb;
+  --nr-cal-accent-focus: #3b82f6;
+  --nr-cal-accent-contrast: #ffffff;
+  --nr-cal-today: #1d4ed8;
+  --nr-cal-today-border: #93c5fd;
+  --nr-cal-nav-bg: #ffffff;
+  --nr-cal-nav-border: #d1d5db;
+  --nr-cal-nav-text: #374151;
+  --nr-cal-title-hover: #e2e8f0;
+  --nr-cal-shadow: 0 18px 40px -20px rgb(15 23 42 / 0.35);
+}
+
 .nr-calendar {
   position: relative;
   display: inline-flex;
   flex-direction: column;
   width: min(100%, 320px);
+  font-family: inherit;
+}
+
+/* Dark theme */
+.nr-calendar--dark,
+.nr-calendar-panel--dark {
+  --nr-cal-bg: #1e293b;
+  --nr-cal-text: #e2e8f0;
+  --nr-cal-text-strong: #f8fafc;
+  --nr-cal-muted: #94a3b8;
+  --nr-cal-subtle: #cbd5e1;
+  --nr-cal-border: #334155;
+  --nr-cal-input-border: #475569;
+  --nr-cal-panel-border: #334155;
+  --nr-cal-header-bg: #111827;
+  --nr-cal-footer-bg: #111827;
+  --nr-cal-hover: rgb(59 130 246 / 0.18);
+  --nr-cal-hover-border: #3b82f6;
+  --nr-cal-accent: #3b82f6;
+  --nr-cal-accent-focus: #60a5fa;
+  --nr-cal-accent-contrast: #ffffff;
+  --nr-cal-today: #bfdbfe;
+  --nr-cal-today-border: #3b82f6;
+  --nr-cal-nav-bg: #0f172a;
+  --nr-cal-nav-border: #334155;
+  --nr-cal-nav-text: #e2e8f0;
+  --nr-cal-title-hover: #334155;
+  --nr-cal-shadow: 0 18px 40px -20px rgb(0 0 0 / 0.6);
+}
+
+/* Inherit the user's font on all form controls */
+.nr-calendar :where(input, button, select, textarea),
+.nr-calendar-panel :where(input, button, select, textarea) {
   font-family: inherit;
 }
 
@@ -32,10 +91,10 @@
   width: 100%;
   box-sizing: border-box;
   padding: 10px 12px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--nr-cal-input-border);
   border-radius: 10px;
-  background: #fff;
-  color: #111827;
+  background: var(--nr-cal-bg);
+  color: var(--nr-cal-text-strong);
   font: inherit;
   font-size: 14px;
   outline: none;
@@ -47,7 +106,7 @@
 }
 
 .nr-calendar__input:focus {
-  border-color: #3b82f6;
+  border-color: var(--nr-cal-accent-focus);
   box-shadow: 0 0 0 3px rgb(59 130 246 / 0.15);
 }
 
@@ -64,7 +123,7 @@
   border: none;
   border-radius: 8px;
   background: transparent;
-  color: #64748b;
+  color: var(--nr-cal-muted);
   cursor: pointer;
 }
 
@@ -82,16 +141,17 @@
 
 .nr-calendar-panel {
   min-width: 280px;
-  border: 1px solid #dbe3f0;
+  border: 1px solid var(--nr-cal-panel-border);
   border-radius: 14px;
-  background: #fff;
-  box-shadow: 0 18px 40px -20px rgb(15 23 42 / 0.35);
+  background: var(--nr-cal-bg);
+  color: var(--nr-cal-text);
+  box-shadow: var(--nr-cal-shadow);
   overflow: hidden;
 }
 
 .nr-calendar--inline .nr-calendar-panel {
   box-shadow: none;
-  border: 1px solid #dbe3f0;
+  border: 1px solid var(--nr-cal-panel-border);
 }
 
 .nr-calendar-panel__header {
@@ -100,8 +160,8 @@
   justify-content: space-between;
   gap: 8px;
   padding: 12px 14px;
-  border-bottom: 1px solid #e5e7eb;
-  background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+  border-bottom: 1px solid var(--nr-cal-border);
+  background: var(--nr-cal-header-bg);
 }
 
 .nr-calendar-panel__title-group {
@@ -116,7 +176,7 @@
 .nr-calendar-panel__title-btn {
   font-size: 14px;
   font-weight: 700;
-  color: #111827;
+  color: var(--nr-cal-text-strong);
 }
 
 .nr-calendar-panel__title-btn {
@@ -128,7 +188,7 @@
 }
 
 .nr-calendar-panel__title-btn:hover {
-  background: #e2e8f0;
+  background: var(--nr-cal-title-hover);
 }
 
 .nr-calendar-panel__nav {
@@ -137,10 +197,10 @@
   justify-content: center;
   width: 32px;
   height: 32px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--nr-cal-nav-border);
   border-radius: 8px;
-  background: #fff;
-  color: #374151;
+  background: var(--nr-cal-nav-bg);
+  color: var(--nr-cal-nav-text);
   cursor: pointer;
 }
 
@@ -166,7 +226,7 @@
   margin-bottom: 8px;
   font-size: 13px;
   font-weight: 700;
-  color: #475569;
+  color: var(--nr-cal-subtle);
   text-align: center;
 }
 
@@ -175,14 +235,14 @@
   justify-content: space-between;
   gap: 8px;
   padding: 10px 12px;
-  border-top: 1px solid #e5e7eb;
-  background: #f8fafc;
+  border-top: 1px solid var(--nr-cal-border);
+  background: var(--nr-cal-footer-bg);
 }
 
 .nr-calendar-panel__footer-btn {
   border: none;
   background: transparent;
-  color: #2563eb;
+  color: var(--nr-cal-accent);
   font: inherit;
   font-size: 13px;
   font-weight: 600;
@@ -200,7 +260,7 @@
   padding: 6px 0;
   font-size: 11px;
   font-weight: 700;
-  color: #64748b;
+  color: var(--nr-cal-muted);
   text-align: center;
 }
 
@@ -215,28 +275,28 @@
   border: 1px solid transparent;
   border-radius: 10px;
   background: transparent;
-  color: #1f2937;
+  color: var(--nr-cal-text);
   font: inherit;
   font-size: 13px;
   cursor: pointer;
 }
 
 .nr-calendar__day:hover {
-  background: #eff6ff;
-  border-color: #bfdbfe;
+  background: var(--nr-cal-hover);
+  border-color: var(--nr-cal-hover-border);
 }
 
 .nr-calendar__day--today {
-  border-color: #93c5fd;
-  color: #1d4ed8;
+  border-color: var(--nr-cal-today-border);
+  color: var(--nr-cal-today);
   font-weight: 700;
 }
 
 .nr-calendar__day--selected,
 .nr-calendar__day--range-edge {
-  background: #2563eb;
-  border-color: #2563eb;
-  color: #fff;
+  background: var(--nr-cal-accent);
+  border-color: var(--nr-cal-accent);
+  color: var(--nr-cal-accent-contrast);
 }
 
 .nr-calendar__day--disabled {
@@ -258,10 +318,10 @@
 .nr-calendar__month,
 .nr-calendar__year {
   padding: 12px 6px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--nr-cal-border);
   border-radius: 10px;
-  background: #fff;
-  color: #1f2937;
+  background: var(--nr-cal-bg);
+  color: var(--nr-cal-text);
   font: inherit;
   font-size: 13px;
   font-weight: 600;
@@ -273,15 +333,15 @@
 
 .nr-calendar__month:hover,
 .nr-calendar__year:hover {
-  border-color: #93c5fd;
-  background: #eff6ff;
+  border-color: var(--nr-cal-hover-border);
+  background: var(--nr-cal-hover);
 }
 
 .nr-calendar__month--selected,
 .nr-calendar__year--selected {
-  background: #2563eb;
-  border-color: #2563eb;
-  color: #fff;
+  background: var(--nr-cal-accent);
+  border-color: var(--nr-cal-accent);
+  color: var(--nr-cal-accent-contrast);
 }
 
 .nr-calendar__time {
@@ -290,7 +350,7 @@
   justify-content: center;
   gap: 12px;
   padding-top: 8px;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid var(--nr-cal-border);
   margin-top: 8px;
 }
 
@@ -304,16 +364,16 @@
 .nr-calendar__time-label {
   font-size: 11px;
   font-weight: 700;
-  color: #64748b;
+  color: var(--nr-cal-muted);
 }
 
 .nr-calendar__time-btn {
   width: 28px;
   height: 24px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--nr-cal-nav-border);
   border-radius: 6px;
-  background: #fff;
-  color: #374151;
+  background: var(--nr-cal-nav-bg);
+  color: var(--nr-cal-nav-text);
   cursor: pointer;
   font-size: 10px;
 }
@@ -323,15 +383,16 @@
   text-align: center;
   font-size: 18px;
   font-weight: 700;
-  color: #111827;
+  color: var(--nr-cal-text-strong);
 }
 
 .nr-calendar__ampm {
   align-self: flex-end;
   padding: 8px 10px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--nr-cal-nav-border);
   border-radius: 8px;
-  background: #fff;
+  background: var(--nr-cal-nav-bg);
+  color: var(--nr-cal-nav-text);
   font: inherit;
   font-size: 12px;
   font-weight: 700;
