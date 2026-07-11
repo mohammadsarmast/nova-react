@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import { useClickOutside } from './hooks/useClickOutside.js';
 import { useBreakpoint } from './hooks/useBreakpoint.js';
+import { usePanelPlacement, useSublistPlacement } from './hooks/useOverlayPlacement.js';
 import { cn } from './utils/cn.js';
 import {
   findSelectedLabel,
@@ -50,6 +51,110 @@ function ChevronRightIcon() {
         clipRule="evenodd"
       />
     </svg>
+  );
+}
+
+function CascadeSublistItem({
+  option,
+  index,
+  level,
+  group,
+  disabled,
+  label,
+  isOpen,
+  config,
+  openPath,
+  optionGroupChildren,
+  onOpen,
+  onBack,
+  onSelect,
+  onClose,
+  focusReq,
+  setFocusReq,
+  itemRefs,
+  handleKeyDown,
+}) {
+  const { itemTemplate, rtl, isMobile } = config;
+  const buttonRef = useRef(null);
+  const sublistRef = useRef(null);
+  const placement = useSublistPlacement(
+    isOpen && !isMobile,
+    buttonRef,
+    sublistRef,
+    rtl,
+    [openPath]
+  );
+
+  return (
+    <li className="nr-cs__item" role="none">
+      <button
+        type="button"
+        ref={(el) => {
+          buttonRef.current = el;
+          itemRefs.current[index] = el;
+        }}
+        role="menuitem"
+        aria-haspopup={group || undefined}
+        aria-expanded={group ? isOpen : undefined}
+        disabled={disabled}
+        tabIndex={-1}
+        className={cn(
+          'nr-cs__option',
+          group && 'nr-cs__option--group',
+          isOpen && 'nr-cs__option--active',
+          disabled && 'nr-cs__option--disabled'
+        )}
+        onMouseEnter={() => {
+          if (disabled || isMobile) return;
+          if (group) onOpen(level, option);
+          else onOpen(level, null);
+        }}
+        onClick={() => {
+          if (disabled) return;
+          if (group) onOpen(level, option);
+          else onSelect(option);
+        }}
+        onKeyDown={(event) => handleKeyDown(event, index, option, group)}
+      >
+        <span className="nr-cs__option-label">
+          {itemTemplate ? itemTemplate(option, { level, group }) : label}
+        </span>
+        {group ? (
+          <span
+            className={cn(
+              'nr-cs__option-arrow',
+              !isMobile && placement === 'backward' && 'nr-cs__option-arrow--backward'
+            )}
+            aria-hidden="true"
+          >
+            {isMobile ? <ChevronDownIcon /> : <ChevronRightIcon />}
+          </span>
+        ) : null}
+      </button>
+
+      {isOpen ? (
+        <div
+          ref={sublistRef}
+          className={cn(
+            'nr-cs__sublist',
+            !isMobile && placement === 'backward' && 'nr-cs__sublist--backward'
+          )}
+        >
+          <CascadeSublist
+            options={getChildOptions(option, level, optionGroupChildren)}
+            level={level + 1}
+            config={config}
+            openPath={openPath}
+            onOpen={onOpen}
+            onBack={onBack}
+            onSelect={onSelect}
+            onClose={onClose}
+            focusReq={focusReq}
+            setFocusReq={setFocusReq}
+          />
+        </div>
+      ) : null}
+    </li>
   );
 }
 
@@ -132,62 +237,27 @@ function CascadeSublist({
         const isOpen = group && openPath[level] === option;
 
         return (
-          <li key={index} className="nr-cs__item" role="none">
-            <button
-              type="button"
-              ref={(el) => {
-                itemRefs.current[index] = el;
-              }}
-              role="menuitem"
-              aria-haspopup={group || undefined}
-              aria-expanded={group ? isOpen : undefined}
-              disabled={disabled}
-              tabIndex={-1}
-              className={cn(
-                'nr-cs__option',
-                group && 'nr-cs__option--group',
-                isOpen && 'nr-cs__option--active',
-                disabled && 'nr-cs__option--disabled'
-              )}
-              onMouseEnter={() => {
-                if (disabled || isMobile) return;
-                if (group) onOpen(level, option);
-                else onOpen(level, null);
-              }}
-              onClick={() => {
-                if (disabled) return;
-                if (group) onOpen(level, option);
-                else onSelect(option);
-              }}
-              onKeyDown={(event) => handleKeyDown(event, index, option, group)}
-            >
-              <span className="nr-cs__option-label">
-                {itemTemplate ? itemTemplate(option, { level, group }) : label}
-              </span>
-              {group ? (
-                <span className="nr-cs__option-arrow" aria-hidden="true">
-                  {isMobile ? <ChevronDownIcon /> : <ChevronRightIcon />}
-                </span>
-              ) : null}
-            </button>
-
-            {isOpen ? (
-              <div className="nr-cs__sublist">
-                <CascadeSublist
-                  options={getChildOptions(option, level, optionGroupChildren)}
-                  level={level + 1}
-                  config={config}
-                  openPath={openPath}
-                  onOpen={onOpen}
-                  onBack={onBack}
-                  onSelect={onSelect}
-                  onClose={onClose}
-                  focusReq={focusReq}
-                  setFocusReq={setFocusReq}
-                />
-              </div>
-            ) : null}
-          </li>
+          <CascadeSublistItem
+            key={index}
+            option={option}
+            index={index}
+            level={level}
+            group={group}
+            disabled={disabled}
+            label={label}
+            isOpen={isOpen}
+            config={config}
+            openPath={openPath}
+            optionGroupChildren={optionGroupChildren}
+            onOpen={onOpen}
+            onBack={onBack}
+            onSelect={onSelect}
+            onClose={onClose}
+            focusReq={focusReq}
+            setFocusReq={setFocusReq}
+            itemRefs={itemRefs}
+            handleKeyDown={handleKeyDown}
+          />
         );
       })}
     </ul>
@@ -231,6 +301,7 @@ export function CascadeSelect(props) {
   const inputId = inputIdProp ?? `nr-cs-${generatedId}`;
   const rootRef = useRef(null);
   const triggerRef = useRef(null);
+  const panelRef = useRef(null);
 
   const isControlled = controlledValue !== undefined;
   const [internalValue, setInternalValue] = useState(defaultValue);
@@ -248,6 +319,7 @@ export function CascadeSelect(props) {
     [resolvedLocale]
   );
   const isRtl = rtl ?? isCascadeSelectRtlLocale(resolvedLocale);
+  const panelPlacement = usePanelPlacement(open && !isMobile, panelRef, rootRef, isRtl);
   const resolvedPlaceholder = placeholder ?? localeConfig.placeholder;
   const themeVars = useMemo(
     () => ({
@@ -421,8 +493,14 @@ export function CascadeSelect(props) {
 
       {open ? (
         <div
+          ref={panelRef}
           id={`${inputId}-panel`}
-          className={cn('nr-cs-panel', isDark && 'nr-cs-panel--dark', panelClassName)}
+          className={cn(
+            'nr-cs-panel',
+            isDark && 'nr-cs-panel--dark',
+            !isMobile && panelPlacement === 'backward' && 'nr-cs-panel--backward',
+            panelClassName
+          )}
           style={{ ...themeVars, ...panelStyle }}
           role="tree"
         >

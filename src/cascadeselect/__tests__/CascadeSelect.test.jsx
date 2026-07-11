@@ -192,4 +192,34 @@ describe('CascadeSelect', () => {
     expect(screen.getByRole('combobox')).toHaveTextContent('انتخاب کنید');
     expect(screen.getByRole('combobox').closest('.nr-cs')).toHaveClass('nr-cs--rtl');
   });
+
+  it('flips nested sublist to backward when it would overflow the viewport', async () => {
+    const user = userEvent.setup();
+    Object.defineProperty(document.documentElement, 'clientWidth', {
+      configurable: true,
+      value: 400,
+    });
+
+    render(<CascadeSelect {...commonProps} />);
+    await user.click(screen.getByRole('combobox'));
+
+    const groupItem = screen.getByRole('menuitem', { name: /USA/i });
+    groupItem.getBoundingClientRect = () => ({
+      left: 310,
+      right: 390,
+      top: 0,
+      bottom: 36,
+      width: 80,
+      height: 36,
+      x: 310,
+      y: 0,
+      toJSON: () => ({}),
+    });
+
+    await user.hover(groupItem);
+
+    await waitFor(() => {
+      expect(document.querySelector('.nr-cs__sublist')).toHaveClass('nr-cs__sublist--backward');
+    });
+  });
 });

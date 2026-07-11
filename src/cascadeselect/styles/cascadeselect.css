@@ -224,6 +224,10 @@
   transform: scaleX(-1);
 }
 
+.nr-cs--rtl .nr-cs__option-arrow--backward {
+  transform: none;
+}
+
 /* Nested sublist opens to the side (desktop) */
 .nr-cs__sublist {
   position: absolute;
@@ -234,6 +238,20 @@
   border-radius: var(--nr-cs-radius);
   background: var(--nr-cs-bg);
   box-shadow: var(--nr-cs-shadow);
+}
+
+.nr-cs__sublist--backward {
+  inset-inline-start: auto;
+  inset-inline-end: 100%;
+}
+
+.nr-cs-panel--backward {
+  inset-inline-start: auto;
+  inset-inline-end: 0;
+}
+
+.nr-cs__option-arrow--backward {
+  transform: scaleX(-1);
 }
 
 /* Responsive — stacked drill-down below breakpoint */
